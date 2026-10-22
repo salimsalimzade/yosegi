@@ -1,0 +1,43 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // A hairline between groups of content. Group with space first; reach for
+  // a line when space alone doesn't separate.
+  .root {
+    flex: none;
+    border: 0;
+    background: knob(separator, color, color(border));
+
+    &[data-orientation="horizontal"] {
+      width: 100%;
+      height: 1px;
+      margin-block: knob(separator, margin, 0);
+    }
+
+    &[data-orientation="vertical"] {
+      align-self: stretch;
+      width: 1px;
+      min-height: 1em;
+      margin-inline: knob(separator, margin, 0);
+    }
+  }
+
+  // With a label, like "or": two lines with the words between them.
+  .labelled {
+    display: flex;
+    align-items: center;
+    gap: space(300);
+    width: 100%;
+    margin-block: knob(separator, margin, 0);
+    font: text(small);
+    color: color(fg-muted);
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: knob(separator, color, color(border));
+    }
+  }
+}

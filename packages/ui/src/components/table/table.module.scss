@@ -1,0 +1,85 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // The wrapper scrolls sideways on narrow screens, so the page doesn't.
+  .root {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font: text(body);
+    color: color(fg);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .caption {
+    padding-top: space(300);
+    font: text(small);
+    color: color(fg-muted);
+    caption-side: bottom;
+    text-align: start;
+  }
+
+  .header .row {
+    border-bottom: 1px solid knob(table, border, color(border));
+  }
+
+  .body .row {
+    border-bottom: 1px solid knob(table, border, color(border));
+    @include transition(background-color);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: color(bg-muted);
+    }
+
+    &[data-selected] {
+      background: color(bg-muted);
+      box-shadow: inset 2px 0 0 color(bg-accent);
+    }
+  }
+
+  .footer {
+    border-top: 1px solid knob(table, border, color(border));
+    font-weight: token(font-weight-semibold);
+  }
+
+  .head {
+    height: knob(table, head-height, 36px);
+    padding: 0 knob(table, cell-padding-x, space(300));
+    font: text(label);
+    color: color(fg-muted);
+    text-align: start;
+    white-space: nowrap;
+  }
+
+  .cell {
+    height: knob(table, row-height, 44px);
+    padding: space(200) knob(table, cell-padding-x, space(300));
+    vertical-align: middle;
+  }
+
+  // align="end" on a Head or Cell, for numbers.
+  :is(.head, .cell)[data-align="end"] {
+    text-align: end;
+  }
+
+  :is(.head, .cell)[data-align="center"] {
+    text-align: center;
+  }
+
+  // The first and last columns line up with the table's edges.
+  :is(.head, .cell):first-child {
+    padding-inline-start: 0;
+  }
+
+  :is(.head, .cell):last-child {
+    padding-inline-end: 0;
+  }
+}

@@ -1,0 +1,35 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    @include state-layout(error-state, 400px);
+  }
+
+  // The red is a hint; the title and the words carry the meaning.
+  .icon {
+    @include state-icon(error-state, color(fg-danger));
+  }
+
+  .title {
+    @include state-title;
+  }
+
+  .description {
+    @include state-description;
+  }
+
+  // A code people can copy and send to support: one click selects it all.
+  .detail {
+    padding: 2px space(200);
+    border-radius: radius(150);
+    background: color(bg-muted);
+    color: color(fg-muted);
+    font: text(code);
+    font-size: 12px;
+    user-select: all;
+  }
+
+  .actions {
+    @include state-actions;
+  }
+}

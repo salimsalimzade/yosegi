@@ -1,3 +1,8 @@
+/** The site's front page, empty for now. The playground is at /playground. */
 export function Home() {
-  return <h1>Yosegi Playground</h1>;
+  return (
+    <main>
+      <h1>Hello world</h1>
+    </main>
+  );
 }

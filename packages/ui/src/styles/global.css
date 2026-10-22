@@ -63,6 +63,12 @@
     padding: 0;
     border: 0;
     background: none;
+    cursor: pointer;
+  }
+
+  /* Components set display on their parts, which would otherwise un-hide them. */
+  [hidden] {
+    display: none !important;
   }
 
   ul[role="list"],
@@ -170,7 +176,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--yosegi-color-border-focus);
-    outline-offset: 2px;
+    outline: var(--yosegi-focus-ring-width) solid var(--yosegi-color-border-focus);
+    outline-offset: var(--yosegi-focus-ring-offset);
   }
 }

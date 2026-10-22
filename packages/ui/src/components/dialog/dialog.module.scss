@@ -1,0 +1,89 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // The content is a native <dialog> in the top layer; the overlay sits just
+  // under it, over the page, which showModal() has made inert.
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483646;
+    background: knob(dialog, overlay, rgb(0 0 0 / 0.45));
+    animation: fade-in token(duration-base) token(easing-out);
+  }
+
+  .content {
+    position: fixed;
+    inset: 50% auto auto 50%;
+    display: grid;
+    gap: space(400);
+    width: min(#{knob(dialog, width, 440px)}, calc(100vw - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 64px);
+    margin: 0;
+    overflow: auto;
+    padding: knob(dialog, padding, space(600));
+    border: 1px solid color(border);
+    border-radius: knob(dialog, radius, radius(400));
+    background: color(bg-surface);
+    color: color(fg);
+    transform: translate(-50%, -50%);
+    animation: dialog-in token(duration-base) token(easing-out);
+
+    &::backdrop {
+      background: transparent;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  // While a modal dialog is open, the page behind it doesn't scroll.
+  :global(html):has(.content[open][aria-modal="true"]) {
+    overflow: hidden;
+  }
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: space(300);
+  }
+
+  .title {
+    font: text(heading);
+    letter-spacing: token(text-heading-tracking);
+  }
+
+  .description {
+    color: color(fg-muted);
+    text-wrap: pretty;
+  }
+
+  .body {
+    display: grid;
+    gap: space(400);
+  }
+
+  // Buttons on the right, the main action last.
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: space(200);
+  }
+
+  .close-button {
+    margin: -4px -4px 0 0;
+    @include icon-button;
+  }
+
+  @include keyframes(fade-in);
+
+  @keyframes dialog-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.98);
+    }
+  }
+}

@@ -1,0 +1,80 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: space(400);
+
+    &[data-orientation="vertical"] {
+      flex-direction: row;
+    }
+  }
+
+  .list {
+    display: flex;
+    gap: space(400);
+    border-bottom: 1px solid knob(tabs, border, color(border));
+
+    &[data-orientation="vertical"] {
+      flex: none;
+      flex-direction: column;
+      gap: 0;
+      min-width: 168px;
+      border-bottom: 0;
+      border-inline-end: 1px solid knob(tabs, border, color(border));
+    }
+  }
+
+  .trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: space(200) 0;
+    color: knob(tabs, fg, color(fg-muted));
+    font: token(font-weight-semibold) 13px / 20px token(font-family-sans);
+    white-space: nowrap;
+    @include transition(color);
+
+    &:hover {
+      color: color(fg);
+    }
+
+    &:focus-visible {
+      outline-offset: 0;
+      border-radius: radius(150);
+    }
+
+    &[data-selected] {
+      color: knob(tabs, selected-fg, color(fg));
+    }
+
+    // The line on the rule under the selected tab.
+    &[data-selected]::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 -1px;
+      height: knob(tabs, indicator-size, 2px);
+      background: knob(tabs, indicator, color(fg-accent));
+    }
+
+    .list[data-orientation="vertical"] & {
+      padding: space(200) space(300);
+
+      &[data-selected]::after {
+        inset: 0 -1px 0 auto;
+        width: knob(tabs, indicator-size, 2px);
+        height: auto;
+      }
+    }
+
+    &:is(:disabled, [data-disabled]) {
+      @include disabled;
+    }
+  }
+
+  .content {
+    color: color(fg);
+  }
+}

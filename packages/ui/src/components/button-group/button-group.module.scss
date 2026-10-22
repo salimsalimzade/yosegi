@@ -1,0 +1,60 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: knob(button-group, gap, space(200));
+  }
+
+  .root[data-orientation="vertical"] {
+    flex-direction: column;
+    align-items: stretch;
+
+    > :global(.yosegi-button) {
+      justify-content: flex-start;
+    }
+  }
+
+  // Attached: one control, sharing borders, rounded on the outer corners only.
+  .root[data-attached] {
+    flex-wrap: nowrap;
+    gap: 0;
+
+    > :global(.yosegi-button) {
+      position: relative;
+    }
+
+    // A focused or pressed button rises, so its whole border shows.
+    > :global(.yosegi-button):is(:hover, :focus-visible, [aria-pressed="true"]) {
+      z-index: 1;
+    }
+  }
+
+  .root[data-attached]:not([data-orientation="vertical"]) {
+    > :global(.yosegi-button):not(:first-child) {
+      margin-left: -1px;
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+    }
+
+    > :global(.yosegi-button):not(:last-child) {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
+  }
+
+  .root[data-attached][data-orientation="vertical"] {
+    > :global(.yosegi-button):not(:first-child) {
+      margin-top: -1px;
+      border-start-start-radius: 0;
+      border-start-end-radius: 0;
+    }
+
+    > :global(.yosegi-button):not(:last-child) {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+  }
+}

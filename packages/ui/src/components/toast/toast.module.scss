@@ -1,0 +1,135 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // The fixed region in a corner of the screen; new toasts land nearest its edge.
+  .region {
+    position: fixed;
+    z-index: 2147483647;
+    display: flex;
+    width: knob(toast, width, 356px);
+    max-width: calc(100vw - 32px);
+    pointer-events: none;
+
+    &[data-y="bottom"] {
+      bottom: space(400);
+    }
+
+    &[data-y="top"] {
+      top: space(400);
+    }
+
+    &[data-x="end"] {
+      right: space(400);
+    }
+
+    &[data-x="start"] {
+      left: space(400);
+    }
+
+    &[data-x="center"] {
+      left: 50%;
+      translate: -50% 0;
+    }
+  }
+
+  .list {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: space(200);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    // Newest last in the list; at the top it's flipped, so it still sits at the edge.
+    .region[data-y="top"] & {
+      flex-direction: column-reverse;
+    }
+  }
+
+  .toast {
+    --yosegi-toast-from: 0 8px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: space(300);
+    padding: space(300) space(400);
+    border: 1px solid knob(toast, border, color(border-strong));
+    border-radius: knob(toast, radius, radius(400));
+    background: color(bg-surface);
+    color: color(fg);
+    pointer-events: auto;
+    animation: toast-in token(duration-base) token(easing-out);
+
+    .region[data-y="top"] & {
+      --yosegi-toast-from: 0 -8px;
+    }
+
+    &[data-closing] {
+      animation: toast-out token(duration-fast) token(easing-out) forwards;
+    }
+  }
+
+  .icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+
+    .toast[data-type="success"] & {
+      color: color(fg-accent);
+    }
+
+    .toast[data-type="error"] & {
+      color: color(fg-danger);
+    }
+
+    :where(svg) {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .content {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+    padding-block: 2px;
+  }
+
+  .title {
+    font: token(font-weight-semibold) 14px / 20px token(font-family-sans);
+  }
+
+  .description {
+    font: text(small);
+    color: color(fg-muted);
+  }
+
+  .action {
+    flex: none;
+    align-self: center;
+  }
+
+  .close {
+    margin: -2px -6px 0 0;
+    @include icon-button(24px);
+  }
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      translate: var(--yosegi-toast-from);
+    }
+  }
+
+  @keyframes toast-out {
+    to {
+      opacity: 0;
+      scale: 0.97;
+    }
+  }
+}

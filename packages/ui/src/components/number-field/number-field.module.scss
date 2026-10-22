@@ -1,0 +1,64 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    @include field-root;
+  }
+
+  .label {
+    @include field-label;
+  }
+
+  .description {
+    @include field-description;
+  }
+
+  .error-message {
+    @include field-error;
+  }
+
+  // The group is the box; the input and the two triggers sit inside it.
+  .group {
+    @include field-box;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    @include focus-within-ring;
+  }
+
+  .input {
+    @include bare-input;
+    font-variant-numeric: tabular-nums;
+    @include touch-text;
+  }
+
+  .decrement-trigger,
+  .increment-trigger {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    border-left: 1px solid color(border);
+    color: color(fg-muted);
+    @include hover-muted;
+
+    &:focus-visible {
+      outline: none;
+      background: color(bg-muted);
+      color: color(fg);
+    }
+
+    &:is(:disabled, [data-disabled]) {
+      @include disabled;
+    }
+
+    :where(svg) {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .root[data-readonly] .group {
+    border-color: color(border);
+    background: color(bg-muted);
+  }
+}

@@ -1,0 +1,90 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    border-top: 1px solid knob(accordion, border, color(border));
+  }
+
+  .item {
+    border-bottom: 1px solid knob(accordion, border, color(border));
+  }
+
+  .header {
+    display: flex;
+  }
+
+  .trigger {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: space(400);
+    padding-block: knob(accordion, padding-y, space(300));
+    color: color(fg);
+    font: token(font-weight-semibold) 14px / 20px token(font-family-sans);
+    text-align: start;
+    @include transition(color);
+
+    &:hover {
+      color: color(fg-accent);
+    }
+
+    // The chevron, drawn with two borders so it follows the text colour.
+    &::after {
+      content: "";
+      flex: none;
+      width: 7px;
+      height: 7px;
+      margin-right: 4px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: translateY(-2px) rotate(45deg);
+      transition: transform token(duration-base) token(easing-out);
+    }
+
+    &[data-expanded]::after {
+      transform: translateY(2px) rotate(-135deg);
+    }
+
+    &:is(:disabled, [data-disabled]) {
+      @include disabled;
+    }
+  }
+
+  .content {
+    overflow: hidden;
+    color: color(fg-muted);
+
+    &[data-expanded] {
+      animation: accordion-down token(duration-base) token(easing-out);
+    }
+
+    &[data-closed] {
+      animation: accordion-up token(duration-base) token(easing-out);
+    }
+
+    > * {
+      padding-bottom: knob(accordion, padding-y, space(300));
+    }
+  }
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--yosegi-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--yosegi-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
+  }
+}

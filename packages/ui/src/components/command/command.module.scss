@@ -1,0 +1,101 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid knob(command, border, color(border));
+    border-radius: knob(command, radius, radius(400));
+    background: color(bg-surface);
+    color: color(fg);
+  }
+
+  // The search row.
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: space(200);
+    padding: 0 space(300);
+    border-bottom: 1px solid color(border);
+    color: color(fg-muted);
+
+    :where(svg) {
+      flex: none;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .input {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: color(fg);
+    font: text(body);
+    @include touch-text;
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .list {
+    max-height: knob(command, max-height, 300px);
+    overflow-y: auto;
+    padding: space(100);
+    scroll-padding-block: space(100);
+  }
+
+  .group {
+    padding-bottom: space(100);
+  }
+
+  .group-heading {
+    padding: space(200) space(200) space(100);
+    font: text(label);
+    color: color(fg-muted);
+  }
+
+  .item {
+    @include list-item;
+  }
+
+  .separator {
+    height: 1px;
+    margin: space(100) calc(-1 * #{space(100)});
+    border: 0;
+    background: color(border);
+  }
+
+  .empty {
+    padding: space(600) space(200);
+    font: text(small);
+    color: color(fg-muted);
+    text-align: center;
+  }
+
+  // A keyboard shortcut at the end of an item, like ⌘K.
+  .shortcut {
+    margin-inline-start: auto;
+    font: text(code);
+    font-size: 12px;
+    color: color(fg-muted);
+    letter-spacing: 0.04em;
+  }
+
+  // Inside a dialog: the dialog draws the box, the command fills it.
+  .dialog {
+    --yosegi-dialog-padding: 0;
+    --yosegi-dialog-width: 520px;
+
+    overflow: hidden;
+
+    .root {
+      border: 0;
+      border-radius: 0;
+    }
+  }
+}

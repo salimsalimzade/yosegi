@@ -1,0 +1,63 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .content {
+    z-index: 50;
+    display: grid;
+    gap: space(200);
+    width: knob(popover, width, 288px);
+    max-width: calc(100vw - 32px);
+    padding: space(400);
+    transform-origin: var(--yosegi-popover-content-transform-origin, center);
+    @include floating-panel(popover);
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .title {
+    font: token(font-weight-semibold) 14px / 20px token(font-family-sans);
+  }
+
+  .description {
+    color: color(fg-muted);
+    text-wrap: pretty;
+  }
+
+  .close-button {
+    margin: -4px -4px 0 0;
+    @include icon-button;
+  }
+
+  // The arrow draws the same edge as the content.
+  .arrow {
+    display: block;
+    width: 12px;
+    height: 6px;
+
+    :where(svg) {
+      display: block;
+      overflow: visible;
+    }
+
+    .fill {
+      fill: color(bg-surface);
+    }
+
+    .edge {
+      fill: none;
+      stroke: knob(popover, border, color(border-strong));
+    }
+  }
+
+  // Wrap the title and the close button in this to put them on one line.
+  :global(.yosegi-popover-header) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: space(300);
+  }
+
+  @include keyframes(floating-in);
+}

@@ -1,0 +1,23 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    @include state-layout(empty-state, 400px);
+  }
+
+  .icon {
+    @include state-icon(empty-state, color(fg-muted));
+  }
+
+  .title {
+    @include state-title;
+  }
+
+  .description {
+    @include state-description;
+  }
+
+  .actions {
+    @include state-actions;
+  }
+}

@@ -1,0 +1,316 @@
+// Mixins shared by the component modules. Each one is a pattern that appears
+// in more than one component; anything used once stays in its own module.
+
+@use "sass:list";
+@use "functions" as *;
+
+// Every component module starts here. The layer statement fixes the cascade
+// order even when a module loads before yosegi/styles.css, and the content
+// lands in yosegi.components, so the app's own CSS always wins.
+@mixin component {
+  @layer yosegi.reset, yosegi.tokens, yosegi.base, yosegi.components;
+
+  @layer yosegi.components {
+    @content;
+  }
+}
+
+// ------------------------------------------------------------------ States
+
+@mixin focus-ring {
+  outline: token(focus-ring-width) solid color(border-focus);
+  outline-offset: token(focus-ring-offset);
+}
+
+// For a box that holds the focused element, like a field group.
+@mixin focus-within-ring {
+  &:has(:focus-visible) {
+    @include focus-ring;
+  }
+}
+
+@mixin disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+// Muted fill and full-strength text, for quiet controls on hover.
+@mixin hover-muted {
+  &:hover {
+    background: color(bg-muted);
+    color: color(fg);
+  }
+}
+
+// transition(background-color, opacity) → each one fast and easing out.
+@mixin transition($properties...) {
+  $list: ();
+
+  @each $property in $properties {
+    $list: list.append($list, $property token(duration-fast) token(easing-out), comma);
+  }
+
+  transition: $list;
+}
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// ------------------------------------------------------------------ Fields
+
+// The root of a field: label, box and hint stacked tight.
+@mixin field-root {
+  display: grid;
+  align-content: start;
+  gap: space(100);
+
+  &[data-disabled] {
+    @include disabled;
+  }
+}
+
+@mixin field-label {
+  font: text(label);
+  color: color(fg);
+}
+
+@mixin field-description {
+  font: text(small);
+  color: color(fg-muted);
+
+  // While the field is invalid, the error message takes the hint's place.
+  :where([data-invalid]) > & {
+    display: none;
+  }
+}
+
+// The error, with the round "!" icon in front, so colour never carries the meaning alone.
+@mixin field-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: text(small);
+  color: color(fg-danger);
+
+  &::before {
+    content: "!";
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 14px;
+    height: 14px;
+    border-radius: radius(full);
+    background: color(fg-danger);
+    color: color(bg);
+    font-size: 10px;
+    font-weight: 700;
+  }
+}
+
+// The box around a value: a text input, the number group, the date control.
+// Invalid works from the root's data-invalid or the element's own aria-invalid.
+@mixin field-box {
+  width: 100%;
+  min-height: knob(input, height, 36px);
+  border: 1px solid knob(input, border, color(border-strong));
+  border-radius: knob(input, radius, radius(300));
+  background: knob(input, bg, color(bg-surface));
+  color: knob(input, fg, color(fg));
+  font: text(body);
+  @include transition(border-color);
+
+  :where([data-invalid]) &,
+  &[aria-invalid="true"] {
+    border-color: knob(input, border-invalid, color(border-danger));
+  }
+}
+
+// An input that lives inside a field box and lets the box draw the edge.
+@mixin bare-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+// iOS zooms into inputs with text under 16px, so touch screens get 16px.
+@mixin touch-text {
+  @media (pointer: coarse) {
+    font-size: 16px;
+  }
+}
+
+// --------------------------------------------------------------- Surfaces
+
+// A small square button for an icon: close, previous and next month.
+@mixin icon-button($size: 28px) {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: $size;
+  height: $size;
+  border-radius: radius(150);
+  color: color(fg-muted);
+  @include hover-muted;
+
+  :where(svg) {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// How a floating layer opens. It stays hidden until it has a position (no
+// data-placement yet), then fades in while moving a few pixels away from its
+// trigger and growing from the corner that touches it, so a calendar under
+// an input opens downward out of the input. Needs `@include keyframes(floating-in)`.
+@mixin floating-motion($distance: 4px, $duration: token(duration-base)) {
+  &:not([data-placement]) {
+    visibility: hidden;
+  }
+
+  &[data-placement] {
+    animation: floating-in $duration token(easing-out);
+  }
+
+  &[data-placement^="bottom"] {
+    --yosegi-floating-from: 0 #{-$distance};
+  }
+
+  &[data-placement^="top"] {
+    --yosegi-floating-from: 0 #{$distance};
+  }
+
+  &[data-placement^="left"] {
+    --yosegi-floating-from: #{$distance} 0;
+  }
+
+  &[data-placement^="right"] {
+    --yosegi-floating-from: #{-$distance} 0;
+  }
+}
+
+// Anything that floats over the page: popover, date picker. Flat, no shadow.
+@mixin floating-panel($component) {
+  border: 1px solid knob($component, border, color(border-strong));
+  border-radius: knob($component, radius, radius(400));
+  background: color(bg-surface);
+  color: color(fg);
+  @include floating-motion;
+}
+
+// A row in a list you move through with the arrow keys: a combobox option or
+// a command. The highlighted one (data-active) gets the muted fill.
+@mixin list-item {
+  display: flex;
+  align-items: center;
+  gap: space(200);
+  min-height: 32px;
+  padding: space(100) space(200);
+  border-radius: radius(150);
+  color: color(fg);
+  cursor: pointer;
+  user-select: none;
+
+  &[data-active] {
+    background: color(bg-muted);
+  }
+
+  &:is([data-disabled], [aria-disabled="true"]) {
+    @include disabled;
+  }
+
+  :where(svg) {
+    flex: none;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// NotFound, ErrorState and EmptyState: one centred column.
+@mixin state-layout($component, $max-width) {
+  display: grid;
+  justify-items: center;
+  gap: space(200);
+  max-width: knob($component, max-width, $max-width);
+  margin-inline: auto;
+  padding: knob($component, padding, space(1600) space(400));
+  text-align: center;
+}
+
+@mixin state-title {
+  font: text(heading);
+  letter-spacing: token(text-heading-tracking);
+  color: color(fg);
+}
+
+@mixin state-description {
+  color: color(fg-muted);
+  text-wrap: pretty;
+}
+
+@mixin state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: space(200);
+  margin-top: space(200);
+}
+
+@mixin state-icon($component, $fg) {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: space(200);
+  border-radius: radius(full);
+  background: color(bg-muted);
+  color: knob($component, icon-fg, $fg);
+
+  :where(svg) {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// ---------------------------------------------------------------- Motion
+
+// Keyframes are local to each CSS module, so a module that animates includes
+// the ones it uses at its top level.
+@mixin keyframes($name) {
+  @if $name == floating-in {
+    // translate and scale, not transform, so they never fight with anything
+    // else that sets a transform on the element.
+    @keyframes floating-in {
+      from {
+        opacity: 0;
+        translate: var(--yosegi-floating-from, 0 0);
+        scale: 0.97;
+      }
+    }
+  } @else if $name == fade-in {
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+    }
+  } @else if $name == spin {
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  } @else {
+    @error "Unknown keyframes: #{$name}";
+  }
+}

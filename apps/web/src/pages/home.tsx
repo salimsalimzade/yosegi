@@ -1,8 +1,8 @@
+/** The site's front page, empty for now. */
 export function Home() {
   return (
     <main>
-      <h1>Yosegi</h1>
-      <a href="/docs">Docs</a>
+      <h1>Hello world</h1>
     </main>
   );
 }

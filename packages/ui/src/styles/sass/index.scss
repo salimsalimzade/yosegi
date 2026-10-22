@@ -1,0 +1,9 @@
+// Yosegi's Sass toolkit. Component modules load it with:
+//
+//   @use "../../styles/sass" as *;
+//
+// It emits no CSS by itself: only functions for the tokens and mixins for the
+// patterns components share.
+
+@forward "functions";
+@forward "mixins";

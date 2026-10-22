@@ -1,0 +1,126 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // The variant resolves into these internal properties; the public knobs
+  // (--yosegi-button-solid-bg …) feed them.
+  .root {
+    --yosegi-button-variant-bg: #{knob(button, solid-bg, color(bg-accent))};
+    --yosegi-button-variant-fg: #{knob(button, solid-fg, color(fg-on-accent))};
+    --yosegi-button-variant-border: transparent;
+    // Inside a button the spinner is 14px; it inherits this.
+    --yosegi-spinner-size: 14px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: space(200);
+    height: knob(button, height, 36px);
+    padding-inline: knob(button, padding-x, space(300));
+    border: 1px solid var(--yosegi-button-variant-border);
+    border-radius: knob(button, radius, radius(300));
+    background: var(--yosegi-button-variant-bg);
+    color: var(--yosegi-button-variant-fg);
+    font: knob(button, font, token(font-weight-semibold) 14px / 20px token(font-family-sans));
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+    @include transition(background-color, opacity);
+
+    :where(svg) {
+      flex: none;
+      width: knob(button, icon-size, 16px);
+      height: knob(button, icon-size, 16px);
+    }
+  }
+
+  // Icon slots. Pulled 2px towards the edge, so the icon side doesn't look
+  // emptier than the text side.
+  .icon {
+    display: inline-flex;
+    flex: none;
+
+    &[data-position="start"] {
+      margin-inline-start: -2px;
+    }
+
+    &[data-position="end"] {
+      margin-inline-end: -2px;
+    }
+  }
+
+  .root[data-variant="solid"]:hover {
+    opacity: 0.9;
+  }
+
+  .root:is([data-variant="outline"], [data-variant="danger"]) {
+    --yosegi-button-variant-bg: transparent;
+    --yosegi-button-variant-fg: #{knob(button, outline-fg, color(fg))};
+    --yosegi-button-variant-border: #{knob(button, outline-border, color(border-strong))};
+  }
+
+  .root[data-variant="danger"] {
+    --yosegi-button-variant-fg: #{knob(button, danger-fg, color(fg-danger))};
+  }
+
+  .root[data-variant="ghost"] {
+    --yosegi-button-variant-bg: transparent;
+    --yosegi-button-variant-fg: #{color(fg)};
+  }
+
+  .root:is([data-variant="outline"], [data-variant="danger"], [data-variant="ghost"]):hover {
+    background: color(bg-muted);
+  }
+
+  // A toggle that is switched on, for example inside an attached ButtonGroup.
+  .root:is([data-variant="outline"], [data-variant="ghost"])[aria-pressed="true"] {
+    background: color(bg-muted);
+    color: color(fg-accent);
+  }
+
+  .root[data-size="sm"] {
+    --yosegi-spinner-size: 12px;
+
+    gap: 6px;
+    height: knob(button, height-sm, 28px);
+    padding-inline: space(200);
+    font-size: 13px;
+
+    :where(svg) {
+      width: knob(button, icon-size, 14px);
+      height: knob(button, icon-size, 14px);
+    }
+  }
+
+  .root[data-size="lg"] {
+    --yosegi-spinner-size: 16px;
+
+    height: knob(button, height-lg, 44px);
+    padding-inline: space(400);
+    font-size: 15px;
+
+    :where(svg) {
+      width: knob(button, icon-size, 18px);
+      height: knob(button, icon-size, 18px);
+    }
+  }
+
+  // An icon with no label: a square of the button's height.
+  .root[data-icon-only] {
+    padding-inline: 0;
+    aspect-ratio: 1;
+
+    .icon {
+      margin: 0;
+    }
+  }
+
+  .root:is(:disabled, [data-disabled]) {
+    @include disabled;
+  }
+
+  // Loading keeps the size and full colour, shows a spinner and ignores clicks.
+  .root:is([data-loading], [aria-busy="true"]) {
+    pointer-events: none;
+    cursor: progress;
+  }
+}
