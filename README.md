@@ -12,9 +12,43 @@ This repo is a pnpm workspace built on SolidJS 2.
 
 - `packages/ui`: the component library, published to npm as `yosegi`
 - `apps/playground`: a sandbox for building components
-- `apps/web`: the website, with the landing page at `/` and the docs under `/docs`
+- `apps/web`: the website, a "Hello world" page for now
 
 Apps use `yosegi` through `workspace:*`, so they compile the library's source directly. `pnpm publish` swaps in the `publishConfig.exports` that point at `dist/`.
+
+## Developing
+
+```sh
+pnpm install
+pnpm dev:playground   # the playground, at http://localhost:5173
+pnpm dev:web          # the website, at http://localhost:5174
+pnpm dev              # both at once
+```
+
+The playground is laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, and a page for each component under `/playground` (`/playground/button`, `/playground/date-picker`, …) that shows every case on its own. The Assets group has the Icons page, with all 24 icons to copy or download. A switch at the top changes between the light and dark themes. Changes to `packages/ui` show up as you save.
+
+## Components
+
+Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Combobox, Command, Accordion, Tabs, Tooltip, Popover, Dialog, Toast, Table, Item, Separator, NotFound, ErrorState and EmptyState.
+
+Each one is a root that holds state, with its parts on it:
+
+```tsx
+import { TextField } from "yosegi";
+
+<TextField validationState={error() ? "invalid" : "valid"}>
+  <TextField.Label>Project name</TextField.Label>
+  <TextField.Input />
+  <TextField.Description>You can change it later.</TextField.Description>
+  <TextField.ErrorMessage>Give the project a name.</TextField.ErrorMessage>
+</TextField>
+```
+
+Toasts need one `<Toaster />` near the root of the app; then call `toast("Saved")`, `toast.success(…)`, `toast.error(…)` or `toast.promise(…)` from anywhere.
+
+Every part renders a stable class, `yosegi-{component}-{part}`, next to any `class` you pass, and shows its state as `data-*` attributes (`data-expanded`, `data-invalid`, …). To restyle a component, set its `--yosegi-{component}-*` knobs or target those classes and attributes.
+
+Component styles are SCSS modules, so an app that compiles Yosegi from source needs `sass-embedded` installed.
 
 ## Styles
 
