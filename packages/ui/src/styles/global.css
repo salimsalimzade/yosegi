@@ -1,0 +1,176 @@
+@layer yosegi.reset, yosegi.tokens, yosegi.base, yosegi.components;
+
+/* Removes browser defaults, so every element starts from the same place. */
+@layer yosegi.reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font: inherit;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  ul[role="list"],
+  ol[role="list"] {
+    padding: 0;
+    list-style: none;
+  }
+
+  /* !important inside a layer beats any app CSS, so this can't be undone by accident. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Gives plain HTML the Yosegi look. */
+@layer yosegi.base {
+  body {
+    font: var(--yosegi-text-body);
+    color: var(--yosegi-color-fg);
+    background-color: var(--yosegi-color-bg);
+  }
+
+  /* A part of the page with its own theme repaints with that theme's colours. */
+  [data-yosegi-theme] {
+    color: var(--yosegi-color-fg);
+    background-color: var(--yosegi-color-bg);
+  }
+
+  h1 {
+    font: var(--yosegi-text-title);
+    letter-spacing: var(--yosegi-text-title-tracking);
+  }
+
+  h2,
+  h3 {
+    font: var(--yosegi-text-heading);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--yosegi-color-fg-accent);
+    text-underline-offset: 0.2em;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font: var(--yosegi-text-code);
+  }
+
+  code,
+  kbd,
+  samp {
+    padding: 0 var(--yosegi-space-100);
+    border-radius: var(--yosegi-radius-150);
+    background-color: var(--yosegi-color-bg-muted);
+  }
+
+  pre {
+    padding: var(--yosegi-space-300) var(--yosegi-space-400);
+    border-radius: var(--yosegi-radius-150);
+    background-color: var(--yosegi-color-bg-muted);
+    overflow-x: auto;
+  }
+
+  pre code {
+    padding: 0;
+    background: none;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--yosegi-color-border);
+  }
+
+  ::placeholder {
+    color: var(--yosegi-color-fg-muted);
+    opacity: 1;
+  }
+
+  /* iOS zooms into inputs with text under 16px. */
+  @media (pointer: coarse) {
+    input,
+    textarea,
+    select {
+      font-size: 16px;
+    }
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--yosegi-color-border-focus);
+    outline-offset: 2px;
+  }
+}

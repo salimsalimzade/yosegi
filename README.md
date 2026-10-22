@@ -16,6 +16,38 @@ This repo is a pnpm workspace built on SolidJS 2.
 
 Apps use `yosegi` through `workspace:*`, so they compile the library's source directly. `pnpm publish` swaps in the `publishConfig.exports` that point at `dist/`.
 
+## Styles
+
+Import the global styles once, at your app's entry:
+
+```ts
+import "yosegi/styles.css";
+```
+
+That loads everything, in the right order:
+
+- `yosegi/fonts.css`: Red Hat Mono and Red Hat Text. The font files ship inside the package, one variable woff2 per style and subset, so nothing loads from a CDN.
+- `yosegi/tokens.css`: the palette, the system tokens, and the light and dark themes.
+- `yosegi/global.css`: a reset that removes browser defaults, and base styles for plain HTML.
+
+If you only want Yosegi's values, import `yosegi/tokens.css` on its own. Without `yosegi/fonts.css` the type falls back to system fonts.
+
+Every token is a CSS custom property starting with `--yosegi-`. To change one, such as the font, redefine it in your own CSS:
+
+```css
+:root {
+  --yosegi-font-family-sans: "Inter Tight", system-ui, sans-serif;
+}
+```
+
+The theme follows the OS setting. To force one, on the whole page or on one part of it, set `data-yosegi-theme`:
+
+```html
+<html data-yosegi-theme="dark">
+```
+
+Yosegi keeps all of its styles in cascade layers (`yosegi.reset`, `yosegi.tokens`, `yosegi.base`, `yosegi.components`). CSS you write outside a layer always wins over them, so overrides don't need `!important` or extra specificity.
+
 ## Releasing
 
 Run `pnpm changeset` to describe any change to `yosegi` and commit the file it creates. The Release workflow is paused for now, so nothing is published. Once it's turned on, while there are changesets on `main` it keeps a "version packages" pull request open. Merging it bumps the version, updates `CHANGELOG.md` and publishes to npm using trusted publishing.

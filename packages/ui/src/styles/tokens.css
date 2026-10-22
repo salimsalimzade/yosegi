@@ -1,0 +1,129 @@
+@layer yosegi.reset, yosegi.tokens, yosegi.base, yosegi.components;
+
+/*
+ * Design tokens. Everything is a custom property, prefixed with --yosegi- so
+ * it can't clash with the app's own variables. There are three levels:
+ *
+ *   palette    --yosegi-green-700        raw values, never used by components
+ *   system     --yosegi-color-bg-accent  what a value is for; themes change these
+ *   component  --yosegi-button-solid-bg  knobs, unset by default (in each component)
+ *
+ * To change a token, redefine it in your own (unlayered) CSS. It wins over
+ * this layer no matter which file loads first:
+ *
+ *   :root { --yosegi-font-family-sans: "Inter Tight", system-ui, sans-serif; }
+ */
+@layer yosegi.tokens {
+  :root {
+    /* Palette */
+    --yosegi-neutral-0: #ffffff;
+    --yosegi-neutral-50: #f3f6f0;
+    --yosegi-neutral-100: #e9eee4;
+    --yosegi-neutral-150: #e6eedf;
+    --yosegi-neutral-200: #dfe5d9;
+    --yosegi-neutral-400: #a3ad9b;
+    --yosegi-neutral-500: #7c8873;
+    --yosegi-neutral-550: #6f7b67;
+    --yosegi-neutral-600: #56614f;
+    --yosegi-neutral-800: #2e362a;
+    --yosegi-neutral-850: #232a20;
+    --yosegi-neutral-900: #1c2419;
+    --yosegi-neutral-925: #191e17;
+    --yosegi-neutral-950: #111510;
+    --yosegi-green-300: #9cc486;
+    --yosegi-green-700: #466a35;
+    --yosegi-red-300: #f08a74;
+    --yosegi-red-700: #a5371f;
+
+    /* Type. Each --yosegi-text-* token is a value for the `font` shorthand. */
+    --yosegi-font-family-sans: "Red Hat Text", ui-sans-serif, system-ui, sans-serif;
+    --yosegi-font-family-mono: "Red Hat Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --yosegi-text-display: 600 36px/40px var(--yosegi-font-family-mono);
+    --yosegi-text-display-tracking: -0.02em;
+    --yosegi-text-title: 600 24px/30px var(--yosegi-font-family-mono);
+    --yosegi-text-title-tracking: -0.01em;
+    --yosegi-text-heading: 600 18px/24px var(--yosegi-font-family-sans);
+    --yosegi-text-label: 600 12px/16px var(--yosegi-font-family-mono);
+    --yosegi-text-body: 400 14px/20px var(--yosegi-font-family-sans);
+    --yosegi-text-small: 400 12px/16px var(--yosegi-font-family-sans);
+    --yosegi-text-code: 400 13px/20px var(--yosegi-font-family-mono);
+
+    /* Spacing. The number is a percentage of the 4px base. */
+    --yosegi-space-100: 4px;
+    --yosegi-space-200: 8px;
+    --yosegi-space-300: 12px;
+    --yosegi-space-400: 16px;
+    --yosegi-space-600: 24px;
+    --yosegi-space-800: 32px;
+    --yosegi-space-1600: 64px;
+
+    /* Radius. Same scale as spacing. */
+    --yosegi-radius-150: 6px;
+    --yosegi-radius-300: 12px;
+    --yosegi-radius-400: 16px;
+    --yosegi-radius-full: 9999px;
+
+    /* Motion. Fast for hover, press and toggles; open for things that open. */
+    --yosegi-duration-fast: 120ms;
+    --yosegi-duration-open: 200ms;
+    --yosegi-easing: ease-out;
+  }
+
+  /* Light theme: the default, or forced with data-yosegi-theme="light". */
+  :root,
+  [data-yosegi-theme="light"] {
+    color-scheme: light;
+    --yosegi-color-bg: var(--yosegi-neutral-50);
+    --yosegi-color-bg-surface: var(--yosegi-neutral-0);
+    --yosegi-color-bg-muted: var(--yosegi-neutral-150);
+    --yosegi-color-bg-accent: var(--yosegi-green-700);
+    --yosegi-color-fg: var(--yosegi-neutral-900);
+    --yosegi-color-fg-muted: var(--yosegi-neutral-600);
+    --yosegi-color-fg-accent: var(--yosegi-green-700);
+    --yosegi-color-fg-on-accent: var(--yosegi-neutral-0);
+    --yosegi-color-fg-danger: var(--yosegi-red-700);
+    --yosegi-color-border: var(--yosegi-neutral-200);
+    --yosegi-color-border-strong: var(--yosegi-neutral-500);
+    --yosegi-color-border-danger: var(--yosegi-red-700);
+    --yosegi-color-border-focus: var(--yosegi-green-700);
+  }
+
+  /* Dark theme: forced with data-yosegi-theme="dark"... */
+  [data-yosegi-theme="dark"] {
+    color-scheme: dark;
+    --yosegi-color-bg: var(--yosegi-neutral-950);
+    --yosegi-color-bg-surface: var(--yosegi-neutral-925);
+    --yosegi-color-bg-muted: var(--yosegi-neutral-850);
+    --yosegi-color-bg-accent: var(--yosegi-green-300);
+    --yosegi-color-fg: var(--yosegi-neutral-100);
+    --yosegi-color-fg-muted: var(--yosegi-neutral-400);
+    --yosegi-color-fg-accent: var(--yosegi-green-300);
+    --yosegi-color-fg-on-accent: var(--yosegi-neutral-950);
+    --yosegi-color-fg-danger: var(--yosegi-red-300);
+    --yosegi-color-border: var(--yosegi-neutral-800);
+    --yosegi-color-border-strong: var(--yosegi-neutral-550);
+    --yosegi-color-border-danger: var(--yosegi-red-300);
+    --yosegi-color-border-focus: var(--yosegi-green-300);
+  }
+
+  /* ...or when the OS is dark, unless the page forces light. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-yosegi-theme="light"]) {
+      color-scheme: dark;
+      --yosegi-color-bg: var(--yosegi-neutral-950);
+      --yosegi-color-bg-surface: var(--yosegi-neutral-925);
+      --yosegi-color-bg-muted: var(--yosegi-neutral-850);
+      --yosegi-color-bg-accent: var(--yosegi-green-300);
+      --yosegi-color-fg: var(--yosegi-neutral-100);
+      --yosegi-color-fg-muted: var(--yosegi-neutral-400);
+      --yosegi-color-fg-accent: var(--yosegi-green-300);
+      --yosegi-color-fg-on-accent: var(--yosegi-neutral-950);
+      --yosegi-color-fg-danger: var(--yosegi-red-300);
+      --yosegi-color-border: var(--yosegi-neutral-800);
+      --yosegi-color-border-strong: var(--yosegi-neutral-550);
+      --yosegi-color-border-danger: var(--yosegi-red-300);
+      --yosegi-color-border-focus: var(--yosegi-green-300);
+    }
+  }
+}

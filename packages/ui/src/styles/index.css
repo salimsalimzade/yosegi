@@ -1,0 +1,12 @@
+/*
+ * Everything Yosegi needs globally: import once at the app's entry.
+ *
+ * All Yosegi styles live in cascade layers, in this order. A later layer
+ * beats an earlier one, and any CSS the app writes outside a layer beats all
+ * of them, so overriding never needs !important or higher specificity.
+ */
+@layer yosegi.reset, yosegi.tokens, yosegi.base, yosegi.components;
+
+@import "./fonts.css";
+@import "./tokens.css";
+@import "./global.css";

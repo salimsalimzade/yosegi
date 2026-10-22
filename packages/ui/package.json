@@ -1,6 +1,7 @@
 {
   "name": "yosegi",
   "version": "0.0.0",
+  "author": "Salim Salimzade",
   "description": "A SolidJS design system, made for my own projects",
   "type": "module",
   "license": "MIT",
@@ -12,12 +13,18 @@
   "files": [
     "dist"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "types": "./src/index.ts",
       "solid": "./src/index.ts"
-    }
+    },
+    "./styles.css": "./src/styles/index.css",
+    "./tokens.css": "./src/styles/tokens.css",
+    "./global.css": "./src/styles/global.css",
+    "./fonts.css": "./src/styles/fonts.css"
   },
   "publishConfig": {
     "access": "public",
@@ -26,11 +33,15 @@
         "types": "./dist/source/index.d.ts",
         "solid": "./dist/source/index.js",
         "import": "./dist/index.js"
-      }
+      },
+      "./styles.css": "./dist/source/styles/index.css",
+      "./tokens.css": "./dist/source/styles/tokens.css",
+      "./global.css": "./dist/source/styles/global.css",
+      "./fonts.css": "./dist/source/styles/fonts.css"
     }
   },
   "scripts": {
-    "build": "vite build && tsc -p tsconfig.build.json",
+    "build": "vite build && tsc -p tsconfig.build.json && node scripts/copy-assets.js",
     "typecheck": "tsc",
     "prepublishOnly": "pnpm build"
   },
