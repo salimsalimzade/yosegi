@@ -1,0 +1,69 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    @include field-root;
+  }
+
+  .label {
+    @include field-label;
+  }
+
+  .description {
+    @include field-description;
+  }
+
+  .error-message {
+    @include field-error;
+  }
+
+  .input,
+  .textarea,
+  .group {
+    @include field-box;
+  }
+
+  .input {
+    padding: 0 10px;
+    @include touch-text;
+  }
+
+  .textarea {
+    min-height: 80px;
+    padding: space(200) 10px;
+    resize: vertical;
+    @include touch-text;
+  }
+
+  // The box when the input shares it with a spinner or an icon.
+  .group {
+    display: flex;
+    align-items: center;
+    gap: space(200);
+    padding-right: 10px;
+    overflow: hidden;
+    @include focus-within-ring;
+
+    > .input {
+      @include bare-input;
+      min-height: 34px;
+      border-radius: 0;
+    }
+
+    > :is(svg, :global(.yosegi-spinner)) {
+      flex: none;
+      color: color(fg-muted);
+    }
+  }
+
+  // Read-only: shown, not edited. A quieter box, still fully legible.
+  .root[data-readonly] :is(.input, .textarea, .group) {
+    border-color: color(border);
+    background: color(bg-muted);
+  }
+
+  // The field stays usable while something is checked; the spinner says so.
+  .root[data-loading] .group {
+    cursor: progress;
+  }
+}

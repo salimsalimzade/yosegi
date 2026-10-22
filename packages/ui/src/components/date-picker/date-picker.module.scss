@@ -1,0 +1,158 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    @include field-root;
+  }
+
+  .label {
+    @include field-label;
+  }
+
+  .description {
+    @include field-description;
+  }
+
+  .error-message {
+    @include field-error;
+  }
+
+  // The field box: the typed date and the calendar button.
+  .control {
+    @include field-box;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    @include focus-within-ring;
+  }
+
+  .input {
+    @include bare-input;
+    font-variant-numeric: tabular-nums;
+    @include touch-text;
+  }
+
+  .trigger {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    border-left: 1px solid color(border);
+    color: color(fg-muted);
+    @include hover-muted;
+
+    &:focus-visible {
+      outline: none;
+      background: color(bg-muted);
+      color: color(fg);
+    }
+
+    :where(svg) {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .root[data-readonly] .control {
+    border-color: color(border);
+    background: color(bg-muted);
+  }
+
+  // The calendar.
+  .content {
+    z-index: 50;
+    width: max-content;
+    padding: space(300);
+    transform-origin: var(--yosegi-date-picker-content-transform-origin, center);
+    @include floating-panel(date-picker);
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: space(200);
+  }
+
+  .heading {
+    font: token(font-weight-semibold) 14px / 20px token(font-family-sans);
+  }
+
+  .prev-trigger,
+  .next-trigger {
+    @include icon-button;
+
+    &:is(:disabled, [data-disabled]) {
+      @include disabled;
+    }
+  }
+
+  .grid {
+    border-collapse: collapse;
+  }
+
+  .head-cell {
+    height: 28px;
+    font: text(small);
+    color: color(fg-muted);
+    text-align: center;
+  }
+
+  .cell {
+    padding: 1px;
+  }
+
+  .cell-trigger {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 32px;
+    border-radius: radius(150);
+    font-variant-numeric: tabular-nums;
+
+    &:hover {
+      background: color(bg-muted);
+    }
+
+    &:focus-visible {
+      outline-offset: 0;
+    }
+
+    // Today: accent text with a dot under it.
+    &[data-today] {
+      color: color(fg-accent);
+      font-weight: 600;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 4px;
+        width: 4px;
+        height: 4px;
+        border-radius: radius(full);
+        background: currentColor;
+      }
+    }
+
+    &[data-outside-month] {
+      color: color(fg-muted);
+    }
+
+    &[data-selected] {
+      background: knob(date-picker, selected-bg, color(bg-accent));
+      color: knob(date-picker, selected-fg, color(fg-on-accent));
+      font-weight: 600;
+    }
+
+    &[data-disabled] {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+  }
+
+  @include keyframes(floating-in);
+}
