@@ -2,6 +2,7 @@
   "name": "yosegi-workspace",
   "version": "0.0.0",
   "private": true,
+  "author": "Salim Salimzade",
   "description": "A SolidJS design system, made for my own projects",
   "type": "module",
   "license": "MIT",
