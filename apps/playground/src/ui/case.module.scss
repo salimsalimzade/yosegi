@@ -1,0 +1,53 @@
+// The frame around one case of a component, like a card on the design system page.
+.case {
+  display: grid;
+  gap: var(--yosegi-space-300);
+}
+
+.heading {
+  display: grid;
+  gap: 2px;
+}
+
+.title {
+  font: var(--yosegi-text-label);
+  color: var(--yosegi-color-fg);
+}
+
+.description {
+  font: var(--yosegi-text-small);
+  color: var(--yosegi-color-fg-muted);
+}
+
+.stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--yosegi-space-300);
+  padding: var(--yosegi-space-600);
+  border: 1px solid var(--yosegi-color-border);
+  border-radius: var(--yosegi-radius-400);
+  background: var(--yosegi-color-bg);
+
+  &[data-layout="stack"] {
+    display: grid;
+    align-items: start;
+    justify-items: start;
+  }
+
+  &[data-layout="fill"] {
+    display: block;
+  }
+
+  &[data-layout="center"] {
+    justify-content: center;
+    min-height: 160px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  align-items: start;
+  gap: var(--yosegi-space-600);
+}
