@@ -1,0 +1,19 @@
+{
+  "name": "yosegi",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A SolidJS design system, made for my own projects",
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@10.28.0",
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "lefthook": "^2.2.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "lefthook"
+    ]
+  }
+}
