@@ -1,0 +1,30 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // Inverse colours, so it reads in both themes.
+  .content {
+    z-index: 50;
+    max-width: knob(tooltip, max-width, 240px);
+    padding: space(100) space(200);
+    border-radius: knob(tooltip, radius, radius(150));
+    background: knob(tooltip, bg, color(fg));
+    color: knob(tooltip, fg, color(bg));
+    font: text(small);
+    transform-origin: var(--yosegi-tooltip-content-transform-origin, center);
+    @include floating-motion(2px, token(duration-fast));
+  }
+
+  .arrow {
+    display: block;
+    width: 10px;
+    height: 5px;
+    color: knob(tooltip, bg, color(fg));
+
+    :where(svg) {
+      display: block;
+      fill: currentColor;
+    }
+  }
+
+  @include keyframes(floating-in);
+}
