@@ -1,0 +1,167 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // A row of content: media, a title and description, and actions. Header
+  // and Footer take a full line above or below.
+  .root {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: knob(item, gap, space(400));
+    padding: knob(item, padding, space(300) space(400));
+    border: 1px solid transparent;
+    border-radius: knob(item, radius, radius(300));
+    color: color(fg);
+    font: text(body);
+    text-align: start;
+    text-decoration: none;
+    @include transition(background-color, border-color);
+
+    &[data-variant="outline"] {
+      border-color: knob(item, border, color(border));
+    }
+
+    &[data-variant="muted"] {
+      background: color(bg-muted);
+    }
+
+    &[data-size="sm"] {
+      --yosegi-item-media-size: 32px;
+
+      gap: knob(item, gap, space(300));
+      padding: knob(item, padding, space(200) space(300));
+    }
+
+    &[data-size="xs"] {
+      --yosegi-item-media-size: 24px;
+
+      gap: knob(item, gap, space(200));
+      padding: knob(item, padding, space(100) space(200));
+    }
+
+    // Rendered as a link or a button, the whole row reacts.
+    &:is(a, button, [data-interactive]) {
+      cursor: pointer;
+
+      &:hover {
+        background: color(bg-muted);
+      }
+    }
+
+    &[data-selected] {
+      border-color: color(bg-accent);
+    }
+
+    &:is([data-disabled], [aria-disabled="true"]) {
+      @include disabled;
+    }
+  }
+
+  .media {
+    display: grid;
+    flex: none;
+    place-items: center;
+    align-self: start;
+    color: color(fg-muted);
+
+    // A small framed icon.
+    &[data-variant="icon"] {
+      width: knob(item, media-size, 40px);
+      height: knob(item, media-size, 40px);
+      border: 1px solid color(border);
+      border-radius: radius(300);
+      background: color(bg-surface);
+
+      :where(svg) {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    // A cover or a photo, cropped to a square.
+    &[data-variant="image"] {
+      width: knob(item, media-size, 40px);
+      height: knob(item, media-size, 40px);
+      overflow: hidden;
+      border-radius: radius(150);
+
+      :where(img) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    // A person: round, with their initials when there's no photo.
+    &[data-variant="avatar"] {
+      width: knob(item, media-size, 40px);
+      height: knob(item, media-size, 40px);
+      overflow: hidden;
+      border-radius: radius(full);
+      background: color(bg-muted);
+      color: color(fg);
+      font: text(label);
+
+      :where(img) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .content {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: space(200);
+    font: token(font-weight-semibold) 14px / 20px token(font-family-sans);
+  }
+
+  // Two lines at most, so a row keeps its height.
+  .description {
+    display: -webkit-box;
+    overflow: hidden;
+    color: color(fg-muted);
+    text-wrap: pretty;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: space(200);
+  }
+
+  .header,
+  .footer {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: space(200);
+  }
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .separator {
+    height: 1px;
+    margin: 0;
+    border: 0;
+    background: color(border);
+  }
+}

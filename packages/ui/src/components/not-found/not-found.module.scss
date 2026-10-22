@@ -1,0 +1,28 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    @include state-layout(not-found, 440px);
+  }
+
+  // Decoration: the title says it in words, so it's hidden from screen readers.
+  .code {
+    margin-bottom: space(100);
+    color: knob(not-found, code-fg, color(fg-muted));
+    font: token(font-weight-semibold) 72px / 1 token(font-family-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+  }
+
+  .title {
+    @include state-title;
+  }
+
+  .description {
+    @include state-description;
+  }
+
+  .actions {
+    @include state-actions;
+  }
+}
