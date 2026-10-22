@@ -14,7 +14,8 @@
     "dist"
   ],
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "**/*.scss"
   ],
   "exports": {
     ".": {
@@ -52,8 +53,12 @@
   "devDependencies": {
     "@solidjs/vite-plugin": "catalog:",
     "@solidjs/web": "catalog:",
+    "sass-embedded": "catalog:",
     "solid-js": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "catalog:"
   }
 }

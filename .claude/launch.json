@@ -4,8 +4,18 @@
     {
       "name": "playground",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "playground", "dev", "--port", "5173", "--strictPort"],
+      "runtimeArgs": [
+        "dev:playground"
+      ],
       "port": 5173
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "dev:web"
+      ],
+      "port": 5174
     }
   ]
 }

@@ -11,6 +11,9 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "dev": "pnpm --parallel --filter playground --filter web dev",
+    "dev:playground": "pnpm --filter playground dev",
+    "dev:web": "pnpm --filter web dev",
     "build": "pnpm --recursive build",
     "typecheck": "pnpm --recursive typecheck",
     "changeset": "changeset",

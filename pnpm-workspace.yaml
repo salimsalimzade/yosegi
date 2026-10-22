@@ -3,9 +3,11 @@ packages:
   - packages/*
 
 catalog:
-  "@solidjs/router": 2.0.0-next.41
-  "@solidjs/vite-plugin": 3.0.0-next.51
-  "@solidjs/web": 2.0.0-rc.17
+  '@floating-ui/dom': ^1.8.0
+  '@solidjs/router': 2.0.0-next.41
+  '@solidjs/vite-plugin': 3.0.0-next.51
+  '@solidjs/web': 2.0.0-rc.17
+  sass-embedded: ~1.105.2
   solid-js: 2.0.0-rc.17
   typescript: ^7.0.2
   vite: ^8.3.5

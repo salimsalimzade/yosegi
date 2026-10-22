@@ -1,9 +1,9 @@
-// tsc only emits JavaScript, so copy the CSS (global styles and component
-// CSS modules), the font files and their licence next to it in dist/source,
-// keeping the same paths so the CSS url()s still resolve.
+// tsc only emits JavaScript, so copy the styles (global CSS, component SCSS
+// modules and the Sass toolkit), the font files and their licence next to it
+// in dist/source, keeping the same paths so imports and url()s still resolve.
 import { cpSync, statSync } from "node:fs";
 
-const assets = [".css", ".woff2", ".txt"];
+const assets = [".css", ".scss", ".woff2", ".txt"];
 
 cpSync("src", "dist/source", {
   recursive: true,
