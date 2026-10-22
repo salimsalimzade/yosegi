@@ -1,0 +1,28 @@
+// Short names for the design tokens, so component styles read like the spec:
+// `padding: space(300)` instead of `padding: var(--yosegi-space-300)`.
+
+@function token($name) {
+  @return var(--yosegi-#{$name});
+}
+
+@function space($step) {
+  @return var(--yosegi-space-#{$step});
+}
+
+@function radius($step) {
+  @return var(--yosegi-radius-#{$step});
+}
+
+@function color($role) {
+  @return var(--yosegi-color-#{$role});
+}
+
+@function text($style) {
+  @return var(--yosegi-text-#{$style});
+}
+
+// A component knob: unset by default, so it falls back to a system value.
+// knob(button, radius, radius(300)) → var(--yosegi-button-radius, var(--yosegi-radius-300))
+@function knob($component, $name, $fallback) {
+  @return var(--yosegi-#{$component}-#{$name}, #{$fallback});
+}

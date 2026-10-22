@@ -39,15 +39,19 @@
     --yosegi-font-family-sans: "Red Hat Text", ui-sans-serif, system-ui, sans-serif;
     --yosegi-font-family-mono: "Red Hat Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
-    --yosegi-text-display: 600 36px/40px var(--yosegi-font-family-mono);
+    --yosegi-font-weight-regular: 400;
+    --yosegi-font-weight-semibold: 600;
+
+    --yosegi-text-display: var(--yosegi-font-weight-semibold) 36px/40px var(--yosegi-font-family-mono);
     --yosegi-text-display-tracking: -0.02em;
-    --yosegi-text-title: 600 24px/30px var(--yosegi-font-family-mono);
+    --yosegi-text-title: var(--yosegi-font-weight-semibold) 24px/30px var(--yosegi-font-family-mono);
     --yosegi-text-title-tracking: -0.01em;
-    --yosegi-text-heading: 600 18px/24px var(--yosegi-font-family-sans);
-    --yosegi-text-label: 600 12px/16px var(--yosegi-font-family-mono);
-    --yosegi-text-body: 400 14px/20px var(--yosegi-font-family-sans);
-    --yosegi-text-small: 400 12px/16px var(--yosegi-font-family-sans);
-    --yosegi-text-code: 400 13px/20px var(--yosegi-font-family-mono);
+    --yosegi-text-heading: var(--yosegi-font-weight-semibold) 18px/24px var(--yosegi-font-family-sans);
+    --yosegi-text-heading-tracking: 0;
+    --yosegi-text-label: var(--yosegi-font-weight-semibold) 12px/16px var(--yosegi-font-family-mono);
+    --yosegi-text-body: var(--yosegi-font-weight-regular) 14px/20px var(--yosegi-font-family-sans);
+    --yosegi-text-small: var(--yosegi-font-weight-regular) 12px/16px var(--yosegi-font-family-sans);
+    --yosegi-text-code: var(--yosegi-font-weight-regular) 13px/20px var(--yosegi-font-family-mono);
 
     /* Spacing. The number is a percentage of the 4px base. */
     --yosegi-space-100: 4px;
@@ -64,10 +68,14 @@
     --yosegi-radius-400: 16px;
     --yosegi-radius-full: 9999px;
 
-    /* Motion. Fast for hover, press and toggles; open for things that open. */
+    /* Focus. The ring every focusable element draws on keyboard focus. */
+    --yosegi-focus-ring-width: 2px;
+    --yosegi-focus-ring-offset: 2px;
+
+    /* Motion. Fast for hover, press and toggles; base for things that open. */
     --yosegi-duration-fast: 120ms;
-    --yosegi-duration-open: 200ms;
-    --yosegi-easing: ease-out;
+    --yosegi-duration-base: 200ms;
+    --yosegi-easing-out: cubic-bezier(0.2, 0, 0, 1);
   }
 
   /* Light theme: the default, or forced with data-yosegi-theme="light". */
