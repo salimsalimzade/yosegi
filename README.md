@@ -16,3 +16,19 @@ This repo is a pnpm workspace built on SolidJS 2.
 - `apps/web`: the web app
 
 Apps use `yosegi` through `workspace:*`, so they compile the library's source directly. `pnpm publish` swaps in the `publishConfig.exports` that point at `dist/`.
+
+## Releasing
+
+Run `pnpm changeset` to describe any change to `yosegi` and commit the file it creates. While there are changesets on `main`, the Release workflow keeps a "version packages" pull request open. Merging it bumps the version, updates `CHANGELOG.md` and publishes to npm using trusted publishing.
+
+## Deploying
+
+The Deploy workflow builds each app and deploys it to its own Cloudflare Pages project. Pushes to `main` go to production, and pull requests get preview URLs.
+
+| App | Pages project |
+| --- | --- |
+| `apps/web` | `yosegi-web` |
+| `apps/playground` | `yosegi-playground` |
+| `apps/docs` | `yosegi-docs` |
+
+It needs the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. Subdomains are set as custom domains on each Pages project.

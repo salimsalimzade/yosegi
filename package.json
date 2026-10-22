@@ -1,5 +1,5 @@
 {
-  "name": "yosegi",
+  "name": "yosegi-workspace",
   "version": "0.0.0",
   "private": true,
   "description": "A SolidJS design system, made for my own projects",
@@ -11,9 +11,12 @@
   },
   "scripts": {
     "build": "pnpm --recursive build",
-    "typecheck": "pnpm --recursive typecheck"
+    "typecheck": "pnpm --recursive typecheck",
+    "changeset": "changeset",
+    "release": "pnpm --filter yosegi build && changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
     "lefthook": "^2.2.2",

@@ -1,0 +1,45 @@
+name: Deploy
+
+# Each app is its own Cloudflare Pages project, served on its own subdomain.
+# Pushes to main deploy to production; pull requests get preview URLs.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy ${{ matrix.app }}
+    # Secrets aren't available to pull requests from forks.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [web, playground, docs]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter ${{ matrix.app }} build
+      - name: Deploy to Cloudflare Pages
+        run: >-
+          pnpm dlx wrangler@4.151.3 pages deploy "apps/$APP/dist"
+          --project-name="yosegi-$APP"
+          --branch="$BRANCH"
+        env:
+          APP: ${{ matrix.app }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
