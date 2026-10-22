@@ -2,10 +2,14 @@ name: Deploy
 
 # Each app is its own Cloudflare Pages project, served on its own subdomain.
 # Pushes to main deploy to production; pull requests get preview URLs.
+#
+# Paused until the Cloudflare Pages projects and secrets are set up: it only
+# runs when started by hand. To turn it on, replace workflow_dispatch with:
+#   pull_request:
+#   push:
+#     branches: [main]
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -18,7 +22,7 @@ jobs:
   deploy:
     name: Deploy ${{ matrix.app }}
     # Secrets aren't available to pull requests from forks.
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

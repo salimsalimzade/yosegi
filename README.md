@@ -19,11 +19,11 @@ Apps use `yosegi` through `workspace:*`, so they compile the library's source di
 
 ## Releasing
 
-Run `pnpm changeset` to describe any change to `yosegi` and commit the file it creates. While there are changesets on `main`, the Release workflow keeps a "version packages" pull request open. Merging it bumps the version, updates `CHANGELOG.md` and publishes to npm using trusted publishing.
+Run `pnpm changeset` to describe any change to `yosegi` and commit the file it creates. The Release workflow is paused for now, so nothing is published. Once it's turned on, while there are changesets on `main` it keeps a "version packages" pull request open. Merging it bumps the version, updates `CHANGELOG.md` and publishes to npm using trusted publishing.
 
 ## Deploying
 
-The Deploy workflow builds each app and deploys it to its own Cloudflare Pages project. Pushes to `main` go to production, and pull requests get preview URLs.
+The Deploy workflow builds each app and deploys it to its own Cloudflare Pages project. It's paused for now and only runs when started by hand from the Actions tab. Once Cloudflare is set up, it will deploy pushes to `main` to production and give pull requests preview URLs.
 
 | App | Pages project |
 | --- | --- |

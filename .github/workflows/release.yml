@@ -2,9 +2,13 @@ name: Release
 
 # Keeps a "version packages" pull request open while there are changesets on main.
 # Merging it bumps the version, writes the changelog and publishes to npm.
+#
+# Paused while the kit is in development and npm isn't set up: it only runs
+# when started by hand. To turn it on, replace workflow_dispatch with:
+#   push:
+#     branches: [main]
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: release
