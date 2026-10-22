@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@solidjs/router':
+      specifier: 2.0.0-next.41
+      version: 2.0.0-next.41
     '@solidjs/vite-plugin':
       specifier: 3.0.0-next.51
       version: 3.0.0-next.51
@@ -41,6 +44,9 @@ importers:
 
   apps/docs:
     dependencies:
+      '@solidjs/router':
+        specifier: 'catalog:'
+        version: 2.0.0-next.41(@solidjs/web@2.0.0-rc.17(solid-js@2.0.0-rc.17))(solid-js@2.0.0-rc.17)
       '@solidjs/web':
         specifier: 'catalog:'
         version: 2.0.0-rc.17(solid-js@2.0.0-rc.17)
@@ -63,6 +69,9 @@ importers:
 
   apps/playground:
     dependencies:
+      '@solidjs/router':
+        specifier: 'catalog:'
+        version: 2.0.0-next.41(@solidjs/web@2.0.0-rc.17(solid-js@2.0.0-rc.17))(solid-js@2.0.0-rc.17)
       '@solidjs/web':
         specifier: 'catalog:'
         version: 2.0.0-rc.17(solid-js@2.0.0-rc.17)
@@ -85,6 +94,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@solidjs/router':
+        specifier: 'catalog:'
+        version: 2.0.0-next.41(@solidjs/web@2.0.0-rc.17(solid-js@2.0.0-rc.17))(solid-js@2.0.0-rc.17)
       '@solidjs/web':
         specifier: 'catalog:'
         version: 2.0.0-rc.17(solid-js@2.0.0-rc.17)
@@ -471,6 +483,16 @@ packages:
 
   '@solidjs/compiler@2.0.0-rc.17':
     resolution: {integrity: sha512-2mRrP/ZyGFLGC3Fi9JNvDdvN9K9si4eqAEpEtuA8bi8j+juNhHI16cC/e8v7zlqKaNAURmv9QzNfZJ1EdvUbkQ==}
+
+  '@solidjs/router@2.0.0-next.41':
+    resolution: {integrity: sha512-wCnhq37p4dpTYuy2Zz8nlf9Si/t4cMXUiMY0r7MxzHSH2c4jUiSrA8LkSdif6swwAIT/dOP7Pbv4hM1qY5ZOuA==}
+    peerDependencies:
+      '@solidjs/web': ^2.0.0-rc.15
+      filesystem-routing: '>=0.4.0'
+      solid-js: ^2.0.0-rc.15
+    peerDependenciesMeta:
+      filesystem-routing:
+        optional: true
 
   '@solidjs/signals@2.0.0-rc.17':
     resolution: {integrity: sha512-GXXWBlJsiZeBCTw3a941Y/HVBYfwupCfctPnwNjFJV+u3tZnRe/SL+NeStI1247zfxlvkH4p9PWzdZK/yX1I1Q==}
@@ -1517,6 +1539,11 @@ snapshots:
       '@solidjs/compiler-linux-x64-gnu': 2.0.0-rc.17
       '@solidjs/compiler-wasm32-wasi': 2.0.0-rc.17
       '@solidjs/compiler-win32-x64-msvc': 2.0.0-rc.17
+
+  '@solidjs/router@2.0.0-next.41(@solidjs/web@2.0.0-rc.17(solid-js@2.0.0-rc.17))(solid-js@2.0.0-rc.17)':
+    dependencies:
+      '@solidjs/web': 2.0.0-rc.17(solid-js@2.0.0-rc.17)
+      solid-js: 2.0.0-rc.17
 
   '@solidjs/signals@2.0.0-rc.17': {}
 

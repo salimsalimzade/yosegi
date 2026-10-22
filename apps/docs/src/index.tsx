@@ -1,3 +1,4 @@
 import { render } from "@solidjs/web";
+import { Router } from "./router";
 
-render(() => <h1>Yosegi Docs</h1>, document.getElementById("root")!);
+render(() => <Router />, document.getElementById("root")!);
