@@ -11,9 +11,8 @@ There are already plenty of great design systems out there. I built this one any
 This repo is a pnpm workspace built on SolidJS 2.
 
 - `packages/ui`: the component library, published to npm as `yosegi`
-- `apps/docs`: the documentation site
 - `apps/playground`: a sandbox for building components
-- `apps/web`: the web app
+- `apps/web`: the website, with the landing page at `/` and the docs under `/docs`
 
 Apps use `yosegi` through `workspace:*`, so they compile the library's source directly. `pnpm publish` swaps in the `publishConfig.exports` that point at `dist/`.
 
@@ -29,6 +28,5 @@ The Deploy workflow builds each app and deploys it to its own Cloudflare Pages p
 | --- | --- |
 | `apps/web` | `yosegi-web` |
 | `apps/playground` | `yosegi-playground` |
-| `apps/docs` | `yosegi-docs` |
 
 It needs the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. Subdomains are set as custom domains on each Pages project.

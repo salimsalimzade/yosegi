@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [web, playground, docs]
+        app: [web, playground]
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6

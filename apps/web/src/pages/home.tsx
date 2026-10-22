@@ -1,3 +1,8 @@
 export function Home() {
-  return <h1>Yosegi</h1>;
+  return (
+    <main>
+      <h1>Yosegi</h1>
+      <a href="/docs">Docs</a>
+    </main>
+  );
 }

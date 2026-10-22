@@ -2,7 +2,7 @@
   "name": "web",
   "version": "0.0.0",
   "private": true,
-  "description": "Yosegi web app",
+  "description": "Yosegi website: landing page and documentation",
   "type": "module",
   "scripts": {
     "dev": "vite",
