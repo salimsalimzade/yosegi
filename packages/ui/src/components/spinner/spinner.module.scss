@@ -1,0 +1,18 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // A 2px ring in currentColor with one quarter open, so it takes the colour
+  // of the text around it. The reset stops the turn for reduced motion.
+  .root {
+    display: inline-block;
+    flex: none;
+    width: knob(spinner, size, 16px);
+    height: knob(spinner, size, 16px);
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: radius(full);
+    animation: spin 700ms linear infinite;
+  }
+
+  @include keyframes(spin);
+}
