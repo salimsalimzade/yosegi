@@ -509,9 +509,7 @@ function DataTable<T>(props: DataTableProps<T>) {
           </span>
           <Actions>
             {props.selectionActions?.(selection())}
-            <Button variant="ghost" size="sm" onClick={() => setSelected([])}>
-              Clear
-            </Button>
+            <Button label="Clear" variant="ghost" size="sm" onClick={() => setSelected([])} />
           </Actions>
         </SelectionBar>
       </Show>
@@ -578,9 +576,7 @@ function DataTable<T>(props: DataTableProps<T>) {
                   <Show when={filtering()} fallback={empty() ?? <strong>No {noun()} yet.</strong>}>
                     <strong>No {noun()} match.</strong>
                     Try a shorter search or fewer filters, or clear them all.
-                    <Button variant="outline" size="sm" onClick={clearAll}>
-                      Clear filters
-                    </Button>
+                    <Button label="Clear filters" variant="outline" size="sm" onClick={clearAll} />
                   </Show>
                 </Show>
               </Empty>

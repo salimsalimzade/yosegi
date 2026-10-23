@@ -7,6 +7,8 @@ import styles from "./button.module.scss";
 
 /** A single clickable action, in one level with no parts. */
 export interface ButtonProps extends Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, "aria-pressed"> {
+  /** The text on the button. Children work too: `<Button>Save</Button>`. */
+  label?: JSX.Element;
   /** solid by default. */
   variant?: "solid" | "outline" | "ghost" | "danger";
   /** sm 28px, md 36px (default), lg 44px. */
@@ -35,18 +37,21 @@ export interface ButtonProps extends Omit<JSX.ButtonHTMLAttributes<HTMLButtonEle
   download?: boolean | string;
 }
 
+/** A Button as another component's trigger, like Popover's: it says it's open with aria-expanded instead. */
+export type ButtonTriggerProps = Omit<ButtonProps, "as" | "aria-pressed">;
+
 export function Button(props: ButtonProps) {
   const Tag = createTag(() => props.as ?? "button");
   const isButton = () => (props.as ?? "button") === "button";
   // Resolved once each: reading a JSX prop again would create it again.
-  const label = children(() => props.children);
+  const label = children(() => ("label" in props ? props.label : props.children));
   const icon = children(() => props.icon);
   const hasIcon = () => icon.toArray().length > 0;
   const iconOnly = () => hasIcon() && label.toArray().length === 0;
   const position = () => props.iconPosition ?? "start";
   const rest = omit(
     props,
-    "as", "variant", "size", "icon", "iconPosition", "loading", "loadingText",
+    "as", "label", "variant", "size", "icon", "iconPosition", "loading", "loadingText",
     "class", "type", "disabled", "onClick", "children", "aria-pressed",
   );
 

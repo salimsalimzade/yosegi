@@ -198,14 +198,17 @@ function Trigger(props: Omit<ButtonProps, "icon">) {
         callHandler(props.onClick, event);
         if (!event.defaultPrevented) filter.openPanel();
       }}
-    >
-      {props.children ?? "Filter"}
-      <Show when={filter.activeCount() > 0}>
-        <span class={[styles.count, "yosegi-filter-count"]} aria-label={`${filter.activeCount()} on`}>
-          {filter.activeCount()}
-        </span>
-      </Show>
-    </Button>
+      label={
+        <>
+          {props.children ?? "Filter"}
+          <Show when={filter.activeCount() > 0}>
+            <span class={[styles.count, "yosegi-filter-count"]} aria-label={`${filter.activeCount()} on`}>
+              {filter.activeCount()}
+            </span>
+          </Show>
+        </>
+      }
+    />
   );
 }
 
@@ -245,9 +248,7 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement>) {
             );
           }}
         </For>
-        <Button variant="ghost" size="sm" onClick={() => filter.clearAll()}>
-          Clear all
-        </Button>
+        <Button label="Clear all" variant="ghost" size="sm" onClick={() => filter.clearAll()} />
       </span>
     </Show>
   );
@@ -516,10 +517,8 @@ function Footer(props: JSX.HTMLAttributes<HTMLDivElement>) {
   };
   return (
     <div {...rest} class={[styles.footer, "yosegi-filter-footer", props.class]}>
-      <Button variant="ghost" onClick={() => filter.clearAll()}>
-        Clear all
-      </Button>
-      <Button onClick={() => filter.apply()}>{label()}</Button>
+      <Button label="Clear all" variant="ghost" onClick={() => filter.clearAll()} />
+      <Button label={label()} onClick={() => filter.apply()} />
     </div>
   );
 }

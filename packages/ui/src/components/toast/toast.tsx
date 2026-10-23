@@ -234,6 +234,7 @@ function ToastItem(props: {
       <Show when={props.toast.action}>
         {(action) => (
           <Button
+            label={action().label}
             class={[styles.action, "yosegi-toast-action"]}
             size="sm"
             variant="outline"
@@ -241,9 +242,7 @@ function ToastItem(props: {
               action().onClick();
               props.onClose();
             }}
-          >
-            {action().label}
-          </Button>
+          />
         )}
       </Show>
       <button type="button" class={[styles.close, "yosegi-toast-close"]} aria-label="Dismiss" onClick={() => props.onClose()}>

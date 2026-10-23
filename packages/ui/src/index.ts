@@ -1,6 +1,6 @@
 export { Accordion, type AccordionItemProps, type AccordionProps } from "./components/accordion/accordion";
 export { ButtonGroup, type ButtonGroupProps } from "./components/button-group/button-group";
-export { Button, type ButtonProps } from "./components/button/button";
+export { Button, type ButtonProps, type ButtonTriggerProps } from "./components/button/button";
 export { Checkbox, type CheckboxProps } from "./components/checkbox/checkbox";
 export {
   Combobox,

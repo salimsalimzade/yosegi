@@ -730,15 +730,14 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
               <span aria-live="polite">{combobox.chosen().length} chosen</span>
               <Show when={combobox.clearable()}>
                 <Button
+                  label="Clear all"
                   variant="ghost"
                   size="sm"
                   onClick={() => {
                     combobox.clearAll();
                     setOverflowOpen(false);
                   }}
-                >
-                  Clear all
-                </Button>
+                />
               </Show>
             </div>
           </div>
@@ -969,9 +968,7 @@ function Listbox(props: ComboboxListboxProps) {
         <div role="alert" class={[styles.error, "yosegi-combobox-error"]}>
           <p class={[styles["error-title"], "yosegi-combobox-error-title"]}>{combobox.errorText()}</p>
           <p>Check your connection, then try again.</p>
-          <Button variant="outline" size="sm" onClick={() => combobox.retry()}>
-            Try again
-          </Button>
+          <Button label="Try again" variant="outline" size="sm" onClick={() => combobox.retry()} />
         </div>
       </Show>
       <Show when={!combobox.error()}>
@@ -1048,9 +1045,7 @@ function Listbox(props: ComboboxListboxProps) {
           <div class={[styles.footer, "yosegi-combobox-footer"]}>
             <span aria-live="polite">{combobox.chosen().length} chosen</span>
             <Show when={combobox.clearable()}>
-              <Button variant="ghost" size="sm" onClick={() => combobox.clearAll()}>
-                Clear all
-              </Button>
+              <Button label="Clear all" variant="ghost" size="sm" onClick={() => combobox.clearAll()} />
             </Show>
           </div>
         </Show>
