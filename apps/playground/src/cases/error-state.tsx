@@ -5,38 +5,32 @@ export function ErrorStatePage() {
   return (
     <Cases>
       <Case title="Whole page" description="A failed first load, with a reference people can quote." layout="fill">
-        <ErrorState>
-          <ErrorState.Icon>
-            <WarningIcon />
-          </ErrorState.Icon>
-          <ErrorState.Title as="h2">Something went wrong</ErrorState.Title>
-          <ErrorState.Description>
-            We couldn't load your notes. Check your connection and try again.
-          </ErrorState.Description>
-          <ErrorState.Detail>Error 503 · ref 8f2c</ErrorState.Detail>
-          <ErrorState.Actions>
-            <Button label="Try again" />
-            <Button label="Contact support" variant="ghost" />
-          </ErrorState.Actions>
-        </ErrorState>
+        <ErrorState
+          icon={<WarningIcon />}
+          title="Something went wrong"
+          description="We couldn't load your notes. Check your connection and try again."
+          detail="Error 503 · ref 8f2c"
+          actions={
+            <>
+              <Button label="Try again" />
+              <Button label="Contact support" variant="ghost" />
+            </>
+          }
+        />
       </Case>
       <Case
         title="One section"
-        description="Smaller padding and a small button, inside a part of the page."
+        description='Smaller padding and a small button, inside a part of the page; titleAs="h3".'
         layout="fill"
       >
-        <ErrorState style={{ "--yosegi-error-state-padding": "var(--yosegi-space-800) var(--yosegi-space-400)" }}>
-          <ErrorState.Icon>
-            <WarningIcon />
-          </ErrorState.Icon>
-          <ErrorState.Title as="h3">Couldn't save</ErrorState.Title>
-          <ErrorState.Description>
-            Your changes are kept on this device. We'll retry when you're back online.
-          </ErrorState.Description>
-          <ErrorState.Actions>
-            <Button label="Retry now" variant="outline" size="sm" />
-          </ErrorState.Actions>
-        </ErrorState>
+        <ErrorState
+          style={{ "--yosegi-error-state-padding": "var(--yosegi-space-800) var(--yosegi-space-400)" }}
+          icon={<WarningIcon />}
+          title="Couldn't save"
+          titleAs="h3"
+          description="Your changes are kept on this device. We'll retry when you're back online."
+          actions={<Button label="Retry now" variant="outline" size="sm" />}
+        />
       </Case>
     </Cases>
   );
