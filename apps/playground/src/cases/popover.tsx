@@ -1,13 +1,5 @@
 import { For } from "solid-js";
-import {
-  Button,
-  Checkbox,
-  Popover,
-  type PopoverProps,
-  ShareIcon,
-  TextField,
-  toast,
-} from "yosegi";
+import { Button, Checkbox, Popover, type PopoverProps, ShareIcon, toast } from "yosegi";
 import { Case } from "../ui/case";
 
 export function PopoverPage() {
@@ -15,130 +7,55 @@ export function PopoverPage() {
     <>
       <Case
         title="Share"
-        description="A title, a close button, a description and a small task. Focus moves inside; Escape returns it to the button."
+        description="A title, a close button, a description, a field from its props and a footer. Focus moves inside; Escape returns it to the button."
       >
-        <Popover placement="bottom-start">
-          <Popover.Trigger as={Button} variant="outline" icon={<ShareIcon />}>
-            Share
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content>
-              <Popover.Arrow />
-              <div class="yosegi-popover-header">
-                <Popover.Title>Share note</Popover.Title>
-                <Popover.CloseButton />
-              </div>
-              <Popover.Description>
-                Anyone with the link can read this note.
-              </Popover.Description>
-              <TextField
-                label="Link"
-                readOnly
-                defaultValue="yosegi.app/n/8f2c"
-              />
-              <div style={{ display: "flex", "justify-content": "flex-end" }}>
-                <Button size="sm" onClick={() => toast.success("Link copied")}>
-                  Copy link
-                </Button>
-              </div>
-            </Popover.Content>
-          </Popover.Portal>
+        <Popover
+          trigger={{ label: "Share", icon: <ShareIcon /> }}
+          title="Share note"
+          description="Anyone with the link can read this note."
+          field={{ label: "Link", readOnly: true, defaultValue: "yosegi.app/n/8f2c" }}
+          footer={<Button label="Copy link" size="sm" onClick={() => toast.success("Link copied")} />}
+          placement="bottom-start"
+        />
+      </Case>
+
+      <Case title="Filter" description="A narrower panel (--yosegi-popover-width: 240px) with checkboxes. Text as the trigger is an outline Button.">
+        <Popover trigger="Filter" title="Show notes" placement="bottom-start" style={{ "--yosegi-popover-width": "240px" }}>
+          <div style={{ display: "grid", gap: "10px" }}>
+            <For each={[["Pinned", true], ["With dates", true], ["Archived", false]] as const}>
+              {([label, checked]) => <Checkbox label={label} defaultChecked={checked} />}
+            </For>
+          </div>
         </Popover>
       </Case>
 
-      <Case
-        title="Filter"
-        description="A narrower panel (--yosegi-popover-width: 240px) with checkboxes."
-      >
-        <Popover placement="bottom-start">
-          <Popover.Trigger as={Button} variant="outline">
-            Filter
-          </Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content style={{ "--yosegi-popover-width": "240px" }}>
-              <Popover.Arrow />
-              <div class="yosegi-popover-header">
-                <Popover.Title>Show notes</Popover.Title>
-                <Popover.CloseButton />
-              </div>
-              <div style={{ display: "grid", gap: "10px" }}>
-                <For
-                  each={
-                    [
-                      ["Pinned", true],
-                      ["With dates", true],
-                      ["Archived", false],
-                    ] as const
-                  }
-                >
-                  {([label, checked]) => (
-                    <Checkbox label={label} defaultChecked={checked} />
-                  )}
-                </For>
-              </div>
-            </Popover.Content>
-          </Popover.Portal>
-        </Popover>
-      </Case>
-
-      <Case
-        title="Placements"
-        description="placement picks the side; it flips when there's no room."
-      >
-        <For
-          each={
-            ["top", "right", "bottom", "left"] as PopoverProps["placement"][]
-          }
-        >
+      <Case title="Placements" description="placement picks the side; it flips when there's no room. closeButton={false} leaves just the text.">
+        <For each={["top", "right", "bottom", "left"] as PopoverProps["placement"][]}>
           {(placement) => (
-            <Popover placement={placement}>
-              <Popover.Trigger as={Button} variant="ghost">
-                {placement}
-              </Popover.Trigger>
-              <Popover.Portal>
-                <Popover.Content style={{ "--yosegi-popover-width": "200px" }}>
-                  <Popover.Arrow />
-                  <Popover.Description>
-                    Opens on the {placement}.
-                  </Popover.Description>
-                </Popover.Content>
-              </Popover.Portal>
-            </Popover>
+            <Popover
+              trigger={{ label: placement, variant: "ghost" }}
+              description={`Opens on the ${placement}.`}
+              closeButton={false}
+              placement={placement}
+              style={{ "--yosegi-popover-width": "200px" }}
+            />
           )}
         </For>
       </Case>
 
-      <Case
-        title="Modal"
-        description="modal keeps focus inside until it's finished or closed."
-      >
-        <Popover modal placement="bottom-start">
-          <Popover.Trigger as={Button}>New folder</Popover.Trigger>
-          <Popover.Portal>
-            <Popover.Content>
-              <Popover.Arrow />
-              <div class="yosegi-popover-header">
-                <Popover.Title>New folder</Popover.Title>
-                <Popover.CloseButton />
-              </div>
-              <TextField label="Name" placeholder="e.g. Travel" />
-              <div
-                style={{
-                  display: "flex",
-                  "justify-content": "flex-end",
-                  gap: "8px",
-                }}
-              >
-                <Button
-                  size="sm"
-                  onClick={() => toast.success("Folder created")}
-                >
-                  Create
-                </Button>
-              </div>
-            </Popover.Content>
-          </Popover.Portal>
-        </Popover>
+      <Case title="Without the arrow" description="arrow={false}: the panel sits flush, still placed against the button.">
+        <Popover trigger="Details" title="Reading list" description="12 notes, last edited today." arrow={false} placement="bottom-start" />
+      </Case>
+
+      <Case title="Modal" description="modal keeps focus inside until it's finished or closed.">
+        <Popover
+          modal
+          trigger={{ label: "New folder", variant: "solid" }}
+          title="New folder"
+          field={{ label: "Name", placeholder: "e.g. Travel" }}
+          footer={<Button label="Create" size="sm" onClick={() => toast.success("Folder created")} />}
+          placement="bottom-start"
+        />
       </Case>
     </>
   );

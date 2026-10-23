@@ -77,9 +77,15 @@ export function CommandPage() {
         </Case>
       </Cases>
       <Case title="Palette in a dialog" description="Command.Dialog; open it with the button, or ⌘K / Ctrl+K anywhere on this page.">
-        <Button variant="outline" onClick={() => setOpen(true)}>
-          Open command palette <kbd class="yosegi-command-shortcut">⌘K</kbd>
-        </Button>
+        <Button
+          label={
+            <>
+              Open command palette <kbd class="yosegi-command-shortcut">⌘K</kbd>
+            </>
+          }
+          variant="outline"
+          onClick={() => setOpen(true)}
+        />
         <Command.Dialog open={open()} onOpenChange={setOpen} label="Command palette">
           <Commands onRun={run} />
         </Command.Dialog>

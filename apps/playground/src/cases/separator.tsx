@@ -22,9 +22,9 @@ export function SeparatorPage() {
       </Case>
       <Case title="With a label" description="Two lines with a word between them." layout="fill">
         <div style={{ display: "grid", gap: "12px" }}>
-          <Button variant="outline">Continue with GitHub</Button>
+          <Button label="Continue with GitHub" variant="outline" />
           <Separator>or</Separator>
-          <Button>Continue with email</Button>
+          <Button label="Continue with email" />
         </div>
       </Case>
       <Case title="Announced" description={'decorative={false} gives it role="separator", for groups that matter.'} layout="fill">

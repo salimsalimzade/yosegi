@@ -20,9 +20,7 @@ export function ItemPage() {
                 <Item.Description>A title, a description and one action.</Item.Description>
               </Item.Content>
               <Item.Actions>
-                <Button size="sm" variant="outline">
-                  Open
-                </Button>
+                <Button label="Open" size="sm" variant="outline" />
               </Item.Actions>
             </Item>
           )}
@@ -55,7 +53,7 @@ export function ItemPage() {
               <Item.Description>From an unknown device in Kyoto.</Item.Description>
             </Item.Content>
             <Item.Actions>
-              <Button size="sm">Review</Button>
+              <Button label="Review" size="sm" />
             </Item.Actions>
           </Item>
         </Case>
@@ -100,9 +98,7 @@ export function ItemPage() {
           <Item variant="outline">
             <Item.Header>
               <Item.Title>Trip to Kyoto</Item.Title>
-              <Button size="sm" variant="ghost">
-                Edit
-              </Button>
+              <Button label="Edit" size="sm" variant="ghost" />
             </Item.Header>
             <Item.Content>
               <Item.Description>Temples in the morning, long lunches, slow trains.</Item.Description>

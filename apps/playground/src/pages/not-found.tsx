@@ -11,9 +11,7 @@ export function NotFound() {
         <NotFoundState.Title>Page not found</NotFoundState.Title>
         <NotFoundState.Description>There's nothing at this address.</NotFoundState.Description>
         <NotFoundState.Actions>
-          <Button as="a" href={playgroundPath()}>
-            Open the playground
-          </Button>
+          <Button label="Open the playground" as="a" href={playgroundPath()} />
         </NotFoundState.Actions>
       </NotFoundState>
     </main>

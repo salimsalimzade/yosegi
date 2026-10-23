@@ -11,9 +11,9 @@ export function ButtonGroupPage() {
     <>
       <Case title="Spaced actions" description="Related actions in a row, with one solid main action.">
         <ButtonGroup aria-label="Note actions">
-          <Button>Save</Button>
-          <Button variant="outline">Preview</Button>
-          <Button variant="ghost">Cancel</Button>
+          <Button label="Save" />
+          <Button label="Preview" variant="outline" />
+          <Button label="Cancel" variant="ghost" />
         </ButtonGroup>
       </Case>
 
@@ -21,9 +21,7 @@ export function ButtonGroupPage() {
         <ButtonGroup attached aria-label="Range">
           <For each={["Day", "Week", "Month", "Year"]}>
             {(value) => (
-              <Button variant="outline" aria-pressed={range() === value} onClick={() => setRange(value)}>
-                {value}
-              </Button>
+              <Button label={value} variant="outline" aria-pressed={range() === value} onClick={() => setRange(value)} />
             )}
           </For>
         </ButtonGroup>
@@ -40,9 +38,7 @@ export function ButtonGroupPage() {
         <ButtonGroup attached orientation="vertical" aria-label="Sort" style={{ width: "160px" }}>
           <For each={["Newest first", "Oldest first", "A to Z"]}>
             {(value) => (
-              <Button variant="outline" aria-pressed={sort() === value} onClick={() => setSort(value)}>
-                {value}
-              </Button>
+              <Button label={value} variant="outline" aria-pressed={sort() === value} onClick={() => setSort(value)} />
             )}
           </For>
         </ButtonGroup>

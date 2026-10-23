@@ -20,9 +20,7 @@ export function ComponentPage() {
           <NotFound.Title>No such component</NotFound.Title>
           <NotFound.Description>Pick one from the list on the left.</NotFound.Description>
           <NotFound.Actions>
-            <Button as="a" href={playgroundPath()}>
-              All components
-            </Button>
+            <Button label="All components" as="a" href={playgroundPath()} />
           </NotFound.Actions>
         </NotFound>
       }

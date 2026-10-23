@@ -55,7 +55,7 @@ export const catalog: Entry[] = [
     group: "Actions",
     page: ButtonPage,
     parts:
-      "One level: <Button variant size icon iconPosition loading loadingText>",
+      "One level: <Button label variant size icon iconPosition loading loadingText>",
     summary:
       "A single clickable action, with variants, sizes, an optional icon, and loading and disabled states.",
   },
@@ -191,7 +191,7 @@ export const catalog: Entry[] = [
     group: "Overlays",
     page: PopoverPage,
     parts:
-      "Popover · Trigger · Anchor · Portal · Content · Arrow · Title · Description · CloseButton",
+      "Popover · Trigger · Anchor · Portal · Content · Arrow · Header · Title · Description · CloseButton · Footer",
     summary:
       "A small panel that opens next to a button for a quick task, like sharing or filtering, without leaving the page.",
   },

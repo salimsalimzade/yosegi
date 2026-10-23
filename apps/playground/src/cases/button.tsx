@@ -22,32 +22,29 @@ export function ButtonPage() {
   return (
     <>
       <Case title="Variants" description="Solid for the one main action; outline and ghost for the rest; danger for what can't be undone.">
+        <Button label="Save" />
+        <Button label="Cancel" variant="outline" />
+        <Button label="Skip" variant="ghost" />
+        <Button label="Delete" variant="danger" />
+      </Case>
+
+      <Case title="Label as children" description="label is the text on the button; children work the same way.">
         <Button>Save</Button>
         <Button variant="outline">Cancel</Button>
-        <Button variant="ghost">Skip</Button>
-        <Button variant="danger">Delete</Button>
       </Case>
 
       <Case title="Sizes" description="sm 28px, md 36px (default), lg 44px.">
-        <Button size="sm">Small</Button>
-        <Button>Medium</Button>
-        <Button size="lg">Large</Button>
+        <Button label="Small" size="sm" />
+        <Button label="Medium" />
+        <Button label="Large" size="lg" />
       </Case>
 
       <Case title="With an icon" description={'icon sits at the start by default; iconPosition="end" for arrows.'}>
-        <Button icon={<PlusIcon />}>New note</Button>
-        <Button variant="outline" icon={<ArrowRightIcon />} iconPosition="end">
-          Continue
-        </Button>
-        <Button variant="ghost" icon={<DownloadIcon />}>
-          Download
-        </Button>
-        <Button size="sm" variant="outline" icon={<PlusIcon />}>
-          Small
-        </Button>
-        <Button size="lg" icon={<PlusIcon />}>
-          Large
-        </Button>
+        <Button label="New note" icon={<PlusIcon />} />
+        <Button label="Continue" variant="outline" icon={<ArrowRightIcon />} iconPosition="end" />
+        <Button label="Download" variant="ghost" icon={<DownloadIcon />} />
+        <Button label="Small" size="sm" variant="outline" icon={<PlusIcon />} />
+        <Button label="Large" size="lg" icon={<PlusIcon />} />
       </Case>
 
       <Case title="Icon only" description="An icon with no label makes a square button. It needs an aria-label.">
@@ -57,15 +54,9 @@ export function ButtonPage() {
       </Case>
 
       <Case title="Loading" description="Click one. The spinner takes the icon's place, and loadingText says what's happening.">
-        <Button loading={saving()} loadingText="Saving…" onClick={save}>
-          Save
-        </Button>
-        <Button variant="outline" icon={<DownloadIcon />} loading={exporting()} loadingText="Exporting…" onClick={exportNotes}>
-          Export notes
-        </Button>
-        <Button variant="danger" icon={<TrashIcon />} loading={deleting()} loadingText="Deleting…" onClick={remove}>
-          Delete project
-        </Button>
+        <Button label="Save" loading={saving()} loadingText="Saving…" onClick={save} />
+        <Button label="Export notes" variant="outline" icon={<DownloadIcon />} loading={exporting()} loadingText="Exporting…" onClick={exportNotes} />
+        <Button label="Delete project" variant="danger" icon={<TrashIcon />} loading={deleting()} loadingText="Deleting…" onClick={remove} />
       </Case>
 
       <Case title="Icon only, loading" description="Click one, or load them all. The spinner replaces the icon and the button stays square.">
@@ -81,26 +72,18 @@ export function ButtonPage() {
             />
           )}
         </For>
-        <Button variant="ghost" size="sm" disabled={allLoading()} onClick={loadAll}>
-          Load all
-        </Button>
+        <Button label="Load all" variant="ghost" size="sm" disabled={allLoading()} onClick={loadAll} />
       </Case>
 
       <Case title="Disabled" description="40% opacity; can't be focused or clicked. Say why nearby.">
-        <Button disabled>Save</Button>
-        <Button variant="outline" disabled>
-          Cancel
-        </Button>
-        <Button variant="ghost" disabled>
-          Skip
-        </Button>
+        <Button label="Save" disabled />
+        <Button label="Cancel" variant="outline" disabled />
+        <Button label="Skip" variant="ghost" disabled />
         <Button variant="outline" icon={<InfoIcon />} aria-label="Info" disabled />
       </Case>
 
       <Case title="As a link" description={'as="a" keeps the look on an anchor.'}>
-        <Button as="a" href="#button" variant="outline" icon={<ArrowRightIcon />} iconPosition="end">
-          See pricing
-        </Button>
+        <Button label="See pricing" as="a" href="#button" variant="outline" icon={<ArrowRightIcon />} iconPosition="end" />
       </Case>
     </>
   );

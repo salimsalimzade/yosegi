@@ -82,21 +82,15 @@ function InvoiceTable(props: Partial<DataTableProps<Invoice>>) {
       noun="invoices"
       actions={
         <>
-          <Button variant="outline" icon={<DownloadIcon />}>
-            Export
-          </Button>
-          <Button icon={<PlusIcon />}>New invoice</Button>
+          <Button label="Export" variant="outline" icon={<DownloadIcon />} />
+          <Button label="New invoice" icon={<PlusIcon />} />
         </>
       }
       selectable
       selectionActions={() => (
         <>
-          <Button variant="outline" size="sm" icon={<DownloadIcon />}>
-            Export
-          </Button>
-          <Button variant="danger" size="sm" icon={<TrashIcon />}>
-            Delete
-          </Button>
+          <Button label="Export" variant="outline" size="sm" icon={<DownloadIcon />} />
+          <Button label="Delete" variant="danger" size="sm" icon={<TrashIcon />} />
         </>
       )}
       data={invoices}

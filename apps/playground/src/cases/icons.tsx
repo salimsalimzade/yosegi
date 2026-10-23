@@ -124,14 +124,10 @@ export function IconsPage() {
         </span>
       </Case>
       <Case title="In components" description="Buttons size them with their text; icon-only buttons need an aria-label.">
-        <Button icon={<PlusIcon />}>New note</Button>
-        <Button variant="outline" icon={<ArrowRightIcon />} iconPosition="end">
-          Continue
-        </Button>
+        <Button label="New note" icon={<PlusIcon />} />
+        <Button label="Continue" variant="outline" icon={<ArrowRightIcon />} iconPosition="end" />
         <Button variant="outline" icon={<SettingsIcon />} aria-label="Settings" />
-        <Button variant="danger" icon={<TrashIcon />}>
-          Delete
-        </Button>
+        <Button label="Delete" variant="danger" icon={<TrashIcon />} />
       </Case>
     </>
   );

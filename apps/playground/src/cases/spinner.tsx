@@ -13,9 +13,7 @@ export function SpinnerPage() {
       <Case title="Colour follows text" description="It draws in currentColor, so it matches what's around it.">
         <Spinner style={{ color: "var(--yosegi-color-fg-muted)" }} label="Loading" />
         <Spinner style={{ color: "var(--yosegi-color-fg-accent)" }} label="Loading" />
-        <Button loading loadingText="Saving…">
-          Save
-        </Button>
+        <Button label="Save" loading loadingText="Saving…" />
       </Case>
       <Case title="With words" description="Decorative next to visible text; label it when it stands alone.">
         <span style={{ display: "inline-flex", "align-items": "center", gap: "8px", color: "var(--yosegi-color-fg-muted)" }}>

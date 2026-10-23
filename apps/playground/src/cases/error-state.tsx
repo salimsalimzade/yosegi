@@ -13,8 +13,8 @@ export function ErrorStatePage() {
           <ErrorState.Description>We couldn't load your notes. Check your connection and try again.</ErrorState.Description>
           <ErrorState.Detail>Error 503 · ref 8f2c</ErrorState.Detail>
           <ErrorState.Actions>
-            <Button>Try again</Button>
-            <Button variant="ghost">Contact support</Button>
+            <Button label="Try again" />
+            <Button label="Contact support" variant="ghost" />
           </ErrorState.Actions>
         </ErrorState>
       </Case>
@@ -26,9 +26,7 @@ export function ErrorStatePage() {
           <ErrorState.Title as="h3">Couldn't save</ErrorState.Title>
           <ErrorState.Description>Your changes are kept on this device. We'll retry when you're back online.</ErrorState.Description>
           <ErrorState.Actions>
-            <Button variant="outline" size="sm">
-              Retry now
-            </Button>
+            <Button label="Retry now" variant="outline" size="sm" />
           </ErrorState.Actions>
         </ErrorState>
       </Case>

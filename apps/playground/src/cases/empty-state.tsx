@@ -12,7 +12,7 @@ export function EmptyStatePage() {
           <EmptyState.Title>No notes yet</EmptyState.Title>
           <EmptyState.Description>Notes you create show up here.</EmptyState.Description>
           <EmptyState.Actions>
-            <Button icon={<PlusIcon />}>New note</Button>
+            <Button label="New note" icon={<PlusIcon />} />
           </EmptyState.Actions>
         </EmptyState>
       </Case>
@@ -24,7 +24,7 @@ export function EmptyStatePage() {
           <EmptyState.Title>No results for “kyoto trip”</EmptyState.Title>
           <EmptyState.Description>Try fewer words, or check the spelling.</EmptyState.Description>
           <EmptyState.Actions>
-            <Button variant="outline">Clear search</Button>
+            <Button label="Clear search" variant="outline" />
           </EmptyState.Actions>
         </EmptyState>
       </Case>

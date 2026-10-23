@@ -12,12 +12,8 @@ export function NotFoundPage() {
             The page you're looking for doesn't exist or has moved. Check the address, or start again from home.
           </NotFound.Description>
           <NotFound.Actions>
-            <Button as="a" href="/">
-              Go home
-            </Button>
-            <Button variant="outline" onClick={() => history.back()}>
-              Go back
-            </Button>
+            <Button label="Go home" as="a" href="/" />
+            <Button label="Go back" variant="outline" onClick={() => history.back()} />
           </NotFound.Actions>
         </NotFound>
       </Case>
@@ -27,7 +23,7 @@ export function NotFoundPage() {
           <NotFound.Title as="h3">This note doesn't exist</NotFound.Title>
           <NotFound.Description>It may have been deleted, or the link is wrong.</NotFound.Description>
           <NotFound.Actions>
-            <Button variant="outline">All notes</Button>
+            <Button label="All notes" variant="outline" />
           </NotFound.Actions>
         </NotFound>
       </Case>
