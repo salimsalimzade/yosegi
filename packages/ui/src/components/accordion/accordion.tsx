@@ -1,5 +1,15 @@
 import type { JSX, ValidComponent } from "@solidjs/web";
-import { createContext, createEffect, createMemo, createSignal, createUniqueId, For, omit, useContext } from "solid-js";
+import {
+  createContext,
+  createEffect,
+  createMemo,
+  createSignal,
+  createUniqueId,
+  For,
+  omit,
+  untrack,
+  useContext,
+} from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createTag, type PartProps } from "../../primitives/create-part";
 import { callHandler, dataAttr } from "../../primitives/dom";
@@ -208,12 +218,20 @@ function Trigger(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
 /** Sets --yosegi-accordion-content-height for the open and close animation. */
 function Content(props: JSX.HTMLAttributes<HTMLDivElement>) {
   const item = useContext(ItemContext);
-  const [closing, setClosing] = createSignal(false, { ownedWrite: true });
+  // Whether the last close has finished. Closing and hidden derive from it
+  // and from open, so they change in the same flush as open does. While the
+  // item is open nothing reads it, so resetting it then can't show a stale frame.
+  const [shut, setShut] = createSignal(!untrack(item.open), { ownedWrite: true });
+  const closing = () => !item.open() && !shut();
+  const hidden = () => !item.open() && shut();
   let el: HTMLDivElement | undefined;
   const rest = omit(props, "class", "ref", "onAnimationEnd", "children");
 
   const measure = () => el?.style.setProperty("--yosegi-accordion-content-height", `${el.scrollHeight}px`);
   const animates = () => !!el && getComputedStyle(el).animationName !== "none";
+  const finishClosing = () => {
+    if (!item.open()) setShut(true);
+  };
 
   createEffect(
     () => item.open(),
@@ -221,18 +239,14 @@ function Content(props: JSX.HTMLAttributes<HTMLDivElement>) {
       if (!el) return;
       if (wasOpen === undefined) {
         // First render: show the starting state without animating it.
-        el.hidden = !open;
         el.style.animation = "none";
         requestAnimationFrame(() => el && (el.style.animation = ""));
         return;
       }
+      measure();
       if (open) {
-        el.hidden = false;
-        measure();
-        setClosing(false);
+        setShut(false);
       } else {
-        measure();
-        setClosing(true);
         // Without an animation there is no animationend to wait for.
         queueMicrotask(() => {
           if (!animates()) finishClosing();
@@ -240,12 +254,6 @@ function Content(props: JSX.HTMLAttributes<HTMLDivElement>) {
       }
     },
   );
-
-  const finishClosing = () => {
-    if (!el || item.open()) return;
-    el.hidden = true;
-    setClosing(false);
-  };
 
   return (
     <div
@@ -255,6 +263,7 @@ function Content(props: JSX.HTMLAttributes<HTMLDivElement>) {
       id={item.contentId}
       aria-labelledby={item.triggerId}
       class={[styles.content, "yosegi-accordion-content", props.class]}
+      hidden={hidden()}
       data-expanded={dataAttr(item.open())}
       data-closed={dataAttr(closing())}
       onAnimationEnd={(event) => {
