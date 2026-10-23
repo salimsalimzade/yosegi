@@ -44,7 +44,11 @@ export function SelectPage() {
 
   return (
     <Cases>
-      <Case title="Nothing chosen yet" description="The placeholder, in muted text. Archived can't be picked." layout="stack">
+      <Case
+        title="Nothing chosen yet"
+        description="The placeholder, in muted text. Archived can't be picked."
+        layout="stack"
+      >
         <Field label="Status" description="Who can see the post depends on it." />
       </Case>
       <Case title="Chosen" description="Controlled: the value lives in the page." layout="stack">
@@ -91,7 +95,11 @@ export function SelectPage() {
       <Case title="Disabled" description="Say why in the Description." layout="stack">
         <Field label="Status" defaultValue="published" disabled description="Published posts are locked." />
       </Case>
-      <Case title="Read-only" description="A muted box with no chevron; the value is still sent with a form." layout="stack">
+      <Case
+        title="Read-only"
+        description="A muted box with no chevron; the value is still sent with a form."
+        layout="stack"
+      >
         <Field label="Status" defaultValue="scheduled" readOnly description="Set by your editor." />
       </Case>
       <Case title="Long value" description="Ends with “…” in the box and in rows." layout="stack">

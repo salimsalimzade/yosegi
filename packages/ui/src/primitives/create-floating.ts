@@ -1,13 +1,4 @@
-import {
-  arrow,
-  autoUpdate,
-  computePosition,
-  flip,
-  offset,
-  shift,
-  size,
-  type Placement,
-} from "@floating-ui/dom";
+import { arrow, autoUpdate, computePosition, flip, offset, shift, size, type Placement } from "@floating-ui/dom";
 import { createEffect } from "solid-js";
 
 export type { Placement };
@@ -34,24 +25,11 @@ const SIDE_ORIGIN = {
 
 /** The corner or edge of the floating element that touches the reference, e.g. "top left" for bottom-start. */
 function transformOrigin(placement: Placement) {
-  const [side, align] = placement.split("-") as [
-    keyof typeof SIDE_ORIGIN,
-    "start" | "end" | undefined,
-  ];
+  const [side, align] = placement.split("-") as [keyof typeof SIDE_ORIGIN, "start" | "end" | undefined];
   const vertical = side === "top" || side === "bottom";
   const cross =
-    align === "start"
-      ? vertical
-        ? "left"
-        : "top"
-      : align === "end"
-        ? vertical
-          ? "right"
-          : "bottom"
-        : "center";
-  return vertical
-    ? `${SIDE_ORIGIN[side]} ${cross}`
-    : `${cross} ${SIDE_ORIGIN[side]}`;
+    align === "start" ? (vertical ? "left" : "top") : align === "end" ? (vertical ? "right" : "bottom") : "center";
+  return vertical ? `${SIDE_ORIGIN[side]} ${cross}` : `${cross} ${SIDE_ORIGIN[side]}`;
 }
 
 /**

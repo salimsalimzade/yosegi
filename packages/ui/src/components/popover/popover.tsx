@@ -14,17 +14,9 @@ import {
 } from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createDismiss } from "../../primitives/create-dismiss";
-import {
-  createFloating,
-  type Placement,
-} from "../../primitives/create-floating";
+import { createFloating, type Placement } from "../../primitives/create-floating";
 import { createPart, createTag } from "../../primitives/create-part";
-import {
-  callHandler,
-  dataAttr,
-  focusFirst,
-  getFocusable,
-} from "../../primitives/dom";
+import { callHandler, dataAttr, focusFirst, getFocusable } from "../../primitives/dom";
 import { CloseIcon } from "../../primitives/icons";
 import { Portal } from "../../primitives/portal";
 import { Button, type ButtonTriggerProps } from "../button/button";
@@ -93,8 +85,7 @@ function PopoverRoot(props: PopoverProps) {
     defaultValue: () => props.defaultOpen ?? false,
     onChange: (next) => props.onOpenChange?.(next),
   });
-  const element = () =>
-    createSignal<HTMLElement | undefined>(undefined, { ownedWrite: true });
+  const element = () => createSignal<HTMLElement | undefined>(undefined, { ownedWrite: true });
   const [trigger, setTrigger] = element();
   const [anchor, setAnchor] = element();
   const [content, setContent] = element();
@@ -133,11 +124,7 @@ function PopoverRoot(props: PopoverProps) {
       if (!isOpen || !el) return;
       requestAnimationFrame(() => focusFirst(el));
       return () => {
-        if (
-          el.contains(document.activeElement) ||
-          document.activeElement === document.body
-        )
-          untrack(trigger)?.focus();
+        if (el.contains(document.activeElement) || document.activeElement === document.body) untrack(trigger)?.focus();
       };
     },
   );
@@ -282,9 +269,7 @@ function Content(props: JSX.HTMLAttributes<HTMLDivElement>) {
         class={[styles.content, "yosegi-popover-content", props.class]}
         aria-modal={popover.modal() ? "true" : undefined}
         aria-labelledby={popover.hasTitle() ? popover.ids.title : undefined}
-        aria-describedby={
-          popover.hasDescription() ? popover.ids.description : undefined
-        }
+        aria-describedby={popover.hasDescription() ? popover.ids.description : undefined}
         data-expanded=""
         onKeyDown={(event) => {
           callHandler(props.onKeyDown, event);
@@ -336,11 +321,7 @@ function Title(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
   });
   const rest = omit(props, "class", "children");
   return (
-    <h2
-      {...rest}
-      id={popover.ids.title}
-      class={[styles.title, "yosegi-popover-title", props.class]}
-    >
+    <h2 {...rest} id={popover.ids.title} class={[styles.title, "yosegi-popover-title", props.class]}>
       {props.children}
     </h2>
   );
@@ -354,11 +335,7 @@ function Description(props: JSX.HTMLAttributes<HTMLParagraphElement>) {
   });
   const rest = omit(props, "class", "children");
   return (
-    <p
-      {...rest}
-      id={popover.ids.description}
-      class={[styles.description, "yosegi-popover-description", props.class]}
-    >
+    <p {...rest} id={popover.ids.description} class={[styles.description, "yosegi-popover-description", props.class]}>
       {props.children}
     </p>
   );
@@ -380,11 +357,7 @@ function CloseButton(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
       type="button"
       aria-label="Close"
       {...rest}
-      class={[
-        styles["close-button"],
-        "yosegi-popover-close-button",
-        props.class,
-      ]}
+      class={[styles["close-button"], "yosegi-popover-close-button", props.class]}
       onClick={(event) => {
         popover.setOpen(false);
         popover.trigger()?.focus();

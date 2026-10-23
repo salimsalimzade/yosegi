@@ -35,7 +35,12 @@ export function Separator(props: SeparatorProps) {
         />
       }
     >
-      <div {...rest} class={[styles.labelled, "yosegi-separator", props.class]} role="separator" data-orientation="horizontal">
+      <div
+        {...rest}
+        class={[styles.labelled, "yosegi-separator", props.class]}
+        role="separator"
+        data-orientation="horizontal"
+      >
         <span class="yosegi-separator-label">{label()}</span>
       </div>
     </Show>

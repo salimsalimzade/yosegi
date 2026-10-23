@@ -10,8 +10,17 @@ export function DatePickerPage() {
 
   return (
     <Cases>
-      <Case title="Default" description="Type a date, or open the calendar with the button or Alt + ↓. Days before today can't be picked." layout="fill">
-        <DatePicker label="Due date" defaultValue={inDays(2)} minValue={today} description="Days before today can't be picked." />
+      <Case
+        title="Default"
+        description="Type a date, or open the calendar with the button or Alt + ↓. Days before today can't be picked."
+        layout="fill"
+      >
+        <DatePicker
+          label="Due date"
+          defaultValue={inDays(2)}
+          minValue={today}
+          description="Days before today can't be picked."
+        />
       </Case>
       <Case title="Invalid" description="A day before today; pick a later one to fix it." layout="fill">
         <DatePicker
@@ -23,7 +32,12 @@ export function DatePickerPage() {
         />
       </Case>
       <Case title="Disabled" layout="fill">
-        <DatePicker label="Return date" defaultValue={inDays(6)} disabled description="Locked once the trip is booked." />
+        <DatePicker
+          label="Return date"
+          defaultValue={inDays(6)}
+          disabled
+          description="Locked once the trip is booked."
+        />
       </Case>
       <Case title="Read-only" layout="fill">
         <DatePicker label="Booked on" defaultValue={inDays(-30)} readOnly />

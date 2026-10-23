@@ -1,9 +1,5 @@
 import { createSignal, onCleanup } from "solid-js";
-import {
-  Combobox,
-  type ComboboxOption,
-  type ComboboxSingleProps,
-} from "yosegi";
+import { Combobox, type ComboboxOption, type ComboboxSingleProps } from "yosegi";
 import { Case, Cases } from "../ui/case";
 
 const cities: ComboboxOption[] = [
@@ -144,23 +140,10 @@ const world = [
 
 /** A city, searched in the panel. */
 function Box(props: Partial<ComboboxSingleProps>) {
-  return (
-    <Combobox
-      options={cities}
-      placeholder="Choose a city"
-      searchPlaceholder="Search cities…"
-      {...props}
-    />
-  );
+  return <Combobox options={cities} placeholder="Choose a city" searchPlaceholder="Search cities…" {...props} />;
 }
 
-function Tags(props: {
-  value?: string[];
-  max?: number;
-  create?: boolean;
-  label?: string;
-  description?: string;
-}) {
+function Tags(props: { value?: string[]; max?: number; create?: boolean; label?: string; description?: string }) {
   const [options, setOptions] = createSignal(startingTags);
   const [chosen, setChosen] = createSignal(props.value ?? []);
   return (
@@ -228,9 +211,7 @@ function ServerSearch() {
           setFailed(true);
           return;
         }
-        setResults(
-          world.filter((city) => city.label.toLowerCase().includes(q)),
-        );
+        setResults(world.filter((city) => city.label.toLowerCase().includes(q)));
       }, 900);
     }, 200);
   };
@@ -265,11 +246,7 @@ function ServerSearch() {
           font: "var(--yosegi-text-small)",
         }}
       >
-        <input
-          type="checkbox"
-          checked={failNext()}
-          onChange={(event) => setFailNext(event.currentTarget.checked)}
-        />
+        <input type="checkbox" checked={failNext()} onChange={(event) => setFailNext(event.currentTarget.checked)} />
         Make the next search fail
       </label>
     </div>
@@ -289,18 +266,8 @@ export function ComboboxPage() {
       >
         <Box label="City" description="Search 2,400 cities." />
       </Case>
-      <Case
-        title="Chosen"
-        description="Controlled: the value lives in the page."
-        layout="stack"
-      >
-        <Combobox
-          label="City"
-          placeholder="Choose a city"
-          options={cities}
-          value={city()}
-          onChange={setCity}
-        />
+      <Case title="Chosen" description="Controlled: the value lives in the page." layout="stack">
+        <Combobox label="City" placeholder="Choose a city" options={cities} value={city()} onChange={setCity} />
         <p>
           Chosen: <code>{city() ?? "nothing"}</code>
         </p>
@@ -310,37 +277,21 @@ export function ComboboxPage() {
         description="multiple: rows get checkboxes and the list stays open after each pick."
         layout="stack"
       >
-        <Tags
-          value={["design", "research"]}
-          description="Pick as many as fit the note."
-        />
+        <Tags value={["design", "research"]} description="Pick as many as fit the note." />
       </Case>
       <Case
         title="Many chosen"
         description="As many chips as fit, then a +N counter that opens the rest. The box never grows."
         layout="stack"
       >
-        <Tags
-          value={[
-            "design",
-            "research",
-            "writing",
-            "urgent",
-            "client",
-            "internal",
-          ]}
-        />
+        <Tags value={["design", "research", "writing", "urgent", "client", "internal"]} />
       </Case>
       <Case
         title="Limit"
         description="max={3}: once reached, the other rows are unavailable and the foot says so."
         layout="stack"
       >
-        <Tags
-          value={["design", "urgent", "client"]}
-          max={3}
-          description="Up to 3 tags."
-        />
+        <Tags value={["design", "urgent", "client"]} max={3} description="Up to 3 tags." />
       </Case>
       <Case
         title="Create"
@@ -393,16 +344,11 @@ export function ComboboxPage() {
           onChange={(_, picked) => setCustomer(picked)}
         />
         <p>
-          Chosen:{" "}
-          <code>{customer() ? JSON.stringify(customer()) : "nothing"}</code>
+          Chosen: <code>{customer() ? JSON.stringify(customer()) : "nothing"}</code>
         </p>
       </Case>
       <Case title="Invalid" layout="stack">
-        <Box
-          label="Home city"
-          description="Where you live."
-          errorMessage="Choose your home city."
-        />
+        <Box label="Home city" description="Where you live." errorMessage="Choose your home city." />
       </Case>
       <Case
         title="Disabled and read-only"

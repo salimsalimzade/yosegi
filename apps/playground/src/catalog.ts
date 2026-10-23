@@ -54,10 +54,8 @@ export const catalog: Entry[] = [
     name: "Button",
     group: "Actions",
     page: ButtonPage,
-    parts:
-      "One level: <Button label variant size icon iconPosition loading loadingText>",
-    summary:
-      "A single clickable action, with variants, sizes, an optional icon, and loading and disabled states.",
+    parts: "One level: <Button label variant size icon iconPosition loading loadingText>",
+    summary: "A single clickable action, with variants, sizes, an optional icon, and loading and disabled states.",
   },
   {
     slug: "button-group",
@@ -65,8 +63,7 @@ export const catalog: Entry[] = [
     group: "Actions",
     page: ButtonGroupPage,
     parts: "One level: <ButtonGroup attached orientation> around Buttons",
-    summary:
-      "A row or column of related Buttons, either spaced apart or attached into one control.",
+    summary: "A row or column of related Buttons, either spaced apart or attached into one control.",
   },
   {
     slug: "text-field",
@@ -75,8 +72,7 @@ export const catalog: Entry[] = [
     page: TextFieldPage,
     parts:
       "<TextField label placeholder description errorMessage icon multiline loading>, or: TextField · Label · Input or TextArea · Group · Icon · Description · ErrorMessage",
-    summary:
-      "A labelled single-line or multi-line text input with an optional hint and error message.",
+    summary: "A labelled single-line or multi-line text input with an optional hint and error message.",
   },
   {
     slug: "number-field",
@@ -85,8 +81,7 @@ export const catalog: Entry[] = [
     page: NumberFieldPage,
     parts:
       "<NumberField label placeholder description errorMessage>, or: NumberField · Label · Group · Input · DecrementTrigger · IncrementTrigger · Description · ErrorMessage",
-    summary:
-      "A labelled input for a number, with − and + buttons, limits and steps.",
+    summary: "A labelled input for a number, with − and + buttons, limits and steps.",
   },
   {
     slug: "date-picker",
@@ -95,8 +90,7 @@ export const catalog: Entry[] = [
     page: DatePickerPage,
     parts:
       "<DatePicker label description errorMessage>, or: DatePicker · Label · Control · Input · Trigger · Portal · Content · Header · PrevTrigger · Heading · NextTrigger · Grid",
-    summary:
-      "A labelled date input that people can type into or fill from a calendar that opens below it.",
+    summary: "A labelled date input that people can type into or fill from a calendar that opens below it.",
   },
   {
     slug: "checkbox",
@@ -105,8 +99,7 @@ export const catalog: Entry[] = [
     page: CheckboxPage,
     parts:
       "<Checkbox label description errorMessage>, or: Checkbox · Input · Control · Indicator · Label · Description · ErrorMessage",
-    summary:
-      "A box a person ticks to turn one option on or off, with a label and optional hint or error.",
+    summary: "A box a person ticks to turn one option on or off, with a label and optional hint or error.",
   },
   {
     slug: "select",
@@ -133,8 +126,7 @@ export const catalog: Entry[] = [
     name: "Filter",
     group: "Forms",
     page: FilterPage,
-    parts:
-      "Filter · Trigger · Chips · Portal · Overlay · Content · Header · Section · Option · Range · Footer",
+    parts: "Filter · Trigger · Chips · Portal · Overlay · Content · Header · Section · Option · Range · Footer",
     summary:
       "A Filter button and a side panel with every filterable column at once; Show applies them together, and each active filter becomes a chip.",
   },
@@ -153,18 +145,15 @@ export const catalog: Entry[] = [
     group: "Navigation",
     page: TabsPage,
     parts: "Tabs · List · Trigger · Content",
-    summary:
-      "A row of labels that switches between views of the same place, showing one panel at a time.",
+    summary: "A row of labels that switches between views of the same place, showing one panel at a time.",
   },
   {
     slug: "command",
     name: "Command",
     group: "Navigation",
     page: CommandPage,
-    parts:
-      "Command · Input · List · Group · Item · Shortcut · Separator · Empty · Dialog",
-    summary:
-      "A searchable list of actions, for a command palette or a quick switcher.",
+    parts: "Command · Input · List · Group · Item · Shortcut · Separator · Empty · Dialog",
+    summary: "A searchable list of actions, for a command palette or a quick switcher.",
   },
   {
     slug: "pagination",
@@ -172,16 +161,14 @@ export const catalog: Entry[] = [
     group: "Navigation",
     page: PaginationPage,
     parts: "Pagination · Previous · Items · Item · Ellipsis · Next",
-    summary:
-      "Numbered pages with Previous and Next, for moving through a table or a long list a page at a time.",
+    summary: "Numbered pages with Previous and Next, for moving through a table or a long list a page at a time.",
   },
   {
     slug: "dialog",
     name: "Dialog",
     group: "Overlays",
     page: DialogPage,
-    parts:
-      "Dialog · Trigger · Portal · Overlay · Content · Header · Title · Description · Body · Footer · CloseButton",
+    parts: "Dialog · Trigger · Portal · Overlay · Content · Header · Title · Description · Body · Footer · CloseButton",
     summary:
       "A window over the page for a decision or a short form that has to be finished, or cancelled, before going on.",
   },
@@ -209,10 +196,8 @@ export const catalog: Entry[] = [
     name: "Toast",
     group: "Feedback",
     page: ToastPage,
-    parts:
-      "toast() · toast.success · toast.error · toast.loading · toast.promise · toast.dismiss · <Toaster>",
-    summary:
-      "A short message in a corner of the screen that confirms something happened, and goes away by itself.",
+    parts: "toast() · toast.success · toast.error · toast.loading · toast.promise · toast.dismiss · <Toaster>",
+    summary: "A short message in a corner of the screen that confirms something happened, and goes away by itself.",
   },
   {
     slug: "spinner",
@@ -229,8 +214,7 @@ export const catalog: Entry[] = [
     group: "Feedback",
     page: EmptyStatePage,
     parts: "EmptyState · Icon · Title · Description · Actions",
-    summary:
-      "A centred message for a list or page that has nothing in it yet, with the action that fills it.",
+    summary: "A centred message for a list or page that has nothing in it yet, with the action that fills it.",
   },
   {
     slug: "error-state",
@@ -247,18 +231,15 @@ export const catalog: Entry[] = [
     group: "Feedback",
     page: NotFoundPage,
     parts: "NotFound · Code · Title · Description · Actions",
-    summary:
-      "A centred message for a page or item that doesn't exist, with a large code and a way back.",
+    summary: "A centred message for a page or item that doesn't exist, with a large code and a way back.",
   },
   {
     slug: "item",
     name: "Item",
     group: "Layout",
     page: ItemPage,
-    parts:
-      "Item · Media · Content · Title · Description · Actions · Header · Footer · Group · Separator",
-    summary:
-      "A row of content with media, a title, a description and actions: a person, a file, a setting or a link.",
+    parts: "Item · Media · Content · Title · Description · Actions · Header · Footer · Group · Separator",
+    summary: "A row of content with media, a title, a description and actions: a person, a file, a setting or a link.",
   },
   {
     slug: "separator",
@@ -266,8 +247,7 @@ export const catalog: Entry[] = [
     group: "Layout",
     page: SeparatorPage,
     parts: "One level: <Separator orientation decorative>",
-    summary:
-      "A hairline between groups of content, across or down, or with a word in the middle like “or”.",
+    summary: "A hairline between groups of content, across or down, or with a word in the middle like “or”.",
   },
   {
     slug: "table",
@@ -284,16 +264,13 @@ export const catalog: Entry[] = [
     name: "Icons",
     group: "Assets",
     page: IconsPage,
-    parts:
-      '25 icons · import { PlusIcon } from "yosegi" · <PlusIcon width height />',
+    parts: '25 icons · import { PlusIcon } from "yosegi" · <PlusIcon width height />',
     summary:
       "Yosegi's outline icons: a 16px grid, a 1.5px stroke and currentColor, so each follows the text around it.",
   },
 ];
 
 /** Where the playground lives, and where one entry's page is. */
-export const playgroundPath = (slug?: string) =>
-  slug ? `/playground/${slug}` : "/playground";
+export const playgroundPath = (slug?: string) => (slug ? `/playground/${slug}` : "/playground");
 
-export const findEntry = (slug: string | undefined) =>
-  catalog.find((entry) => entry.slug === slug);
+export const findEntry = (slug: string | undefined) => catalog.find((entry) => entry.slug === slug);

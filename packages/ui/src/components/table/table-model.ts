@@ -99,7 +99,10 @@ export function countValues<T>(column: TableColumn<T>, rows: readonly T[]) {
 /** Whether a row matches the search (in any searchable column) and every filter. */
 export function rowMatches<T>(row: T, columns: readonly TableColumn<T>[], filters: FilterValue, search = "") {
   const q = search.trim().toLowerCase();
-  if (q && !columns.some((column) => column.searchable !== false && columnText(column, row).toLowerCase().includes(q))) {
+  if (
+    q &&
+    !columns.some((column) => column.searchable !== false && columnText(column, row).toLowerCase().includes(q))
+  ) {
     return false;
   }
   for (const [key, filter] of Object.entries(filters)) {
@@ -146,7 +149,12 @@ export function sortRows<T>(rows: readonly T[], columns: readonly TableColumn<T>
  * Search, filter, sort and page an array, as the table does in the browser. A
  * server can run the same steps, or a pretend server in a demo.
  */
-export function applyTableQuery<T>(data: readonly T[], columns: readonly TableColumn<T>[], query: TableQuery, pageSize = 10) {
+export function applyTableQuery<T>(
+  data: readonly T[],
+  columns: readonly TableColumn<T>[],
+  query: TableQuery,
+  pageSize = 10,
+) {
   const size = query.pageSize ?? pageSize;
   const matching = data.filter((row) => rowMatches(row, columns, query.filters, query.search));
   const sorted = sortRows(matching, columns, query.sort);

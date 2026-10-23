@@ -17,7 +17,11 @@ export function NotFoundPage() {
           </NotFound.Actions>
         </NotFound>
       </Case>
-      <Case title="One item" description="A single thing that's gone, inside a page: smaller code and padding." layout="fill">
+      <Case
+        title="One item"
+        description="A single thing that's gone, inside a page: smaller code and padding."
+        layout="fill"
+      >
         <NotFound style={{ "--yosegi-not-found-padding": "var(--yosegi-space-800) var(--yosegi-space-400)" }}>
           <NotFound.Code style={{ "font-size": "48px" }}>404</NotFound.Code>
           <NotFound.Title as="h3">This note doesn't exist</NotFound.Title>

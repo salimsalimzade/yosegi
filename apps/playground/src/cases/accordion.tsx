@@ -3,9 +3,21 @@ import { Accordion, type AccordionProps } from "yosegi";
 import { Case, Cases } from "../ui/case";
 
 const faq = [
-  { value: "what", q: "What is Yosegi?", a: "A small design system for SolidJS. Plain pieces, one accent colour, and parts you can style however you like." },
-  { value: "colours", q: "Can I change the colours?", a: "Yes. Set a system token such as --yosegi-color-bg-accent, or a component knob such as --yosegi-accordion-border." },
-  { value: "kobalte", q: "Does it follow Kobalte?", a: "The parts and data attributes match Kobalte: Accordion, Item, Header, Trigger and Content." },
+  {
+    value: "what",
+    q: "What is Yosegi?",
+    a: "A small design system for SolidJS. Plain pieces, one accent colour, and parts you can style however you like.",
+  },
+  {
+    value: "colours",
+    q: "Can I change the colours?",
+    a: "Yes. Set a system token such as --yosegi-color-bg-accent, or a component knob such as --yosegi-accordion-border.",
+  },
+  {
+    value: "kobalte",
+    q: "Does it follow Kobalte?",
+    a: "The parts and data attributes match Kobalte: Accordion, Item, Header, Trigger and Content.",
+  },
 ];
 
 function Faq(props: AccordionProps & { locked?: boolean }) {

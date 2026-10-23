@@ -1,5 +1,16 @@
 import type { JSX } from "@solidjs/web";
-import { children, createEffect, createMemo, createSignal, createUniqueId, For, omit, onCleanup, Show, untrack } from "solid-js";
+import {
+  children,
+  createEffect,
+  createMemo,
+  createSignal,
+  createUniqueId,
+  For,
+  omit,
+  onCleanup,
+  Show,
+  untrack,
+} from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createPart } from "../../primitives/create-part";
 import { dataAttr, mergeStyle } from "../../primitives/dom";
@@ -11,7 +22,17 @@ import { Spinner } from "../spinner/spinner";
 import { TextField } from "../text-field/text-field";
 import { Filter, type FilterValue } from "./filter";
 import { Pagination } from "./pagination";
-import { columnText, countValues, filterKind, filterOptions, pageOffset, rowMatches, sortRows, type TableColumn, type TableQuery } from "./table-model";
+import {
+  columnText,
+  countValues,
+  filterKind,
+  filterOptions,
+  pageOffset,
+  rowMatches,
+  sortRows,
+  type TableColumn,
+  type TableQuery,
+} from "./table-model";
 import styles from "./table.module.scss";
 
 /** A plain table: the parts below, put together by hand. */
@@ -170,7 +191,12 @@ function PageSize(props: TablePageSizeProps) {
 
   return (
     <div {...rest} class={[styles["page-size"], "yosegi-table-page-size", props.class]}>
-      <Select options={options()} value={String(size())} onChange={(value) => setSize(Number(value))} placement="top-start">
+      <Select
+        options={options()}
+        value={String(size())}
+        onChange={(value) => setSize(Number(value))}
+        placement="top-start"
+      >
         <Select.Label>Rows per page</Select.Label>
         <Select.Trigger />
         <Select.Portal>
@@ -255,9 +281,15 @@ const isActive = (value: FilterValue[string]) =>
 
 /** Clicks on these, inside a row, are theirs and don't open the row. */
 const fromControl = (event: Event) =>
-  event.target instanceof Element && !!event.target.closest("a, button, input, select, textarea, label, .yosegi-checkbox");
+  event.target instanceof Element &&
+  !!event.target.closest("a, button, input, select, textarea, label, .yosegi-checkbox");
 
-function RowCheck(props: { label: string; checked: boolean; indeterminate?: boolean; onChange: (checked: boolean) => void }) {
+function RowCheck(props: {
+  label: string;
+  checked: boolean;
+  indeterminate?: boolean;
+  onChange: (checked: boolean) => void;
+}) {
   return (
     <Checkbox checked={props.checked} indeterminate={props.indeterminate} onChange={props.onChange}>
       <Checkbox.Input aria-label={props.label} />
@@ -271,10 +303,38 @@ function RowCheck(props: { label: string; checked: boolean; indeterminate?: bool
 function DataTable<T>(props: DataTableProps<T>) {
   const rest = omit(
     props,
-    "data", "columns", "rowKey", "title", "description", "actions", "toolbar", "noun", "searchable", "searchPlaceholder",
-    "searchDelay", "pageSize", "pageSizeOptions", "height", "maxHeight", "query", "defaultQuery", "onQueryChange", "manual", "rowCount",
-    "resultCount", "loading", "selectable", "selected", "defaultSelected", "onSelectedChange", "selectionActions", "onRowClick",
-    "rowHref", "empty", "aria-label", "style",
+    "data",
+    "columns",
+    "rowKey",
+    "title",
+    "description",
+    "actions",
+    "toolbar",
+    "noun",
+    "searchable",
+    "searchPlaceholder",
+    "searchDelay",
+    "pageSize",
+    "pageSizeOptions",
+    "height",
+    "maxHeight",
+    "query",
+    "defaultQuery",
+    "onQueryChange",
+    "manual",
+    "rowCount",
+    "resultCount",
+    "loading",
+    "selectable",
+    "selected",
+    "defaultSelected",
+    "onSelectedChange",
+    "selectionActions",
+    "onRowClick",
+    "rowHref",
+    "empty",
+    "aria-label",
+    "style",
   );
   const title = children(() => props.title);
   const description = children(() => props.description);
@@ -348,7 +408,9 @@ function DataTable<T>(props: DataTableProps<T>) {
   };
 
   const matching = createMemo(() =>
-    props.manual ? props.data : props.data.filter((row) => rowMatches(row, props.columns, query().filters, query().search)),
+    props.manual
+      ? props.data
+      : props.data.filter((row) => rowMatches(row, props.columns, query().filters, query().search)),
   );
   const sorted = createMemo(() => (props.manual ? matching() : sortRows(matching(), props.columns, query().sort)));
   const total = () => (props.manual ? (props.rowCount ?? props.data.length) : matching().length);
@@ -373,7 +435,9 @@ function DataTable<T>(props: DataTableProps<T>) {
   });
   const selectedSet = createMemo(() => new Set(selected()));
   const keyOf = (row: T) =>
-    typeof props.rowKey === "function" ? props.rowKey(row) : String((row as Record<string, unknown>)[props.rowKey ?? "id"]);
+    typeof props.rowKey === "function"
+      ? props.rowKey(row)
+      : String((row as Record<string, unknown>)[props.rowKey ?? "id"]);
   const isSelected = (row: T) => selectedSet().has(keyOf(row));
   const toggle = (rows: readonly T[], on: boolean) => {
     const next = new Set(untrack(selectedSet));
@@ -464,8 +528,13 @@ function DataTable<T>(props: DataTableProps<T>) {
                         <For each={filterable()}>
                           {(column) => {
                             // Read once: in server mode the page's values could flip the kind.
-                            const kind = filterKind(column, untrack(() => props.data));
-                            const counts = createMemo(() => (props.manual ? undefined : countValues(column, props.data)));
+                            const kind = filterKind(
+                              column,
+                              untrack(() => props.data),
+                            );
+                            const counts = createMemo(() =>
+                              props.manual ? undefined : countValues(column, props.data),
+                            );
                             return (
                               <Show
                                 when={kind === "range"}
@@ -593,17 +662,23 @@ function DataTable<T>(props: DataTableProps<T>) {
                   if (clickable() && !fromControl(event)) props.onRowClick!(row(), event);
                 }}
                 onKeyDown={(event) => {
-                  if (clickable() && event.key === "Enter" && event.target === event.currentTarget) props.onRowClick!(row(), event);
+                  if (clickable() && event.key === "Enter" && event.target === event.currentTarget)
+                    props.onRowClick!(row(), event);
                 }}
               >
                 <Show when={props.selectable}>
                   <Cell selection>
-                    <RowCheck label={`Select ${keyOf(row())}`} checked={isSelected(row())} onChange={(on) => toggle([row()], on)} />
+                    <RowCheck
+                      label={`Select ${keyOf(row())}`}
+                      checked={isSelected(row())}
+                      onChange={(on) => toggle([row()], on)}
+                    />
                   </Cell>
                 </Show>
                 <For each={props.columns}>
                   {(column) => {
-                    const content = () => (column.cell ? column.cell(row(), columnText(column, row())) : columnText(column, row()));
+                    const content = () =>
+                      column.cell ? column.cell(row(), columnText(column, row())) : columnText(column, row());
                     const href = () => (column === props.columns[0] ? props.rowHref?.(row()) : undefined);
                     return (
                       <Cell align={column.align} class={column.class}>

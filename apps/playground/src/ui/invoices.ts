@@ -11,7 +11,15 @@ export interface Invoice {
 export const statusLabels = { paid: "Paid", pending: "Pending", unpaid: "Unpaid" } as const;
 export const methodLabels = { card: "Card", bank: "Bank transfer", cash: "Cash" } as const;
 
-const customers = ["Aiko Tanaka", "Mateo Rossi", "Nia Okafor", "Lena Fischer", "Omar Haddad", "Sofía Herrera", "Salim Salimzade"];
+const customers = [
+  "Aiko Tanaka",
+  "Mateo Rossi",
+  "Nia Okafor",
+  "Lena Fischer",
+  "Omar Haddad",
+  "Sofía Herrera",
+  "Salim Salimzade",
+];
 
 // 312 invoices, newest first, the same every time, so there are pages to move through.
 export const invoices: Invoice[] = Array.from({ length: 312 }, (_, i) => {

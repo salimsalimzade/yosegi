@@ -1,5 +1,16 @@
 import type { JSX, ValidComponent } from "@solidjs/web";
-import { children, createContext, createEffect, createMemo, createSignal, createUniqueId, omit, onSettled, Show, useContext } from "solid-js";
+import {
+  children,
+  createContext,
+  createEffect,
+  createMemo,
+  createSignal,
+  createUniqueId,
+  omit,
+  onSettled,
+  Show,
+  useContext,
+} from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createPart, createTag } from "../../primitives/create-part";
 import { callHandler, dataAttr, focusFirst } from "../../primitives/dom";
@@ -82,7 +93,11 @@ function DialogRoot(props: DialogProps) {
         setTrigger,
       }}
     >
-      {"trigger" in props || "title" in props ? <Built {...omit(props, "children")}>{props.children}</Built> : props.children}
+      {"trigger" in props || "title" in props ? (
+        <Built {...omit(props, "children")}>{props.children}</Built>
+      ) : (
+        props.children
+      )}
     </DialogContext>
   );
 }
@@ -177,7 +192,7 @@ function Overlay(props: JSX.HTMLAttributes<HTMLDivElement>) {
 
   return (
     <Show when={dialog.open()}>
-      <div aria-hidden="true" {...rest} class={[styles.overlay, "yosegi-dialog-overlay", props.class]} data-expanded="" >
+      <div aria-hidden="true" {...rest} class={[styles.overlay, "yosegi-dialog-overlay", props.class]} data-expanded="">
         {props.children}
       </div>
     </Show>
@@ -234,7 +249,10 @@ function Content(props: JSX.DialogHtmlAttributes<HTMLDialogElement>) {
           if (event.target !== el || props.role === "alertdialog") return;
           const box = el.getBoundingClientRect();
           const inside =
-            event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
+            event.clientX >= box.left &&
+            event.clientX <= box.right &&
+            event.clientY >= box.top &&
+            event.clientY <= box.bottom;
           if (!inside) dialog.setOpen(false);
         }}
       >

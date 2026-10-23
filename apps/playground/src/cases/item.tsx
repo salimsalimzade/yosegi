@@ -27,7 +27,11 @@ export function ItemPage() {
         </For>
       </Case>
 
-      <Case title="Sizes" description="md (default), sm and xs for dense lists; media shrinks with them." layout="stack">
+      <Case
+        title="Sizes"
+        description="md (default), sm and xs for dense lists; media shrinks with them."
+        layout="stack"
+      >
         <For each={["md", "sm", "xs"] as const}>
           {(size) => (
             <Item variant="outline" size={size} style={{ width: "100%" }}>
@@ -72,7 +76,11 @@ export function ItemPage() {
           </Item>
         </Case>
 
-        <Case title="A list of people" description="Group and Separator, avatar media, a selected row and a disabled one." layout="fill">
+        <Case
+          title="A list of people"
+          description="Group and Separator, avatar media, a selected row and a disabled one."
+          layout="fill"
+        >
           <Item.Group>
             <For each={people}>
               {(person, index) => (
@@ -104,7 +112,9 @@ export function ItemPage() {
               <Item.Description>Temples in the morning, long lunches, slow trains.</Item.Description>
             </Item.Content>
             <Item.Footer>
-              <span style={{ font: "var(--yosegi-text-small)", color: "var(--yosegi-color-fg-muted)" }}>4 notes · edited yesterday</span>
+              <span style={{ font: "var(--yosegi-text-small)", color: "var(--yosegi-color-fg-muted)" }}>
+                4 notes · edited yesterday
+              </span>
             </Item.Footer>
           </Item>
         </Case>

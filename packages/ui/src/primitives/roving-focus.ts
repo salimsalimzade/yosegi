@@ -6,7 +6,9 @@ export type Orientation = "horizontal" | "vertical";
  * skipped and the ends wrap around. Returns the newly focused item.
  */
 export function moveFocus(event: KeyboardEvent, items: HTMLElement[], orientation: Orientation) {
-  const enabled = items.filter((item) => !item.hasAttribute("disabled") && item.getAttribute("aria-disabled") !== "true");
+  const enabled = items.filter(
+    (item) => !item.hasAttribute("disabled") && item.getAttribute("aria-disabled") !== "true",
+  );
   const index = enabled.indexOf(event.currentTarget as HTMLElement);
   if (index === -1 || enabled.length === 0) return;
 

@@ -42,16 +42,16 @@
     --yosegi-font-weight-regular: 400;
     --yosegi-font-weight-semibold: 600;
 
-    --yosegi-text-display: var(--yosegi-font-weight-semibold) 36px/40px var(--yosegi-font-family-mono);
+    --yosegi-text-display: var(--yosegi-font-weight-semibold) 36px / 40px var(--yosegi-font-family-mono);
     --yosegi-text-display-tracking: -0.02em;
-    --yosegi-text-title: var(--yosegi-font-weight-semibold) 24px/30px var(--yosegi-font-family-mono);
+    --yosegi-text-title: var(--yosegi-font-weight-semibold) 24px / 30px var(--yosegi-font-family-mono);
     --yosegi-text-title-tracking: -0.01em;
-    --yosegi-text-heading: var(--yosegi-font-weight-semibold) 18px/24px var(--yosegi-font-family-sans);
+    --yosegi-text-heading: var(--yosegi-font-weight-semibold) 18px / 24px var(--yosegi-font-family-sans);
     --yosegi-text-heading-tracking: 0;
-    --yosegi-text-label: var(--yosegi-font-weight-semibold) 12px/16px var(--yosegi-font-family-mono);
-    --yosegi-text-body: var(--yosegi-font-weight-regular) 14px/20px var(--yosegi-font-family-sans);
-    --yosegi-text-small: var(--yosegi-font-weight-regular) 12px/16px var(--yosegi-font-family-sans);
-    --yosegi-text-code: var(--yosegi-font-weight-regular) 13px/20px var(--yosegi-font-family-mono);
+    --yosegi-text-label: var(--yosegi-font-weight-semibold) 12px / 16px var(--yosegi-font-family-mono);
+    --yosegi-text-body: var(--yosegi-font-weight-regular) 14px / 20px var(--yosegi-font-family-sans);
+    --yosegi-text-small: var(--yosegi-font-weight-regular) 12px / 16px var(--yosegi-font-family-sans);
+    --yosegi-text-code: var(--yosegi-font-weight-regular) 13px / 20px var(--yosegi-font-family-mono);
 
     /* Spacing. The number is a percentage of the 4px base. */
     --yosegi-space-100: 4px;

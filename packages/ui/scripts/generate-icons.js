@@ -36,8 +36,7 @@ const svgo = {
 };
 
 /** search-off → SearchOffIcon */
-const componentName = (file) =>
-  file.replace(/(^|-)([a-z0-9])/g, (_, __, char) => char.toUpperCase()) + "Icon";
+const componentName = (file) => file.replace(/(^|-)([a-z0-9])/g, (_, __, char) => char.toUpperCase()) + "Icon";
 
 const attributes = (text) => [...text.matchAll(/([\w:-]+)="([^"]*)"/g)].map(([, name, value]) => [name, value]);
 
@@ -50,7 +49,10 @@ function readIcon(file) {
   const match = data.trim().match(/^<svg([^>]*)>([\s\S]*)<\/svg>$/);
   if (!match) throw new Error(`src/icons/${file}: expected one <svg> element`);
   // Every copy of an icon on a page would share its ids, so masks and gradients can't work.
-  if (/\sid="/.test(data)) throw new Error(`src/icons/${file}: icons can't use ids (masks, gradients, clip paths); draw it with strokes and fills`);
+  if (/\sid="/.test(data))
+    throw new Error(
+      `src/icons/${file}: icons can't use ids (masks, gradients, clip paths); draw it with strokes and fills`,
+    );
 
   const svgAttributes = attributes(match[1]).filter(([attr]) => !attr.startsWith("xmlns"));
   const body = match[2]
@@ -64,7 +66,11 @@ function readIcon(file) {
 const compact = (svg) => svg.replace(/>\s+</g, "><").trim() + "\n";
 
 function component(icon) {
-  const attrs = [...icon.svgAttributes.map(([name, value]) => `${name}="${value}"`), 'aria-hidden="true"', "{...props}"];
+  const attrs = [
+    ...icon.svgAttributes.map(([name, value]) => `${name}="${value}"`),
+    'aria-hidden="true"',
+    "{...props}",
+  ];
   const oneLine = `    <svg ${attrs.join(" ")}>`;
   const open = oneLine.length <= 120 ? oneLine : `    <svg\n${attrs.map((attr) => `      ${attr}`).join("\n")}\n    >`;
   return [
@@ -112,8 +118,13 @@ const stale = existsSync(playground)
 const relative = (url) => url.pathname.replace(new URL("../../", root).pathname, "");
 
 if (check) {
-  const outdated = [...files].filter(([url, text]) => !existsSync(url) || readFileSync(url, "utf8") !== text).map(([url]) => url);
-  const problems = [...outdated.map((url) => `out of date: ${relative(url)}`), ...stale.map((url) => `no SVG for: ${relative(url)}`)];
+  const outdated = [...files]
+    .filter(([url, text]) => !existsSync(url) || readFileSync(url, "utf8") !== text)
+    .map(([url]) => url);
+  const problems = [
+    ...outdated.map((url) => `out of date: ${relative(url)}`),
+    ...stale.map((url) => `no SVG for: ${relative(url)}`),
+  ];
   if (problems.length > 0) {
     console.error(`Icons are out of date. Run \`pnpm generate\`.\n  ${problems.join("\n  ")}`);
     process.exit(1);
@@ -123,5 +134,7 @@ if (check) {
   mkdirSync(playground, { recursive: true });
   for (const [url, text] of files) writeFileSync(url, text);
   for (const url of stale) rmSync(url);
-  console.log(`Generated ${icons.length} icons into ${relative(output)}${stale.length ? `, removed ${stale.length} old downloads` : ""}.`);
+  console.log(
+    `Generated ${icons.length} icons into ${relative(output)}${stale.length ? `, removed ${stale.length} old downloads` : ""}.`,
+  );
 }

@@ -23,7 +23,9 @@ const useTextField = () => useContext(TextFieldContext);
  * as children to arrange them yourself.
  */
 export interface TextFieldProps
-  extends FieldState, FieldTextProps, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  extends FieldState,
+    FieldTextProps,
+    Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
   /** Something about the value is being checked; sets data-loading and aria-busy, and shows a spinner. */
   loading?: boolean;
   value?: string;
@@ -49,8 +51,26 @@ function TextFieldRoot(props: TextFieldProps) {
   });
   const rest = omit(
     props,
-    "loading", "value", "defaultValue", "onChange", "name", "label", "description", "errorMessage", "placeholder", "type",
-    "autocomplete", "icon", "multiline", "validationState", "required", "disabled", "readOnly", "class", "children", "aria-label",
+    "loading",
+    "value",
+    "defaultValue",
+    "onChange",
+    "name",
+    "label",
+    "description",
+    "errorMessage",
+    "placeholder",
+    "type",
+    "autocomplete",
+    "icon",
+    "multiline",
+    "validationState",
+    "required",
+    "disabled",
+    "readOnly",
+    "class",
+    "children",
+    "aria-label",
   );
   const icon = children(() => props.icon);
 
@@ -75,7 +95,12 @@ function TextFieldRoot(props: TextFieldProps) {
             <Show
               when={!props.multiline}
               fallback={
-                <TextArea autoResize placeholder={props.placeholder} autocomplete={props.autocomplete} aria-label={props["aria-label"]} />
+                <TextArea
+                  autoResize
+                  placeholder={props.placeholder}
+                  autocomplete={props.autocomplete}
+                  aria-label={props["aria-label"]}
+                />
               }
             >
               {/* Always the group, so the input keeps focus when the spinner comes and goes. */}
@@ -168,10 +193,7 @@ function TextArea(props: TextFieldTextAreaProps) {
     <textarea
       {...controlAttributes(ctx)}
       {...rest}
-      ref={[
-        (el: HTMLTextAreaElement) => requestAnimationFrame(() => resize(el)),
-        props.ref as any,
-      ]}
+      ref={[(el: HTMLTextAreaElement) => requestAnimationFrame(() => resize(el)), props.ref as any]}
       class={[styles.textarea, "yosegi-text-field-textarea", props.class]}
       value={ctx.value()}
       onInput={(event) => {
@@ -187,10 +209,7 @@ function TextArea(props: TextFieldTextAreaProps) {
 function Group(props: JSX.HTMLAttributes<HTMLDivElement>) {
   const rest = omit(props, "class", "children");
   return (
-    <div
-      {...rest}
-      class={[styles.group, "yosegi-text-field-group", props.class]}
-    >
+    <div {...rest} class={[styles.group, "yosegi-text-field-group", props.class]}>
       {props.children}
     </div>
   );

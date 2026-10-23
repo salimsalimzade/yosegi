@@ -4,7 +4,11 @@ import { Case } from "../ui/case";
 export function TabsPage() {
   return (
     <>
-      <Case title="Horizontal, with counts" description="← → move between tabs and switch panels; the disabled one is skipped." layout="fill">
+      <Case
+        title="Horizontal, with counts"
+        description="← → move between tabs and switch panels; the disabled one is skipped."
+        layout="fill"
+      >
         <Tabs defaultValue="all">
           <Tabs.List aria-label="Notes">
             <Tabs.Trigger value="all">
@@ -18,7 +22,9 @@ export function TabsPage() {
               Shared
             </Tabs.Trigger>
           </Tabs.List>
-          <Tabs.Content value="all">12 notes, newest first. “Shared” is disabled until you invite someone.</Tabs.Content>
+          <Tabs.Content value="all">
+            12 notes, newest first. “Shared” is disabled until you invite someone.
+          </Tabs.Content>
           <Tabs.Content value="pinned">3 pinned notes.</Tabs.Content>
           <Tabs.Content value="archive">Nothing archived yet.</Tabs.Content>
         </Tabs>
@@ -43,7 +49,11 @@ export function TabsPage() {
         </Tabs>
       </Case>
 
-      <Case title="Manual activation" description='activationMode="manual": arrows move focus, Enter or Space switches.' layout="fill">
+      <Case
+        title="Manual activation"
+        description='activationMode="manual": arrows move focus, Enter or Space switches.'
+        layout="fill"
+      >
         <Tabs activationMode="manual" defaultValue="day">
           <Tabs.List aria-label="Range">
             <Tabs.Trigger value="day">Day</Tabs.Trigger>

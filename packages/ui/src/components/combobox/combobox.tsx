@@ -99,7 +99,10 @@ const ControlContext = createContext<boolean>(false);
 
 /** With no children, Combobox builds itself from label, placeholder, description and errorMessage. */
 interface ComboboxBaseProps<T>
-  extends FieldState, FieldTextProps, OptionAccessors<T>, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  extends FieldState,
+    FieldTextProps,
+    OptionAccessors<T>,
+    Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
   /** { value, label, group?, disabled? }, or your own objects read through getOptionValue and getOptionLabel. */
   options: readonly T[];
   /** contains (default), startsWith, or your own test. Ignored when you search on a server. */
@@ -230,7 +233,9 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
 
   // The rows the arrow keys move through, in order.
   const rows = () => [
-    ...visible().filter((option) => !unavailable(option)).map((option) => option.value),
+    ...visible()
+      .filter((option) => !unavailable(option))
+      .map((option) => option.value),
     ...(createQuery() !== undefined ? [CREATE] : []),
   ];
 
@@ -330,12 +335,51 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
   });
 
   const rest = omit(
-    props as ComboboxBaseProps<T> & { multiple?: boolean; max?: number; clearable?: boolean; value?: unknown; defaultValue?: unknown; onChange?: unknown },
-    "options", "value", "defaultValue", "onChange", "filter", "onCreate", "onInputChange", "minQueryLength",
-    "loading", "loadingText", "error", "errorText", "onRetry", "hint", "placement", "name", "multiple", "max",
-    "clearable", "label", "description", "errorMessage", "placeholder", "searchPlaceholder", "emptyText", "renderOption",
-    "getOptionValue", "getOptionLabel", "getOptionGroup", "getOptionDisabled",
-    "validationState", "required", "disabled", "readOnly", "class", "children", "aria-label",
+    props as ComboboxBaseProps<T> & {
+      multiple?: boolean;
+      max?: number;
+      clearable?: boolean;
+      value?: unknown;
+      defaultValue?: unknown;
+      onChange?: unknown;
+    },
+    "options",
+    "value",
+    "defaultValue",
+    "onChange",
+    "filter",
+    "onCreate",
+    "onInputChange",
+    "minQueryLength",
+    "loading",
+    "loadingText",
+    "error",
+    "errorText",
+    "onRetry",
+    "hint",
+    "placement",
+    "name",
+    "multiple",
+    "max",
+    "clearable",
+    "label",
+    "description",
+    "errorMessage",
+    "placeholder",
+    "searchPlaceholder",
+    "emptyText",
+    "renderOption",
+    "getOptionValue",
+    "getOptionLabel",
+    "getOptionGroup",
+    "getOptionDisabled",
+    "validationState",
+    "required",
+    "disabled",
+    "readOnly",
+    "class",
+    "children",
+    "aria-label",
   );
 
   return (
@@ -423,7 +467,9 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
                 <Show when={props.searchPlaceholder} fallback={<Search />}>
                   <Search placeholder={props.searchPlaceholder} />
                 </Show>
-                <Listbox children={props.renderOption && ((option) => props.renderOption!((option as ResolvedOption<T>).item))} />
+                <Listbox
+                  children={props.renderOption && ((option) => props.renderOption!((option as ResolvedOption<T>).item))}
+                />
               </Content>
             </Portal>
           </FieldLayout>
@@ -436,7 +482,8 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
   );
 }
 
-const isPrintable = (event: KeyboardEvent) => event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
+const isPrintable = (event: KeyboardEvent) =>
+  event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
 
 /** On its own: the box, a button with the chevron after its children. Inside Control: just the chevron. */
 function Trigger(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
@@ -497,7 +544,11 @@ function Value(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
     return value === undefined ? undefined : (combobox.optionFor(value)?.label ?? value);
   };
   return (
-    <span {...rest} class={[styles.value, "yosegi-combobox-value", props.class]} data-placeholder-shown={dataAttr(label() === undefined)}>
+    <span
+      {...rest}
+      class={[styles.value, "yosegi-combobox-value", props.class]}
+      data-placeholder-shown={dataAttr(label() === undefined)}
+    >
       {label() ?? props.placeholder}
     </span>
   );
@@ -624,7 +675,10 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
     // Focus the chip before it, or what comes after the chips.
     requestAnimationFrame(() => {
       const remaining = [...(container?.querySelectorAll<HTMLElement>(".yosegi-combobox-chip-remove") ?? [])];
-      (remaining[Math.max(0, index - 1)] ?? container?.parentElement?.querySelector<HTMLElement>(".yosegi-combobox-trigger"))?.focus();
+      (
+        remaining[Math.max(0, index - 1)] ??
+        container?.parentElement?.querySelector<HTMLElement>(".yosegi-combobox-trigger")
+      )?.focus();
     });
   };
 
@@ -652,7 +706,11 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
   );
 
   return (
-    <span {...rest} ref={(el: HTMLSpanElement) => (container = el)} class={[styles.chips, "yosegi-combobox-chips", props.class]}>
+    <span
+      {...rest}
+      ref={(el: HTMLSpanElement) => (container = el)}
+      class={[styles.chips, "yosegi-combobox-chips", props.class]}
+    >
       <Show
         when={combobox.chosen().length > 0}
         fallback={
@@ -780,7 +838,8 @@ function Content(props: ComboboxContentProps) {
     if (combobox.tooShort()) return `Type ${combobox.minQueryLength()} or more letters to search.`;
     if (combobox.loading()) return combobox.loadingText();
     const count = combobox.visible().length;
-    if (combobox.query().trim() && count === 0 && !combobox.createQuery()) return `No results for “${combobox.query().trim()}”.`;
+    if (combobox.query().trim() && count === 0 && !combobox.createQuery())
+      return `No results for “${combobox.query().trim()}”.`;
     return combobox.query().trim() ? `${count} ${count === 1 ? "result" : "results"}` : "";
   };
 
@@ -818,7 +877,9 @@ function Content(props: ComboboxContentProps) {
             }
           >
             {resolved.toArray().filter(isSearch)}
-            <div class={[styles.body, "yosegi-combobox-body"]}>{resolved.toArray().filter((node) => !isSearch(node))}</div>
+            <div class={[styles.body, "yosegi-combobox-body"]}>
+              {resolved.toArray().filter((node) => !isSearch(node))}
+            </div>
           </Show>
           <p class={styles["visually-hidden"]} aria-live="polite">
             {announcement()}
@@ -935,7 +996,9 @@ function Listbox(props: ComboboxListboxProps) {
             </Show>
           </span>
         </Show>
-        <span class={[styles["item-label"], "yosegi-combobox-item-label"]}>{props.children ? props.children(option) : option.label}</span>
+        <span class={[styles["item-label"], "yosegi-combobox-item-label"]}>
+          {props.children ? props.children(option) : option.label}
+        </span>
         <Show when={!combobox.multiple() && chosen()}>
           <TickIcon />
         </Show>
@@ -951,7 +1014,10 @@ function Listbox(props: ComboboxListboxProps) {
             <Show when={combobox.multiple()}>
               <span class={[styles["skeleton-bar"], "yosegi-combobox-skeleton-bar"]} data-shape="box" />
             </Show>
-            <span class={[styles["skeleton-bar"], "yosegi-combobox-skeleton-bar"]} style={{ "--yosegi-skeleton-width": `${width}%` }} />
+            <span
+              class={[styles["skeleton-bar"], "yosegi-combobox-skeleton-bar"]}
+              style={{ "--yosegi-skeleton-width": `${width}%` }}
+            />
           </div>
         )}
       </For>
@@ -960,7 +1026,10 @@ function Listbox(props: ComboboxListboxProps) {
 
   const limitReached = () => combobox.atMax();
   const nothingFound = () =>
-    combobox.query().trim() !== "" && !combobox.tooShort() && combobox.visible().length === 0 && combobox.createQuery() === undefined;
+    combobox.query().trim() !== "" &&
+    !combobox.tooShort() &&
+    combobox.visible().length === 0 &&
+    combobox.createQuery() === undefined;
 
   return (
     <>
@@ -991,10 +1060,17 @@ function Listbox(props: ComboboxListboxProps) {
                 <For each={group.options}>{(option) => <Item option={option} />}</For>
               ) : (
                 <li role="presentation">
-                  <div id={`${combobox.listboxId}-group-${index()}`} class={[styles.section, "yosegi-combobox-section"]}>
+                  <div
+                    id={`${combobox.listboxId}-group-${index()}`}
+                    class={[styles.section, "yosegi-combobox-section"]}
+                  >
                     {group.name}
                   </div>
-                  <ul role="group" aria-labelledby={`${combobox.listboxId}-group-${index()}`} class={[styles.group, "yosegi-combobox-group"]}>
+                  <ul
+                    role="group"
+                    aria-labelledby={`${combobox.listboxId}-group-${index()}`}
+                    class={[styles.group, "yosegi-combobox-group"]}
+                  >
                     <For each={group.options}>{(option) => <Item option={option} />}</For>
                   </ul>
                 </li>

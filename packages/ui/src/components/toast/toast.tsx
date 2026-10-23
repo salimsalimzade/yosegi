@@ -70,12 +70,21 @@ export const toast = Object.assign(show, {
   /** A loading toast that turns into success or error when the promise settles. */
   promise<T>(
     promise: Promise<T>,
-    messages: { loading: string; success: string | ((value: T) => string); error: string | ((error: unknown) => string) },
+    messages: {
+      loading: string;
+      success: string | ((value: T) => string);
+      error: string | ((error: unknown) => string);
+    },
   ) {
     const id = show(messages.loading, { type: "loading" });
     promise.then(
-      (value) => show(typeof messages.success === "function" ? messages.success(value) : messages.success, { id, type: "success" }),
-      (error) => show(typeof messages.error === "function" ? messages.error(error) : messages.error, { id, type: "error" }),
+      (value) =>
+        show(typeof messages.success === "function" ? messages.success(value) : messages.success, {
+          id,
+          type: "success",
+        }),
+      (error) =>
+        show(typeof messages.error === "function" ? messages.error(error) : messages.error, { id, type: "error" }),
     );
     return promise;
   },
@@ -163,7 +172,14 @@ export function Toaster(props: ToasterProps) {
 
 function ErrorIcon() {
   return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
       <circle cx="8" cy="8" r="6" />
       <path d="M8 5v3.5M8 11h.01" />
     </svg>
@@ -184,7 +200,14 @@ function ToastItem(props: {
   createEffect(
     // Everything the timer depends on is read here, where it's tracked; the
     // callback below only uses what it's handed.
-    () => [props.paused, props.toast.type, props.toast.version, props.toast.closing, props.toast.duration ?? props.duration] as const,
+    () =>
+      [
+        props.paused,
+        props.toast.type,
+        props.toast.version,
+        props.toast.closing,
+        props.toast.duration ?? props.duration,
+      ] as const,
     ([paused, type, currentVersion, closing, duration]) => {
       if (currentVersion !== version) {
         version = currentVersion;
@@ -245,7 +268,12 @@ function ToastItem(props: {
           />
         )}
       </Show>
-      <button type="button" class={[styles.close, "yosegi-toast-close"]} aria-label="Dismiss" onClick={() => props.onClose()}>
+      <button
+        type="button"
+        class={[styles.close, "yosegi-toast-close"]}
+        aria-label="Dismiss"
+        onClick={() => props.onClose()}
+      >
         <CloseIcon />
       </button>
     </li>

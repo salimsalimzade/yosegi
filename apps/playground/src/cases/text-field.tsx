@@ -17,7 +17,11 @@ export function TextFieldPage() {
         <TextField label="Project name" defaultValue="Reading list" description="You can change it later." />
       </Case>
 
-      <Case title="Invalid" description="Validated after blur: errorMessage is set only then, and replaces the hint. Type a full address to fix it." layout="fill">
+      <Case
+        title="Invalid"
+        description="Validated after blur: errorMessage is set only then, and replaces the hint. Type a full address to fix it."
+        layout="fill"
+      >
         <TextField
           label="Email"
           type="email"
@@ -33,15 +37,32 @@ export function TextFieldPage() {
         <TextField label="Folder" disabled defaultValue="Personal" description="Folders are locked while syncing." />
       </Case>
 
-      <Case title="Read-only" description="Shown, not edited; it can still be copied and is sent with the form." layout="fill">
-        <TextField label="Project ID" readOnly defaultValue="prj_8f2c11" description="Set by Yosegi; copy it, don't edit it." />
+      <Case
+        title="Read-only"
+        description="Shown, not edited; it can still be copied and is sent with the form."
+        layout="fill"
+      >
+        <TextField
+          label="Project ID"
+          readOnly
+          defaultValue="prj_8f2c11"
+          description="Set by Yosegi; copy it, don't edit it."
+        />
       </Case>
 
-      <Case title="Leading icon" description="icon puts a 16px icon before the text, like the search glass." layout="fill">
+      <Case
+        title="Leading icon"
+        description="icon puts a 16px icon before the text, like the search glass."
+        layout="fill"
+      >
         <TextField icon={<SearchIcon />} type="search" placeholder="Search invoices" aria-label="Search invoices" />
       </Case>
 
-      <Case title="Loading" description="Something about the value is being checked: a spinner, and the field stays usable." layout="fill">
+      <Case
+        title="Loading"
+        description="Something about the value is being checked: a spinner, and the field stays usable."
+        layout="fill"
+      >
         <TextField label="Username" loading defaultValue="salim" description="Checking that the name is free…" />
       </Case>
 

@@ -40,7 +40,12 @@ export function createFieldParts(useField: () => Field, classes: FieldPartClasse
     field.register("error");
     const rest = omit(props, "class", "children");
     return (
-      <p id={field.errorId} role="alert" {...rest} class={[classes.errorMessage, `${prefix}-error-message`, props.class]}>
+      <p
+        id={field.errorId}
+        role="alert"
+        {...rest}
+        class={[classes.errorMessage, `${prefix}-error-message`, props.class]}
+      >
         {props.children ?? field.errorText()}
       </p>
     );

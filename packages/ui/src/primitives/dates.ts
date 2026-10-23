@@ -31,7 +31,9 @@ export function startOfWeek(date: Date, firstDay: WeekDay) {
 }
 
 export function isSameDay(a: Date | null | undefined, b: Date | null | undefined) {
-  return !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  return (
+    !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
+  );
 }
 
 export function isSameMonth(a: Date, b: Date) {
@@ -78,5 +80,7 @@ export function parseDate(text: string, locale?: string) {
   const parts = Object.fromEntries(order.map((type, i) => [type, Number(numbers[i])]));
   const year = parts.year < 100 ? 2000 + parts.year : parts.year;
   const date = new Date(year, parts.month - 1, parts.day);
-  return date.getFullYear() === year && date.getMonth() === parts.month - 1 && date.getDate() === parts.day ? date : null;
+  return date.getFullYear() === year && date.getMonth() === parts.month - 1 && date.getDate() === parts.day
+    ? date
+    : null;
 }

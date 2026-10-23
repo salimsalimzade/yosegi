@@ -282,7 +282,8 @@ function Content(props: JSX.HTMLAttributes<HTMLElement>) {
   const filter = useFilter();
   const rest = omit(props, "class", "ref", "onKeyDown", "children");
   const resolved = children(() => props.children);
-  const is = (node: unknown, part: string) => node instanceof Element && node.classList.contains(`yosegi-filter-${part}`);
+  const is = (node: unknown, part: string) =>
+    node instanceof Element && node.classList.contains(`yosegi-filter-${part}`);
   const parts = () => {
     const nodes = resolved.toArray();
     return {
@@ -391,7 +392,11 @@ function Section(props: FilterSectionProps) {
     >
       <section {...rest} aria-labelledby={id} class={[styles.section, "yosegi-filter-section", props.class]}>
         <div class={[styles["section-header"], "yosegi-filter-section-header"]}>
-          <h3 ref={(el: HTMLHeadingElement) => (titleEl = el)} id={id} class={[styles["section-title"], "yosegi-filter-section-title"]}>
+          <h3
+            ref={(el: HTMLHeadingElement) => (titleEl = el)}
+            id={id}
+            class={[styles["section-title"], "yosegi-filter-section-title"]}
+          >
             {props.title}
           </h3>
           <Show when={isActive(filter.draft()[props.name])}>
@@ -482,7 +487,8 @@ function Range(props: FilterRangeProps) {
     const number = Number.parseFloat(text.replace(/[^\d.-]/g, ""));
     return Number.isFinite(number) ? number : undefined;
   };
-  const set = (end: "from" | "to", text: string) => filter.setDraftKey(section.name, { ...current(), [end]: parse(text) });
+  const set = (end: "from" | "to", text: string) =>
+    filter.setDraftKey(section.name, { ...current(), [end]: parse(text) });
 
   return (
     <div {...rest} class={[styles.range, "yosegi-filter-range", props.class]}>

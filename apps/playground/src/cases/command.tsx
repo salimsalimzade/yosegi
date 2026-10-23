@@ -57,7 +57,11 @@ export function CommandPage() {
   return (
     <>
       <Cases>
-        <Case title="Inline" description="Type to filter: “sett” finds Preferences by keyword. ↑ ↓ move, Enter runs, Billing is disabled." layout="fill">
+        <Case
+          title="Inline"
+          description="Type to filter: “sett” finds Preferences by keyword. ↑ ↓ move, Enter runs, Billing is disabled."
+          layout="fill"
+        >
           <Command>
             <Commands onRun={run} />
           </Command>
@@ -76,7 +80,10 @@ export function CommandPage() {
           </Command>
         </Case>
       </Cases>
-      <Case title="Palette in a dialog" description="Command.Dialog; open it with the button, or ⌘K / Ctrl+K anywhere on this page.">
+      <Case
+        title="Palette in a dialog"
+        description="Command.Dialog; open it with the button, or ⌘K / Ctrl+K anywhere on this page."
+      >
         <Button
           label={
             <>

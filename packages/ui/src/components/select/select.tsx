@@ -1,5 +1,17 @@
 import type { JSX } from "@solidjs/web";
-import { children, createContext, createEffect, createMemo, createSignal, createUniqueId, For, omit, Show, untrack, useContext } from "solid-js";
+import {
+  children,
+  createContext,
+  createEffect,
+  createMemo,
+  createSignal,
+  createUniqueId,
+  For,
+  omit,
+  Show,
+  untrack,
+  useContext,
+} from "solid-js";
 import { nextItem } from "../../primitives/active-descendant";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createDismiss } from "../../primitives/create-dismiss";
@@ -57,7 +69,10 @@ const useSelect = () => useContext(SelectContext);
  * placeholder, description and errorMessage.
  */
 export interface SelectProps<T = SelectOption>
-  extends FieldState, FieldTextProps, OptionAccessors<T>, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  extends FieldState,
+    FieldTextProps,
+    OptionAccessors<T>,
+    Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
   /** { value, label, group?, disabled? }, or your own objects read through getOptionValue and getOptionLabel. */
   options: readonly T[];
   value?: string | null;
@@ -160,9 +175,28 @@ function SelectRoot<T = SelectOption>(props: SelectProps<T>) {
 
   const rest = omit(
     props,
-    "options", "value", "defaultValue", "onChange", "placement", "name", "label", "description", "errorMessage", "placeholder", "renderOption",
-    "getOptionValue", "getOptionLabel", "getOptionGroup", "getOptionDisabled",
-    "validationState", "required", "disabled", "readOnly", "class", "children", "aria-label",
+    "options",
+    "value",
+    "defaultValue",
+    "onChange",
+    "placement",
+    "name",
+    "label",
+    "description",
+    "errorMessage",
+    "placeholder",
+    "renderOption",
+    "getOptionValue",
+    "getOptionLabel",
+    "getOptionGroup",
+    "getOptionDisabled",
+    "validationState",
+    "required",
+    "disabled",
+    "readOnly",
+    "class",
+    "children",
+    "aria-label",
   );
 
   return (
@@ -216,7 +250,9 @@ function SelectRoot<T = SelectOption>(props: SelectProps<T>) {
             </Trigger>
             <Portal>
               <Content>
-                <Listbox children={props.renderOption && ((option) => props.renderOption!((option as ResolvedOption<T>).item))} />
+                <Listbox
+                  children={props.renderOption && ((option) => props.renderOption!((option as ResolvedOption<T>).item))}
+                />
               </Content>
             </Portal>
           </FieldLayout>
@@ -229,7 +265,8 @@ function SelectRoot<T = SelectOption>(props: SelectProps<T>) {
   );
 }
 
-const isPrintable = (event: KeyboardEvent) => event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
+const isPrintable = (event: KeyboardEvent) =>
+  event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
 
 /** The box: a button with the chevron after its children, Select.Value by default. */
 function Trigger(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
@@ -327,7 +364,11 @@ function Value(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
   const select = useSelect();
   const rest = omit(props, "class", "placeholder", "children");
   return (
-    <span {...rest} class={[styles.value, "yosegi-select-value", props.class]} data-placeholder-shown={dataAttr(!select.selected())}>
+    <span
+      {...rest}
+      class={[styles.value, "yosegi-select-value", props.class]}
+      data-placeholder-shown={dataAttr(!select.selected())}
+    >
       {select.selected()?.label ?? props.placeholder}
     </span>
   );
@@ -385,7 +426,9 @@ function Listbox(props: SelectListboxProps) {
         onPointerMove={() => !option.disabled && select.setActive(option.value)}
         onClick={() => select.select(option)}
       >
-        <span class={[styles["item-label"], "yosegi-select-item-label"]}>{props.children ? props.children(option) : option.label}</span>
+        <span class={[styles["item-label"], "yosegi-select-item-label"]}>
+          {props.children ? props.children(option) : option.label}
+        </span>
         <Show when={chosen()}>
           <TickIcon />
         </Show>
@@ -412,7 +455,11 @@ function Listbox(props: SelectListboxProps) {
               <div id={`${select.listboxId}-group-${index()}`} class={[styles.section, "yosegi-select-section"]}>
                 {group.name}
               </div>
-              <ul role="group" aria-labelledby={`${select.listboxId}-group-${index()}`} class={[styles.group, "yosegi-select-group"]}>
+              <ul
+                role="group"
+                aria-labelledby={`${select.listboxId}-group-${index()}`}
+                class={[styles.group, "yosegi-select-group"]}
+              >
                 <For each={group.options}>{(option) => <Item option={option} />}</For>
               </ul>
             </li>

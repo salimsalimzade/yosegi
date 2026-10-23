@@ -2,7 +2,9 @@ import { Button, toast } from "yosegi";
 import { Case } from "../ui/case";
 
 const wait = (ms: number, fail = false) =>
-  new Promise<string>((resolve, reject) => setTimeout(() => (fail ? reject(new Error("Network")) : resolve("Trip to Kyoto")), ms));
+  new Promise<string>((resolve, reject) =>
+    setTimeout(() => (fail ? reject(new Error("Network")) : resolve("Trip to Kyoto")), ms),
+  );
 
 export function ToastPage() {
   return (
@@ -12,7 +14,11 @@ export function ToastPage() {
       </Case>
 
       <Case title="Success, with a description">
-        <Button label="Show success" variant="outline" onClick={() => toast.success("Project created", { description: "You can invite people now." })} />
+        <Button
+          label="Show success"
+          variant="outline"
+          onClick={() => toast.success("Project created", { description: "You can invite people now." })}
+        />
       </Case>
 
       <Case title="Error, with an action" description={'Errors are announced straight away (role="alert").'}>
@@ -32,7 +38,9 @@ export function ToastPage() {
         <Button
           label="Delete a note"
           variant="outline"
-          onClick={() => toast("Note deleted", { action: { label: "Undo", onClick: () => toast.success("Note restored") } })}
+          onClick={() =>
+            toast("Note deleted", { action: { label: "Undo", onClick: () => toast.success("Note restored") } })
+          }
         />
       </Case>
 
@@ -40,17 +48,35 @@ export function ToastPage() {
         <Button
           label="Save, succeeds"
           variant="outline"
-          onClick={() => toast.promise(wait(1500), { loading: "Saving…", success: (name) => `${name} saved`, error: "Couldn't save" })}
+          onClick={() =>
+            toast.promise(wait(1500), {
+              loading: "Saving…",
+              success: (name) => `${name} saved`,
+              error: "Couldn't save",
+            })
+          }
         />
         <Button
           label="Save, fails"
           variant="outline"
-          onClick={() => toast.promise(wait(1500, true), { loading: "Saving…", success: "Saved", error: "Couldn't save: you're offline" })}
+          onClick={() =>
+            toast.promise(wait(1500, true), {
+              loading: "Saving…",
+              success: "Saved",
+              error: "Couldn't save: you're offline",
+            })
+          }
         />
       </Case>
 
       <Case title="Many at once" description="At most 3 show; the oldest make room. Dismiss all clears them.">
-        <Button label="Show five" variant="outline" onClick={() => ["One", "Two", "Three", "Four", "Five"].forEach((n, i) => setTimeout(() => toast(`Toast ${n}`), i * 150))} />
+        <Button
+          label="Show five"
+          variant="outline"
+          onClick={() =>
+            ["One", "Two", "Three", "Four", "Five"].forEach((n, i) => setTimeout(() => toast(`Toast ${n}`), i * 150))
+          }
+        />
         <Button label="Dismiss all" variant="ghost" onClick={() => toast.dismiss()} />
       </Case>
     </>

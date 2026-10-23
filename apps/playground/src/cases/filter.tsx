@@ -48,12 +48,20 @@ export function InvoiceFilter(props: { value: FilterValue; onChange: (value: Fil
 
 export function FilterPage() {
   const [none, setNone] = createSignal<FilterValue>({});
-  const [some, setSome] = createSignal<FilterValue>({ status: ["paid", "pending"], method: ["card"], amount: { from: 100 } });
+  const [some, setSome] = createSignal<FilterValue>({
+    status: ["paid", "pending"],
+    method: ["card"],
+    amount: { from: 100 },
+  });
   const count = () => invoices.filter((invoice) => matches(invoice, some())).length;
 
   return (
     <>
-      <Case title="No filters" description="“Filter” with a funnel. Open it: tick values, set a range, then Show applies them together." layout="fill">
+      <Case
+        title="No filters"
+        description="“Filter” with a funnel. Open it: tick values, set a range, then Show applies them together."
+        layout="fill"
+      >
         <div style={{ display: "flex", "flex-wrap": "wrap", gap: "8px", "align-items": "center" }}>
           <InvoiceFilter value={none()} onChange={setNone} />
         </div>

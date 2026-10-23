@@ -10,7 +10,10 @@ export function callHandler(handler: unknown, event: Event) {
 }
 
 /** Adds custom properties to a `style` prop, in either its object or string form. */
-export function mergeStyle(vars: Record<string, string | undefined>, style: JSX.CSSProperties | string | false | undefined) {
+export function mergeStyle(
+  vars: Record<string, string | undefined>,
+  style: JSX.CSSProperties | string | false | undefined,
+) {
   if (typeof style !== "string") return { ...vars, ...(style || {}) } as JSX.CSSProperties;
 
   const declarations = Object.entries(vars)

@@ -18,7 +18,11 @@ export interface FieldTextProps {
 }
 
 const isSet = (value: unknown) =>
-  value !== undefined && value !== null && value !== false && value !== "" && !(Array.isArray(value) && value.length === 0);
+  value !== undefined &&
+  value !== null &&
+  value !== false &&
+  value !== "" &&
+  !(Array.isArray(value) && value.length === 0);
 
 /**
  * The ids and states a labelled field shares between its parts: the label
@@ -32,7 +36,8 @@ export function createField(props: FieldState & Pick<FieldTextProps, "errorMessa
   // Read once: a JSX prop makes new elements every time it's read.
   const errorText = children(() => props.errorMessage);
 
-  const invalid = () => props.validationState === "invalid" || (props.validationState !== "valid" && isSet(errorText()));
+  const invalid = () =>
+    props.validationState === "invalid" || (props.validationState !== "valid" && isSet(errorText()));
 
   return {
     controlId: `${id}-control`,

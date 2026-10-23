@@ -29,7 +29,10 @@ const useNumberField = () => useContext(NumberFieldContext);
  * A labelled number input with − and + buttons, limits and steps. With no
  * children it builds itself from label, placeholder, description and errorMessage.
  */
-export interface NumberFieldProps extends FieldState, FieldTextProps, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface NumberFieldProps
+  extends FieldState,
+    FieldTextProps,
+    Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
   value?: number;
   defaultValue?: number;
   onChange?: (value: number) => void;
@@ -71,7 +74,8 @@ function NumberFieldRoot(props: NumberFieldProps) {
     const group = parts.find((p) => p.type === "group")?.value ?? ",";
     const decimal = parts.find((p) => p.type === "decimal")?.value ?? ".";
     const normalised = text
-      .split(group).join("")
+      .split(group)
+      .join("")
       .replace(/\s/g, "")
       .replace(decimal, ".")
       .replace(/[^\d.-]/g, "");
@@ -96,7 +100,11 @@ function NumberFieldRoot(props: NumberFieldProps) {
   const step = (direction: 1 | -1, amount = stepSize()) => {
     const n = current();
     const unit = percent() ? amount / 100 : amount;
-    const base = Number.isNaN(n) ? (direction > 0 ? (props.minValue ?? 0) : (props.maxValue ?? 0)) : n + direction * unit;
+    const base = Number.isNaN(n)
+      ? direction > 0
+        ? (props.minValue ?? 0)
+        : (props.maxValue ?? 0)
+      : n + direction * unit;
     setValue(clamp(base));
     setDraft(null);
   };
@@ -110,9 +118,27 @@ function NumberFieldRoot(props: NumberFieldProps) {
 
   const rest = omit(
     props,
-    "value", "defaultValue", "onChange", "minValue", "maxValue", "step", "largeStep", "formatOptions", "locale", "name",
-    "label", "description", "errorMessage", "placeholder", "validationState", "required", "disabled", "readOnly", "class",
-    "children", "aria-label",
+    "value",
+    "defaultValue",
+    "onChange",
+    "minValue",
+    "maxValue",
+    "step",
+    "largeStep",
+    "formatOptions",
+    "locale",
+    "name",
+    "label",
+    "description",
+    "errorMessage",
+    "placeholder",
+    "validationState",
+    "required",
+    "disabled",
+    "readOnly",
+    "class",
+    "children",
+    "aria-label",
   );
 
   return (

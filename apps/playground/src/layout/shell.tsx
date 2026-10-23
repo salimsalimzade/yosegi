@@ -43,7 +43,13 @@ export function Shell(props: { children?: JSX.Element }) {
           <ButtonGroup attached aria-label="Theme">
             <For each={["system", "light", "dark"] as const}>
               {(value) => (
-                <Button label={value[0].toUpperCase() + value.slice(1)} size="sm" variant="outline" aria-pressed={theme() === value} onClick={() => choose(value)} />
+                <Button
+                  label={value[0].toUpperCase() + value.slice(1)}
+                  size="sm"
+                  variant="outline"
+                  aria-pressed={theme() === value}
+                  onClick={() => choose(value)}
+                />
               )}
             </For>
           </ButtonGroup>

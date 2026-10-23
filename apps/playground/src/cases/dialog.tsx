@@ -29,7 +29,10 @@ export function DialogPage() {
 
   return (
     <>
-      <Case title="Confirmation" description='role="alertdialog" for a choice that interrupts. Escape or Cancel closes; the main action shows it is busy.'>
+      <Case
+        title="Confirmation"
+        description='role="alertdialog" for a choice that interrupts. Escape or Cancel closes; the main action shows it is busy.'
+      >
         <Dialog
           open={confirmOpen()}
           onOpenChange={setConfirmOpen}
@@ -40,13 +43,22 @@ export function DialogPage() {
           footer={
             <>
               <Button label="Cancel" variant="outline" onClick={() => setConfirmOpen(false)} />
-              <Button label="Delete project" variant="danger" loading={deleting()} loadingText="Deleting…" onClick={confirmDelete} />
+              <Button
+                label="Delete project"
+                variant="danger"
+                loading={deleting()}
+                loadingText="Deleting…"
+                onClick={confirmDelete}
+              />
             </>
           }
         />
       </Case>
 
-      <Case title="A short form" description="The children go between the description and the footer. Text as the trigger is an outline Button.">
+      <Case
+        title="A short form"
+        description="The children go between the description and the footer. Text as the trigger is an outline Button."
+      >
         <Dialog
           open={renameOpen()}
           onOpenChange={setRenameOpen}
@@ -59,7 +71,12 @@ export function DialogPage() {
             </>
           }
         >
-          <TextField label="Name" value={name()} onChange={setName} description="Shown in the sidebar and in shared links." />
+          <TextField
+            label="Name"
+            value={name()}
+            onChange={setName}
+            description="Shown in the sidebar and in shared links."
+          />
         </Dialog>
       </Case>
 
@@ -71,7 +88,10 @@ export function DialogPage() {
         />
       </Case>
 
-      <Case title="Without a trigger" description="A title is enough to build it; open it from anywhere with open and onOpenChange.">
+      <Case
+        title="Without a trigger"
+        description="A title is enough to build it; open it from anywhere with open and onOpenChange."
+      >
         <Button label="Archive 3 notes" variant="outline" onClick={() => setArchiveOpen(true)} />
         <Dialog
           open={archiveOpen()}

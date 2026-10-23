@@ -36,7 +36,17 @@ function TabsRoot(props: TabsProps) {
     onChange: (next) => next !== undefined && props.onChange?.(next),
   });
   let root: HTMLDivElement | undefined;
-  const rest = omit(props, "value", "defaultValue", "onChange", "orientation", "activationMode", "class", "ref", "children");
+  const rest = omit(
+    props,
+    "value",
+    "defaultValue",
+    "onChange",
+    "orientation",
+    "activationMode",
+    "class",
+    "ref",
+    "children",
+  );
   const safe = (value: string) => value.replace(/[^\w-]/g, "_");
 
   // With no value given, the first tab that isn't disabled starts selected.

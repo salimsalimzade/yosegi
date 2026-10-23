@@ -21,7 +21,10 @@ export function ButtonPage() {
 
   return (
     <>
-      <Case title="Variants" description="Solid for the one main action; outline and ghost for the rest; danger for what can't be undone.">
+      <Case
+        title="Variants"
+        description="Solid for the one main action; outline and ghost for the rest; danger for what can't be undone."
+      >
         <Button label="Save" />
         <Button label="Cancel" variant="outline" />
         <Button label="Skip" variant="ghost" />
@@ -49,17 +52,39 @@ export function ButtonPage() {
 
       <Case title="Icon only" description="An icon with no label makes a square button. It needs an aria-label.">
         <For each={iconButtons}>
-          {(button) => <Button icon={<button.icon />} variant={button.variant} size={button.size} aria-label={button.label} />}
+          {(button) => (
+            <Button icon={<button.icon />} variant={button.variant} size={button.size} aria-label={button.label} />
+          )}
         </For>
       </Case>
 
-      <Case title="Loading" description="Click one. The spinner takes the icon's place, and loadingText says what's happening.">
+      <Case
+        title="Loading"
+        description="Click one. The spinner takes the icon's place, and loadingText says what's happening."
+      >
         <Button label="Save" loading={saving()} loadingText="Saving…" onClick={save} />
-        <Button label="Export notes" variant="outline" icon={<DownloadIcon />} loading={exporting()} loadingText="Exporting…" onClick={exportNotes} />
-        <Button label="Delete project" variant="danger" icon={<TrashIcon />} loading={deleting()} loadingText="Deleting…" onClick={remove} />
+        <Button
+          label="Export notes"
+          variant="outline"
+          icon={<DownloadIcon />}
+          loading={exporting()}
+          loadingText="Exporting…"
+          onClick={exportNotes}
+        />
+        <Button
+          label="Delete project"
+          variant="danger"
+          icon={<TrashIcon />}
+          loading={deleting()}
+          loadingText="Deleting…"
+          onClick={remove}
+        />
       </Case>
 
-      <Case title="Icon only, loading" description="Click one, or load them all. The spinner replaces the icon and the button stays square.">
+      <Case
+        title="Icon only, loading"
+        description="Click one, or load them all. The spinner replaces the icon and the button stays square."
+      >
         <For each={iconButtons}>
           {(button, index) => (
             <Button
@@ -83,7 +108,14 @@ export function ButtonPage() {
       </Case>
 
       <Case title="As a link" description={'as="a" keeps the look on an anchor.'}>
-        <Button label="See pricing" as="a" href="#button" variant="outline" icon={<ArrowRightIcon />} iconPosition="end" />
+        <Button
+          label="See pricing"
+          as="a"
+          href="#button"
+          variant="outline"
+          icon={<ArrowRightIcon />}
+          iconPosition="end"
+        />
       </Case>
     </>
   );

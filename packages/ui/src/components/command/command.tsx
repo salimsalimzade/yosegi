@@ -92,7 +92,8 @@ function CommandRoot(props: CommandProps) {
       value={{
         search,
         setSearch,
-        matches: (value, keywords) => !search().trim() || (props.filter ?? defaultFilter)(value, search().trim(), keywords),
+        matches: (value, keywords) =>
+          !search().trim() || (props.filter ?? defaultFilter)(value, search().trim(), keywords),
         active,
         setActive,
         move,
@@ -219,7 +220,17 @@ function Item(props: CommandItemProps) {
   const visible = () => command.matches(props.value, props.keywords ?? []);
   command.items.register(visible);
   group?.register(visible);
-  const rest = omit(props, "value", "keywords", "onSelect", "disabled", "class", "onClick", "onPointerMove", "children");
+  const rest = omit(
+    props,
+    "value",
+    "keywords",
+    "onSelect",
+    "disabled",
+    "class",
+    "onClick",
+    "onPointerMove",
+    "children",
+  );
 
   return (
     <div
@@ -264,7 +275,13 @@ function Empty(props: JSX.HTMLAttributes<HTMLDivElement>) {
 function Separator(props: JSX.HTMLAttributes<HTMLHRElement>) {
   const command = useCommand();
   const rest = omit(props, "class");
-  return <hr {...rest} class={[styles.separator, "yosegi-command-separator", props.class]} hidden={!!command.search().trim()} />;
+  return (
+    <hr
+      {...rest}
+      class={[styles.separator, "yosegi-command-separator", props.class]}
+      hidden={!!command.search().trim()}
+    />
+  );
 }
 
 function Shortcut(props: JSX.HTMLAttributes<HTMLElement>) {

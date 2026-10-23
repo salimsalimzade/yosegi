@@ -5,8 +5,18 @@ import { Case } from "../ui/case";
 export function TooltipPage() {
   return (
     <>
-      <Case title="On hover and focus" description="Hover for 300ms, or Tab to a button: keyboard focus opens it right away. Escape closes it.">
-        <For each={[["Archive", "Move to the archive"], ["Share", "Copy a link"]] as const}>
+      <Case
+        title="On hover and focus"
+        description="Hover for 300ms, or Tab to a button: keyboard focus opens it right away. Escape closes it."
+      >
+        <For
+          each={
+            [
+              ["Archive", "Move to the archive"],
+              ["Share", "Copy a link"],
+            ] as const
+          }
+        >
           {([label, tip]) => (
             <Tooltip>
               <Tooltip.Trigger as={Button} variant="outline">
@@ -23,8 +33,19 @@ export function TooltipPage() {
         </For>
       </Case>
 
-      <Case title="Naming icon buttons" description="The tooltip adds a description; the button still has its own aria-label.">
-        <For each={[["New note", PlusIcon], ["Pick a date", CalendarIcon], ["Synced 2 min ago", InfoIcon]] as const}>
+      <Case
+        title="Naming icon buttons"
+        description="The tooltip adds a description; the button still has its own aria-label."
+      >
+        <For
+          each={
+            [
+              ["New note", PlusIcon],
+              ["Pick a date", CalendarIcon],
+              ["Synced 2 min ago", InfoIcon],
+            ] as const
+          }
+        >
           {([tip, Icon]) => (
             <Tooltip>
               <Tooltip.Trigger as={Button} variant="ghost" icon={<Icon />} aria-label={tip} />

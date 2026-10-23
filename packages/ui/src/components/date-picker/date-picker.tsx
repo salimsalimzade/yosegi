@@ -1,5 +1,17 @@
 import type { JSX } from "@solidjs/web";
-import { createContext, createEffect, createMemo, createSignal, createUniqueId, flush, For, omit, Show, untrack, useContext } from "solid-js";
+import {
+  createContext,
+  createEffect,
+  createMemo,
+  createSignal,
+  createUniqueId,
+  flush,
+  For,
+  omit,
+  Show,
+  untrack,
+  useContext,
+} from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createDismiss } from "../../primitives/create-dismiss";
 import { createField, type Field, type FieldState, type FieldTextProps } from "../../primitives/create-field";
@@ -64,7 +76,10 @@ const useDatePicker = () => useContext(DatePickerContext);
  * A date input with a calendar that opens below it. With no children it builds
  * itself from label, description and errorMessage.
  */
-export interface DatePickerProps extends FieldState, FieldTextProps, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+export interface DatePickerProps
+  extends FieldState,
+    FieldTextProps,
+    Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
   value?: Date | null;
   defaultValue?: Date | null;
   onChange?: (date: Date | null) => void;
@@ -155,9 +170,30 @@ function DatePickerRoot(props: DatePickerProps) {
 
   const rest = omit(
     props,
-    "value", "defaultValue", "onChange", "minValue", "maxValue", "isDateUnavailable", "locale", "firstDayOfWeek",
-    "open", "defaultOpen", "onOpenChange", "closeOnSelect", "placement", "name", "label", "description", "errorMessage",
-    "validationState", "required", "disabled", "readOnly", "class", "children", "aria-label",
+    "value",
+    "defaultValue",
+    "onChange",
+    "minValue",
+    "maxValue",
+    "isDateUnavailable",
+    "locale",
+    "firstDayOfWeek",
+    "open",
+    "defaultOpen",
+    "onOpenChange",
+    "closeOnSelect",
+    "placement",
+    "name",
+    "label",
+    "description",
+    "errorMessage",
+    "validationState",
+    "required",
+    "disabled",
+    "readOnly",
+    "class",
+    "children",
+    "aria-label",
   );
 
   return (
@@ -257,8 +293,10 @@ function Input(props: JSX.InputHTMLAttributes<HTMLInputElement>) {
     <input
       type="text"
       autocomplete="off"
-      placeholder={format().formatToParts(new Date(2000, 10, 22)).map((part) =>
-        ({ day: "dd", month: "mm", year: "yyyy" })[part.type as "day"] ?? part.value).join("")}
+      placeholder={format()
+        .formatToParts(new Date(2000, 10, 22))
+        .map((part) => ({ day: "dd", month: "mm", year: "yyyy" })[part.type as "day"] ?? part.value)
+        .join("")}
       {...rest}
       ref={[(el: HTMLInputElement) => picker.setInput(el), props.ref as any]}
       id={picker.field.controlId}
@@ -364,7 +402,12 @@ function Heading(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
   const rest = omit(props, "class", "children");
 
   return (
-    <h2 aria-live="polite" {...rest} id={picker.headingId} class={[styles.heading, "yosegi-date-picker-heading", props.class]}>
+    <h2
+      aria-live="polite"
+      {...rest}
+      id={picker.headingId}
+      class={[styles.heading, "yosegi-date-picker-heading", props.class]}
+    >
       {props.children ?? label()}
     </h2>
   );
@@ -409,7 +452,10 @@ function Grid(props: DatePickerGridProps) {
     const long = new Intl.DateTimeFormat(picker.locale(), { weekday: "long" });
     const short = new Intl.DateTimeFormat(picker.locale(), { weekday: "short" });
     const start = startOfWeek(new Date(), picker.firstDayOfWeek());
-    return Array.from({ length: 7 }, (_, i) => addDays(start, i)).map((d) => ({ long: long.format(d), short: short.format(d) }));
+    return Array.from({ length: 7 }, (_, i) => addDays(start, i)).map((d) => ({
+      long: long.format(d),
+      short: short.format(d),
+    }));
   });
   const rest = omit(props, "class", "children");
 
@@ -422,16 +468,15 @@ function Grid(props: DatePickerGridProps) {
   });
 
   return (
-    <table role="grid" {...rest} aria-labelledby={picker.headingId} class={[styles.grid, "yosegi-date-picker-grid", props.class]}>
+    <table
+      role="grid"
+      {...rest}
+      aria-labelledby={picker.headingId}
+      class={[styles.grid, "yosegi-date-picker-grid", props.class]}
+    >
       <thead aria-hidden="true">
         <tr>
-          <For each={weekdays()}>
-            {(weekday) => (
-              <HeadCell title={weekday.long}>
-                {weekday.short}
-              </HeadCell>
-            )}
-          </For>
+          <For each={weekdays()}>{(weekday) => <HeadCell title={weekday.long}>{weekday.short}</HeadCell>}</For>
         </tr>
       </thead>
       <tbody>
@@ -484,7 +529,9 @@ const NAVIGATION: Record<string, (date: Date, event: KeyboardEvent, firstDay: We
 
 function CellTrigger(props: DatePickerCellTriggerProps) {
   const picker = useDatePicker();
-  const label = createMemo(() => new Intl.DateTimeFormat(picker.locale(), { dateStyle: "full" }).format(props.day.date));
+  const label = createMemo(() =>
+    new Intl.DateTimeFormat(picker.locale(), { dateStyle: "full" }).format(props.day.date),
+  );
   const rest = omit(props, "day", "class", "onClick", "onKeyDown", "children");
 
   return (

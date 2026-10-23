@@ -37,7 +37,11 @@ export function paginationSlots(count: number, page: number, siblings = 1): Pagi
     ...start,
     ...(siblingsStart > boundary + 2 ? ["ellipsis" as const] : boundary + 1 < count - boundary ? [boundary + 1] : []),
     ...range(siblingsStart, siblingsEnd),
-    ...(siblingsEnd < count - boundary - 1 ? ["ellipsis" as const] : count - boundary > boundary ? [count - boundary] : []),
+    ...(siblingsEnd < count - boundary - 1
+      ? ["ellipsis" as const]
+      : count - boundary > boundary
+        ? [count - boundary]
+        : []),
     ...end,
   ];
   return pages.map((slot) => (slot === "ellipsis" ? { type: "ellipsis" } : { type: "page", page: slot }));
@@ -64,7 +68,17 @@ function PaginationRoot(props: PaginationProps) {
     onChange: (next) => props.onPageChange?.(next),
   });
   const current = () => Math.min(Math.max(1, page()), count());
-  const rest = omit(props, "count", "page", "defaultPage", "onPageChange", "siblingCount", "showLabels", "class", "children");
+  const rest = omit(
+    props,
+    "count",
+    "page",
+    "defaultPage",
+    "onPageChange",
+    "siblingCount",
+    "showLabels",
+    "class",
+    "children",
+  );
 
   return (
     <PaginationContext

@@ -27,7 +27,11 @@ export function SeparatorPage() {
           <Button label="Continue with email" />
         </div>
       </Case>
-      <Case title="Announced" description={'decorative={false} gives it role="separator", for groups that matter.'} layout="fill">
+      <Case
+        title="Announced"
+        description={'decorative={false} gives it role="separator", for groups that matter.'}
+        layout="fill"
+      >
         <div style={{ display: "grid", gap: "12px" }}>
           <p>Edit</p>
           <Separator decorative={false} />

@@ -16,7 +16,9 @@ export function SpinnerPage() {
         <Button label="Save" loading loadingText="Saving…" />
       </Case>
       <Case title="With words" description="Decorative next to visible text; label it when it stands alone.">
-        <span style={{ display: "inline-flex", "align-items": "center", gap: "8px", color: "var(--yosegi-color-fg-muted)" }}>
+        <span
+          style={{ display: "inline-flex", "align-items": "center", gap: "8px", color: "var(--yosegi-color-fg-muted)" }}
+        >
           <Spinner />
           Loading notes…
         </span>

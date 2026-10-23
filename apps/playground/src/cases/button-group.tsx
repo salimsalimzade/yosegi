@@ -21,7 +21,12 @@ export function ButtonGroupPage() {
         <ButtonGroup attached aria-label="Range">
           <For each={["Day", "Week", "Month", "Year"]}>
             {(value) => (
-              <Button label={value} variant="outline" aria-pressed={range() === value} onClick={() => setRange(value)} />
+              <Button
+                label={value}
+                variant="outline"
+                aria-pressed={range() === value}
+                onClick={() => setRange(value)}
+              />
             )}
           </For>
         </ButtonGroup>
@@ -29,8 +34,20 @@ export function ButtonGroupPage() {
 
       <Case title="Icon toolbar" description="Attached icon buttons, each with an aria-label.">
         <ButtonGroup attached aria-label="View">
-          <Button variant="outline" icon={<ListIcon />} aria-label="List" aria-pressed={view() === "List"} onClick={() => setView("List")} />
-          <Button variant="outline" icon={<GridIcon />} aria-label="Grid" aria-pressed={view() === "Grid"} onClick={() => setView("Grid")} />
+          <Button
+            variant="outline"
+            icon={<ListIcon />}
+            aria-label="List"
+            aria-pressed={view() === "List"}
+            onClick={() => setView("List")}
+          />
+          <Button
+            variant="outline"
+            icon={<GridIcon />}
+            aria-label="Grid"
+            aria-pressed={view() === "Grid"}
+            onClick={() => setView("Grid")}
+          />
         </ButtonGroup>
       </Case>
 

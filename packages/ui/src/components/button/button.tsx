@@ -51,8 +51,20 @@ export function Button(props: ButtonProps) {
   const position = () => props.iconPosition ?? "start";
   const rest = omit(
     props,
-    "as", "label", "variant", "size", "icon", "iconPosition", "loading", "loadingText",
-    "class", "type", "disabled", "onClick", "children", "aria-pressed",
+    "as",
+    "label",
+    "variant",
+    "size",
+    "icon",
+    "iconPosition",
+    "loading",
+    "loadingText",
+    "class",
+    "type",
+    "disabled",
+    "onClick",
+    "children",
+    "aria-pressed",
   );
 
   if (isDev) {

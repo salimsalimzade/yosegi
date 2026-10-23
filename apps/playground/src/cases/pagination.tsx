@@ -11,7 +11,11 @@ export function PaginationPage() {
       <Case title="First page" description="Previous is off." layout="fill">
         <Pagination count={16} defaultPage={1} />
       </Case>
-      <Case title="Middle" description="One page either side of the current one, gaps on both sides. Try it: the bar keeps its width." layout="fill">
+      <Case
+        title="Middle"
+        description="One page either side of the current one, gaps on both sides. Try it: the bar keeps its width."
+        layout="fill"
+      >
         <Pagination count={16} page={page()} onPageChange={setPage} />
       </Case>
       <Case title="Last page" description="Next is off." layout="fill">

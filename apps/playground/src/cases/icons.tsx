@@ -42,15 +42,18 @@ const usedBy: Record<string, string> = {
 
 /** SearchOffIcon → search-off */
 const fileName = (component: string) =>
-  component
-    .replace(/Icon$/, "")
-    .replace(/[A-Z]/g, (char, index) => (index ? "-" : "") + char.toLowerCase());
+  component.replace(/Icon$/, "").replace(/[A-Z]/g, (char, index) => (index ? "-" : "") + char.toLowerCase());
 
 // Every icon the kit exports, so a new SVG shows up here after `pnpm generate`.
 const order = Object.keys(usedBy);
 const icons: Icon[] = Object.entries(yosegi)
   .filter(([name]) => name.endsWith("Icon"))
-  .map(([component, Icon]) => ({ file: fileName(component), component, Icon: Icon as Component<IconProps>, usedBy: usedBy[component] }))
+  .map(([component, Icon]) => ({
+    file: fileName(component),
+    component,
+    Icon: Icon as Component<IconProps>,
+    usedBy: usedBy[component],
+  }))
   .sort((a, b) => {
     const rank = (icon: Icon) => (order.includes(icon.component) ? order.indexOf(icon.component) : order.length);
     return rank(a) - rank(b) || a.file.localeCompare(b.file);
@@ -99,7 +102,10 @@ export function IconsPage() {
           </For>
         </ul>
       </Case>
-      <Case title="Sizes" description="16px by default (24px for the large ones). Set width and height, or size them with CSS.">
+      <Case
+        title="Sizes"
+        description="16px by default (24px for the large ones). Set width and height, or size them with CSS."
+      >
         <For each={[14, 16, 18, 20, 24]}>
           {(size) => (
             <span class={styles.size}>
@@ -123,7 +129,10 @@ export function IconsPage() {
           <TrashIcon /> Danger
         </span>
       </Case>
-      <Case title="In components" description="Buttons size them with their text; icon-only buttons need an aria-label.">
+      <Case
+        title="In components"
+        description="Buttons size them with their text; icon-only buttons need an aria-label."
+      >
         <Button label="New note" icon={<PlusIcon />} />
         <Button label="Continue" variant="outline" icon={<ArrowRightIcon />} iconPosition="end" />
         <Button variant="outline" icon={<SettingsIcon />} aria-label="Settings" />

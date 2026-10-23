@@ -25,7 +25,9 @@ const useCheckbox = () => useContext(CheckboxContext);
  * from label, description and errorMessage; with no label, give it aria-label.
  */
 export interface CheckboxProps
-  extends Omit<FieldState, "readOnly">, FieldTextProps, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  extends Omit<FieldState, "readOnly">,
+    FieldTextProps,
+    Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
   checked?: boolean;
   defaultChecked?: boolean;
   onChange?: (checked: boolean) => void;
@@ -44,8 +46,21 @@ function CheckboxRoot(props: CheckboxProps) {
   });
   const rest = omit(
     props,
-    "checked", "defaultChecked", "onChange", "indeterminate", "name", "value", "label", "description", "errorMessage",
-    "validationState", "required", "disabled", "class", "children", "aria-label",
+    "checked",
+    "defaultChecked",
+    "onChange",
+    "indeterminate",
+    "name",
+    "value",
+    "label",
+    "description",
+    "errorMessage",
+    "validationState",
+    "required",
+    "disabled",
+    "class",
+    "children",
+    "aria-label",
   );
   const label = children(() => props.label);
   const description = children(() => props.description);

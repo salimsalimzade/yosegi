@@ -68,9 +68,22 @@ function Status(props: { status: Invoice["status"]; label: string }) {
 const columns: TableColumn<Invoice>[] = [
   { key: "id", label: "Invoice", sortable: true },
   { key: "customer", label: "Customer", sortable: true, cell: (invoice) => <Customer name={invoice.customer} /> },
-  { key: "status", label: "Status", filter: true, options: statusLabels, cell: (invoice, text) => <Status status={invoice.status} label={text} /> },
+  {
+    key: "status",
+    label: "Status",
+    filter: true,
+    options: statusLabels,
+    cell: (invoice, text) => <Status status={invoice.status} label={text} />,
+  },
   { key: "method", label: "Method", filter: true, options: methodLabels },
-  { key: "amount", label: "Amount", align: "end", sortable: true, filter: "range", format: (amount: number) => money.format(amount) },
+  {
+    key: "amount",
+    label: "Amount",
+    align: "end",
+    sortable: true,
+    filter: "range",
+    format: (amount: number) => money.format(amount),
+  },
 ];
 
 /** Invoices in the box: title and actions, search, Filter, sorting, selection and pages. */
@@ -158,7 +171,11 @@ export function TablePage() {
         <InvoiceTable />
       </Case>
 
-      <Case title="20 to a page" description="pageSize={20} starts at 20: 312 invoices over 16 pages. Rows per page can still change it." layout="fill">
+      <Case
+        title="20 to a page"
+        description="pageSize={20} starts at 20: 312 invoices over 16 pages. Rows per page can still change it."
+        layout="fill"
+      >
         <InvoiceTable pageSize={20} />
       </Case>
 
@@ -170,27 +187,53 @@ export function TablePage() {
         <InvoiceTable pageSize={50} height={undefined} maxHeight={400} />
       </Case>
 
-      <Case title="Sorted" description="defaultQuery sorts by Amount, highest first. The heading shows the direction; click it to turn it round, then off." layout="fill">
+      <Case
+        title="Sorted"
+        description="defaultQuery sorts by Amount, highest first. The heading shows the direction; click it to turn it round, then off."
+        layout="fill"
+      >
         <InvoiceTable defaultQuery={{ sort: { key: "amount", direction: "desc" } }} />
       </Case>
 
-      <Case title="Filters applied" description="A count on Filter, a chip per filter, and the pages follow the new total." layout="fill">
-        <InvoiceTable defaultQuery={{ filters: { status: ["paid", "pending"], method: ["card"], amount: { from: 100 } } }} />
+      <Case
+        title="Filters applied"
+        description="A count on Filter, a chip per filter, and the pages follow the new total."
+        layout="fill"
+      >
+        <InvoiceTable
+          defaultQuery={{ filters: { status: ["paid", "pending"], method: ["card"], amount: { from: 100 } } }}
+        />
       </Case>
 
-      <Case title="Rows selected" description="The selection bar takes the place of the top bar and toolbar, with selectionActions and Clear." layout="fill">
+      <Case
+        title="Rows selected"
+        description="The selection bar takes the place of the top bar and toolbar, with selectionActions and Clear."
+        layout="fill"
+      >
         <InvoiceTable defaultSelected={["INV-312", "INV-310"]} />
       </Case>
 
-      <Case title="Filters match nothing" description="Say so, and offer to clear them. The range reads “0 of …” and the pages hide." layout="fill">
+      <Case
+        title="Filters match nothing"
+        description="Say so, and offer to clear them. The range reads “0 of …” and the pages hide."
+        layout="fill"
+      >
         <InvoiceTable defaultQuery={{ filters: { status: ["unpaid"], amount: { from: 2000 } } }} />
       </Case>
 
-      <Case title="Row click" description="onRowClick opens an invoice: click a row, or Tab to it and press Enter. The checkbox still only ticks." layout="fill">
+      <Case
+        title="Row click"
+        description="onRowClick opens an invoice: click a row, or Tab to it and press Enter. The checkbox still only ticks."
+        layout="fill"
+      >
         <InvoiceTable pageSize={5} onRowClick={(invoice) => toast(`Opened ${invoice.id}`)} />
       </Case>
 
-      <Case title="Row links" description="rowHref puts a link in the first cell that covers the row, so it opens in a new tab too." layout="fill">
+      <Case
+        title="Row links"
+        description="rowHref puts a link in the first cell that covers the row, so it opens in a new tab too."
+        layout="fill"
+      >
         <InvoiceTable pageSize={5} rowHref={(invoice) => `#${invoice.id}`} />
       </Case>
 
@@ -202,7 +245,11 @@ export function TablePage() {
         <ServerTable />
       </Case>
 
-      <Case title="Without the box" description="A plain table, for content pages and small sets: a caption, a footer, align=&quot;end&quot; for amounts." layout="fill">
+      <Case
+        title="Without the box"
+        description="A plain table, for content pages and small sets: a caption, a footer, align=&quot;end&quot; for amounts."
+        layout="fill"
+      >
         <Table>
           <Table.Caption>Your recent invoices.</Table.Caption>
           <Table.Header>
