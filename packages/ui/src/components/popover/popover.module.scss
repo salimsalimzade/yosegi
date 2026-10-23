@@ -25,8 +25,9 @@
     text-wrap: pretty;
   }
 
+  // auto keeps it on the end side, with or without a title.
   .close-button {
-    margin: -4px -4px 0 0;
+    margin: -4px -4px 0 auto;
     @include icon-button;
   }
 
@@ -51,12 +52,20 @@
     }
   }
 
-  // Wrap the title and the close button in this to put them on one line.
-  :global(.yosegi-popover-header) {
+  // The title and the close button on one line.
+  .header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: space(300);
+  }
+
+  // Buttons at the foot of the panel, on the end side.
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: space(200);
   }
 
   @include keyframes(floating-in);

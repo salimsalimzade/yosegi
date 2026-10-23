@@ -73,8 +73,9 @@
     gap: space(200);
   }
 
+  // auto keeps it on the end side, with or without a title.
   .close-button {
-    margin: -4px -4px 0 0;
+    margin: -4px -4px 0 auto;
     @include icon-button;
   }
 

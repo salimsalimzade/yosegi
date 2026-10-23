@@ -1,10 +1,11 @@
 import type { JSX, ValidComponent } from "@solidjs/web";
-import { createContext, createEffect, createSignal, createUniqueId, omit, onSettled, Show, useContext } from "solid-js";
+import { children, createContext, createEffect, createMemo, createSignal, createUniqueId, omit, onSettled, Show, useContext } from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createPart, createTag } from "../../primitives/create-part";
 import { callHandler, dataAttr, focusFirst } from "../../primitives/dom";
 import { CloseIcon } from "../../primitives/icons";
 import { Portal } from "../../primitives/portal";
+import { Button, type ButtonTriggerProps } from "../button/button";
 import styles from "./dialog.module.scss";
 
 interface DialogContextValue {
@@ -23,8 +24,30 @@ interface DialogContextValue {
 const DialogContext = createContext<DialogContextValue>();
 const useDialog = () => useContext(DialogContext);
 
-/** A window over the page for a decision or a short form. */
+/**
+ * A window over the page for a decision or a short form. Give it a trigger or a
+ * title and it builds the window itself: the overlay, the title and close
+ * button, the description, the children as its body, and the footer. Without
+ * either, put the parts together yourself.
+ */
 export interface DialogProps {
+  /**
+   * What opens it: text, or a Button's props like `{ label: "Delete", variant: "danger" }`.
+   * Outline by default. Leave it out to open it with `open`.
+   */
+  trigger?: string | ButtonTriggerProps;
+  title?: JSX.Element;
+  description?: JSX.Element;
+  /** Buttons at the foot of the window, the main action last. */
+  footer?: JSX.Element;
+  /** The × button next to the title. True by default. */
+  closeButton?: boolean;
+  /** "alertdialog" for a choice that interrupts: clicking outside doesn't close it. */
+  role?: "dialog" | "alertdialog";
+  /** Classes for the window, when it builds itself. */
+  class?: string;
+  /** Styles for the window, when it builds itself, like --yosegi-dialog-width. */
+  style?: JSX.CSSProperties | string;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -59,8 +82,63 @@ function DialogRoot(props: DialogProps) {
         setTrigger,
       }}
     >
-      {props.children}
+      {"trigger" in props || "title" in props ? <Built {...omit(props, "children")}>{props.children}</Built> : props.children}
     </DialogContext>
+  );
+}
+
+/** The window from the root's props, when it has a trigger or a title. */
+function Built(props: DialogProps) {
+  const dialog = useDialog();
+  const title = children(() => props.title);
+  const description = children(() => props.description);
+  const footer = children(() => props.footer);
+
+  return (
+    <>
+      <Show when={"trigger" in props}>
+        <TriggerFrom trigger={props.trigger} />
+      </Show>
+      <Portal>
+        <Show when={dialog.modal()}>
+          <Overlay />
+        </Show>
+        <Content role={props.role} class={props.class} style={props.style}>
+          <Show when={title() || props.closeButton !== false}>
+            <Header>
+              <Show when={title()}>
+                <Title>{title()}</Title>
+              </Show>
+              <Show when={props.closeButton !== false}>
+                <CloseButton />
+              </Show>
+            </Header>
+          </Show>
+          <Show when={description()}>
+            <Description>{description()}</Description>
+          </Show>
+          {props.children}
+          <Show when={footer()}>
+            <Footer>{footer()}</Footer>
+          </Show>
+        </Content>
+      </Portal>
+    </>
+  );
+}
+
+/** The trigger from the root's props: an outline Button with the text, or with the Button props given. */
+function TriggerFrom(props: { trigger?: string | ButtonTriggerProps }) {
+  // Read once: the object builds its icon again on every read.
+  const button = createMemo(() => {
+    const trigger = props.trigger;
+    return typeof trigger === "string" ? { label: trigger } : { ...trigger };
+  });
+  // Keyed: Trigger gets plain props, and a new trigger object builds it again.
+  return (
+    <Show when={button()} keyed>
+      {(button) => <Trigger as={Button} variant="outline" {...button} />}
+    </Show>
   );
 }
 
@@ -215,15 +293,19 @@ function CloseButton(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
   );
 }
 
+const Header = createPart("div", styles.header, "yosegi-dialog-header");
+
+const Footer = createPart("div", styles.footer, "yosegi-dialog-footer");
+
 export const Dialog = Object.assign(DialogRoot, {
   Trigger,
   Portal,
   Overlay,
   Content,
-  Header: createPart("div", styles.header, "yosegi-dialog-header"),
+  Header,
   Title,
   Description,
   Body: createPart("div", styles.body, "yosegi-dialog-body"),
-  Footer: createPart("div", styles.footer, "yosegi-dialog-footer"),
+  Footer,
   CloseButton,
 });
