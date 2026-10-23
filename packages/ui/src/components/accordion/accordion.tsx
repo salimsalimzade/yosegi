@@ -1,5 +1,5 @@
-import type { JSX } from "@solidjs/web";
-import { createContext, createEffect, createSignal, createUniqueId, omit, useContext } from "solid-js";
+import type { JSX, ValidComponent } from "@solidjs/web";
+import { createContext, createEffect, createMemo, createSignal, createUniqueId, For, omit, useContext } from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createTag, type PartProps } from "../../primitives/create-part";
 import { callHandler, dataAttr } from "../../primitives/dom";
@@ -23,8 +23,24 @@ interface ItemContextValue {
 const AccordionContext = createContext<AccordionContextValue>();
 const ItemContext = createContext<ItemContextValue>();
 
-/** Headings that each show or hide a section of content. */
+/** One section, when Accordion builds itself from `sections`. */
+export interface AccordionSection {
+  /** Unique within the accordion. */
+  value: string;
+  /** The heading's text, or any JSX. */
+  title: JSX.Element;
+  content?: JSX.Element;
+  disabled?: boolean;
+}
+
+/**
+ * Headings that each show or hide a section of content. Give it `sections` and
+ * it builds the items itself. Without them, put the parts together yourself.
+ */
 export interface AccordionProps extends Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  sections?: AccordionSection[];
+  /** Each heading's element, with `sections`. h3 by default. */
+  titleAs?: ValidComponent;
   value?: string[];
   defaultValue?: string[];
   onChange?: (value: string[]) => void;
@@ -41,7 +57,19 @@ function AccordionRoot(props: AccordionProps) {
     onChange: (next) => props.onChange?.(next),
   });
   let root: HTMLDivElement | undefined;
-  const rest = omit(props, "value", "defaultValue", "onChange", "multiple", "collapsible", "class", "ref", "children");
+  const rest = omit(
+    props,
+    "value",
+    "defaultValue",
+    "onChange",
+    "multiple",
+    "collapsible",
+    "class",
+    "ref",
+    "children",
+    "sections",
+    "titleAs",
+  );
 
   const toggle = (item: string) => {
     const open = value().includes(item);
@@ -60,9 +88,31 @@ function AccordionRoot(props: AccordionProps) {
         ref={[(el: HTMLDivElement) => (root = el), props.ref as any]}
         class={[styles.root, "yosegi-accordion", props.class]}
       >
-        {props.children}
+        {"sections" in props ? <Built sections={props.sections} titleAs={props.titleAs} /> : props.children}
       </div>
     </AccordionContext>
+  );
+}
+
+/** The items from the root's `sections`. */
+function Built(props: { sections?: AccordionSection[]; titleAs?: ValidComponent }) {
+  // Read once: the sections build their titles and content again on every read.
+  const sections = createMemo(() => props.sections ?? []);
+
+  return (
+    <For each={sections()}>
+      {(section) => (
+        <Item value={section.value} disabled={section.disabled}>
+          <Header as={props.titleAs}>
+            <Trigger>{section.title}</Trigger>
+          </Header>
+          <Content>
+            {/* One element, so the content's padding applies to plain text too. */}
+            <div>{section.content}</div>
+          </Content>
+        </Item>
+      )}
+    </For>
   );
 }
 
