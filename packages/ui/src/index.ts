@@ -57,7 +57,7 @@ export {
   type TableSelection,
 } from "./components/table/table";
 export { applyTableQuery, type TableColumn, type TableQuery, type TableSort } from "./components/table/table-model";
-export { Tabs, type TabsProps, type TabsTriggerProps } from "./components/tabs/tabs";
+export { Tabs, type TabsItem, type TabsProps, type TabsTriggerProps } from "./components/tabs/tabs";
 export { TextField, type TextFieldProps, type TextFieldTextAreaProps } from "./components/text-field/text-field";
 export {
   toast,
