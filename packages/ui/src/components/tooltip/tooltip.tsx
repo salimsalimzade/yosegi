@@ -156,9 +156,9 @@ function Content(props: JSX.HTMLAttributes<HTMLDivElement>) {
   );
 }
 
-function Arrow(props: JSX.HTMLAttributes<HTMLSpanElement> & { size?: number }) {
+function Arrow(props: JSX.HTMLAttributes<HTMLSpanElement>) {
   const tooltip = useTooltip();
-  const rest = omit(props, "class", "ref", "size");
+  const rest = omit(props, "class", "ref");
 
   return (
     <span
