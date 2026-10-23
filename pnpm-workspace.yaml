@@ -9,6 +9,7 @@ catalog:
   '@solidjs/web': 2.0.0-rc.17
   sass-embedded: ~1.105.2
   solid-js: 2.0.0-rc.17
+  svgo: ^4.1.0
   typescript: ^7.0.2
   vite: ^8.3.5
 

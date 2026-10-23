@@ -1,39 +1,23 @@
 import type { Component } from "solid-js";
 import { For } from "solid-js";
+import * as yosegi from "yosegi";
 import {
-  ArchiveIcon,
   ArrowRightIcon,
   Button,
-  CalendarIcon,
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CloseIcon,
-  DashIcon,
   DownloadIcon,
-  FileIcon,
-  GridIcon,
-  InboxIcon,
   InfoIcon,
   type IconProps,
-  ListIcon,
-  MinusIcon,
   PlusIcon,
-  SearchIcon,
-  SearchOffIcon,
   SettingsIcon,
-  ShareIcon,
-  ShieldIcon,
   TickIcon,
   toast,
   TrashIcon,
-  WarningIcon,
 } from "yosegi";
 import { Case } from "../ui/case";
 import styles from "./icons.module.scss";
 
 interface Icon {
-  /** The file name in the design system's Icons group and in public/icons. */
+  /** The file name in packages/ui/src/icons, public/icons and the design system's Icons group. */
   file: string;
   component: string;
   Icon: Component<IconProps>;
@@ -41,32 +25,36 @@ interface Icon {
   usedBy?: string;
 }
 
-const icons: Icon[] = [
-  { file: "tick", component: "TickIcon", Icon: TickIcon, usedBy: "Checkbox, Combobox, Toast" },
-  { file: "dash", component: "DashIcon", Icon: DashIcon, usedBy: "Checkbox" },
-  { file: "plus", component: "PlusIcon", Icon: PlusIcon, usedBy: "NumberField" },
-  { file: "minus", component: "MinusIcon", Icon: MinusIcon, usedBy: "NumberField" },
-  { file: "close", component: "CloseIcon", Icon: CloseIcon, usedBy: "Dialog, Popover, Toast" },
-  { file: "calendar", component: "CalendarIcon", Icon: CalendarIcon, usedBy: "DatePicker" },
-  { file: "chevron-left", component: "ChevronLeftIcon", Icon: ChevronLeftIcon, usedBy: "DatePicker" },
-  { file: "chevron-right", component: "ChevronRightIcon", Icon: ChevronRightIcon, usedBy: "DatePicker" },
-  { file: "chevron-down", component: "ChevronDownIcon", Icon: ChevronDownIcon, usedBy: "Combobox" },
-  { file: "search", component: "SearchIcon", Icon: SearchIcon, usedBy: "Command" },
-  { file: "arrow-right", component: "ArrowRightIcon", Icon: ArrowRightIcon },
-  { file: "download", component: "DownloadIcon", Icon: DownloadIcon },
-  { file: "trash", component: "TrashIcon", Icon: TrashIcon },
-  { file: "settings", component: "SettingsIcon", Icon: SettingsIcon },
-  { file: "shield", component: "ShieldIcon", Icon: ShieldIcon },
-  { file: "file", component: "FileIcon", Icon: FileIcon },
-  { file: "share", component: "ShareIcon", Icon: ShareIcon },
-  { file: "list", component: "ListIcon", Icon: ListIcon },
-  { file: "grid", component: "GridIcon", Icon: GridIcon },
-  { file: "info", component: "InfoIcon", Icon: InfoIcon },
-  { file: "archive", component: "ArchiveIcon", Icon: ArchiveIcon },
-  { file: "inbox", component: "InboxIcon", Icon: InboxIcon },
-  { file: "search-off", component: "SearchOffIcon", Icon: SearchOffIcon },
-  { file: "warning", component: "WarningIcon", Icon: WarningIcon },
-];
+/** Where the library draws its own icons. These come first; the rest follow by name. */
+const usedBy: Record<string, string> = {
+  TickIcon: "Checkbox, Select, Combobox, Filter, Toast",
+  DashIcon: "Checkbox",
+  PlusIcon: "NumberField",
+  MinusIcon: "NumberField",
+  CloseIcon: "Dialog, Popover, Toast, Filter, Combobox",
+  CalendarIcon: "DatePicker",
+  ChevronLeftIcon: "DatePicker, Pagination",
+  ChevronRightIcon: "DatePicker, Pagination",
+  ChevronDownIcon: "Select, Combobox, Table",
+  SearchIcon: "Command, Combobox, Table",
+  FilterIcon: "Filter",
+};
+
+/** SearchOffIcon → search-off */
+const fileName = (component: string) =>
+  component
+    .replace(/Icon$/, "")
+    .replace(/[A-Z]/g, (char, index) => (index ? "-" : "") + char.toLowerCase());
+
+// Every icon the kit exports, so a new SVG shows up here after `pnpm generate`.
+const order = Object.keys(usedBy);
+const icons: Icon[] = Object.entries(yosegi)
+  .filter(([name]) => name.endsWith("Icon"))
+  .map(([component, Icon]) => ({ file: fileName(component), component, Icon: Icon as Component<IconProps>, usedBy: usedBy[component] }))
+  .sort((a, b) => {
+    const rank = (icon: Icon) => (order.includes(icon.component) ? order.indexOf(icon.component) : order.length);
+    return rank(a) - rank(b) || a.file.localeCompare(b.file);
+  });
 
 const copy = async (icon: Icon) => {
   const text = `<${icon.component} />`;
