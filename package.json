@@ -17,10 +17,13 @@
     "generate": "pnpm --filter yosegi generate",
     "build": "pnpm --recursive build",
     "typecheck": "pnpm --recursive typecheck",
+    "format": "biome format --write",
+    "format:check": "biome format",
     "changeset": "changeset",
     "release": "pnpm --filter yosegi build && changeset publish"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.6.2",
     "@changesets/cli": "^3.0.3",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
