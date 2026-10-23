@@ -6,6 +6,8 @@ import { createFloating, type Placement } from "../../primitives/create-floating
 import { createTag } from "../../primitives/create-part";
 import { callHandler, dataAttr } from "../../primitives/dom";
 import { Portal } from "../../primitives/portal";
+import type { ButtonTriggerProps } from "../button/button";
+import { ButtonTriggerSlot } from "../button/button-trigger";
 import styles from "./tooltip.module.scss";
 
 interface TooltipContextValue {
@@ -21,8 +23,22 @@ interface TooltipContextValue {
 const TooltipContext = createContext<TooltipContextValue>();
 const useTooltip = () => useContext(TooltipContext);
 
-/** A short label shown on hover or focus. */
+/**
+ * A short label shown on hover or focus. Give it a trigger and it builds the
+ * rest itself: the arrow and the content. Without one, put the parts together
+ * yourself.
+ */
 export interface TooltipProps {
+  /** What it's about: text, or a Button's props like `{ icon: <PlusIcon />, "aria-label": "New note" }`. Outline by default. */
+  trigger?: string | ButtonTriggerProps;
+  /** The text of the tooltip. */
+  content?: JSX.Element;
+  /** The arrow pointing at the trigger. True by default. */
+  arrow?: boolean;
+  /** Classes for the content, with a trigger. */
+  class?: string;
+  /** Styles for the content, with a trigger. */
+  style?: JSX.CSSProperties | string;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -80,8 +96,25 @@ function TooltipRoot(props: TooltipProps) {
         setArrow,
       }}
     >
-      {props.children}
+      {"trigger" in props ? <Built {...omit(props, "children")} /> : props.children}
     </TooltipContext>
+  );
+}
+
+/** The trigger and the content from the root's props, when it has a trigger. */
+function Built(props: TooltipProps) {
+  return (
+    <>
+      <ButtonTriggerSlot trigger={props.trigger} part={Trigger} />
+      <Portal>
+        <Content class={props.class} style={props.style}>
+          <Show when={props.arrow !== false}>
+            <Arrow />
+          </Show>
+          {props.content}
+        </Content>
+      </Portal>
+    </>
   );
 }
 

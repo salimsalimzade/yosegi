@@ -3,7 +3,6 @@ import {
   children,
   createContext,
   createEffect,
-  createMemo,
   createSignal,
   createUniqueId,
   omit,
@@ -16,7 +15,8 @@ import { createPart, createTag } from "../../primitives/create-part";
 import { callHandler, dataAttr, focusFirst } from "../../primitives/dom";
 import { CloseIcon } from "../../primitives/icons";
 import { Portal } from "../../primitives/portal";
-import { Button, type ButtonTriggerProps } from "../button/button";
+import type { ButtonTriggerProps } from "../button/button";
+import { ButtonTriggerSlot } from "../button/button-trigger";
 import styles from "./dialog.module.scss";
 
 interface DialogContextValue {
@@ -112,7 +112,7 @@ function Built(props: DialogProps) {
   return (
     <>
       <Show when={"trigger" in props}>
-        <TriggerFrom trigger={props.trigger} />
+        <ButtonTriggerSlot trigger={props.trigger} part={Trigger} />
       </Show>
       <Portal>
         <Show when={dialog.modal()}>
@@ -139,21 +139,6 @@ function Built(props: DialogProps) {
         </Content>
       </Portal>
     </>
-  );
-}
-
-/** The trigger from the root's props: an outline Button with the text, or with the Button props given. */
-function TriggerFrom(props: { trigger?: string | ButtonTriggerProps }) {
-  // Read once: the object builds its icon again on every read.
-  const button = createMemo(() => {
-    const trigger = props.trigger;
-    return typeof trigger === "string" ? { label: trigger } : { ...trigger };
-  });
-  // Keyed: Trigger gets plain props, and a new trigger object builds it again.
-  return (
-    <Show when={button()} keyed>
-      {(button) => <Trigger as={Button} variant="outline" {...button} />}
-    </Show>
   );
 }
 

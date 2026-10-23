@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import { Button, CalendarIcon, InfoIcon, PlusIcon, Tooltip, type TooltipProps } from "yosegi";
+import { CalendarIcon, InfoIcon, PlusIcon, Tooltip, type TooltipProps } from "yosegi";
 import { Case } from "../ui/case";
 
 export function TooltipPage() {
@@ -17,19 +17,7 @@ export function TooltipPage() {
             ] as const
           }
         >
-          {([label, tip]) => (
-            <Tooltip>
-              <Tooltip.Trigger as={Button} variant="outline">
-                {label}
-              </Tooltip.Trigger>
-              <Tooltip.Portal>
-                <Tooltip.Content>
-                  <Tooltip.Arrow />
-                  {tip}
-                </Tooltip.Content>
-              </Tooltip.Portal>
-            </Tooltip>
-          )}
+          {([label, tip]) => <Tooltip trigger={label} content={tip} />}
         </For>
       </Case>
 
@@ -46,17 +34,7 @@ export function TooltipPage() {
             ] as const
           }
         >
-          {([tip, Icon]) => (
-            <Tooltip>
-              <Tooltip.Trigger as={Button} variant="ghost" icon={<Icon />} aria-label={tip} />
-              <Tooltip.Portal>
-                <Tooltip.Content>
-                  <Tooltip.Arrow />
-                  {tip}
-                </Tooltip.Content>
-              </Tooltip.Portal>
-            </Tooltip>
-          )}
+          {([tip, Icon]) => <Tooltip trigger={{ icon: <Icon />, variant: "ghost", "aria-label": tip }} content={tip} />}
         </For>
       </Case>
 
@@ -64,42 +42,19 @@ export function TooltipPage() {
         <div style={{ display: "flex", gap: "96px", padding: "48px 72px" }}>
           <For each={["top", "right", "bottom", "left"] as TooltipProps["placement"][]}>
             {(placement) => (
-              <Tooltip open placement={placement}>
-                <Tooltip.Trigger as={Button} variant="outline" size="sm">
-                  {placement}
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content>
-                    <Tooltip.Arrow />
-                    {placement}
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip>
+              <Tooltip open placement={placement} trigger={{ label: placement, size: "sm" }} content={placement} />
             )}
           </For>
         </div>
       </Case>
 
-      <Case title="Instant and disabled" description="openDelay={0} opens at once; disabled never opens.">
-        <Tooltip openDelay={0}>
-          <Tooltip.Trigger as={Button} variant="outline">
-            No delay
-          </Tooltip.Trigger>
-          <Tooltip.Portal>
-            <Tooltip.Content>
-              <Tooltip.Arrow />
-              Right away
-            </Tooltip.Content>
-          </Tooltip.Portal>
-        </Tooltip>
-        <Tooltip disabled>
-          <Tooltip.Trigger as={Button} variant="outline">
-            Disabled tooltip
-          </Tooltip.Trigger>
-          <Tooltip.Portal>
-            <Tooltip.Content>Never shown</Tooltip.Content>
-          </Tooltip.Portal>
-        </Tooltip>
+      <Case
+        title="Instant, disabled and without the arrow"
+        description="openDelay={0} opens at once; disabled never opens; arrow={false} leaves just the text."
+      >
+        <Tooltip openDelay={0} trigger="No delay" content="Right away" />
+        <Tooltip disabled trigger="Disabled tooltip" content="Never shown" />
+        <Tooltip openDelay={0} arrow={false} trigger="No arrow" content="Just the text" />
       </Case>
     </>
   );

@@ -37,7 +37,7 @@ export interface ButtonProps extends Omit<JSX.ButtonHTMLAttributes<HTMLButtonEle
   download?: boolean | string;
 }
 
-/** A Button as another component's trigger, like Popover's: it says it's open with aria-expanded instead. */
+/** A Button as another component's trigger, like Popover's: `as` is the component's, and its state goes in other aria attributes. */
 export type ButtonTriggerProps = Omit<ButtonProps, "as" | "aria-pressed">;
 
 export function Button(props: ButtonProps) {
