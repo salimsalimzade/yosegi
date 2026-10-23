@@ -47,6 +47,8 @@ export {
   type FilterProps,
   type FilterRangeProps,
   type FilterRangeValue,
+  type FilterSection,
+  type FilterSectionOption,
   type FilterSectionProps,
   type FilterValue,
 } from "./components/table/filter";

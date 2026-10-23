@@ -3,6 +3,7 @@ import {
   children,
   createContext,
   createEffect,
+  createMemo,
   createSignal,
   createUniqueId,
   For,
@@ -68,7 +69,40 @@ const clean = (value: FilterValue) =>
   Object.fromEntries(Object.entries(value).filter(([, v]) => isActive(v))) as FilterValue;
 
 /** A Filter button and a side panel with every filterable column; Show applies them together. */
+/** One option of an options section, when Filter builds itself from `sections`. */
+export interface FilterSectionOption {
+  value: string;
+  label: JSX.Element;
+  /** How many results have this value. */
+  count?: number;
+  disabled?: boolean;
+}
+
+/** One section, when Filter builds itself from `sections`: a list of options, or a range. */
+export type FilterSection = {
+  /** The key in the filter value. */
+  name: string;
+  title: JSX.Element;
+} & (
+  | { type?: "options"; options: FilterSectionOption[] }
+  | {
+      type: "range";
+      /** The chip text for a value: “over $100”. */
+      format?: (value: number) => string;
+      placeholderFrom?: string;
+      placeholderTo?: string;
+    }
+);
+
+/**
+ * A Filter button and a side panel of option and range sections. Give it
+ * `sections` and it builds the button, the chips and the panel itself.
+ * Without them, put the parts together yourself.
+ */
 export interface FilterProps {
+  sections?: FilterSection[];
+  /** The panel's heading, with `sections`. “Filters” by default. */
+  title?: JSX.Element;
   value?: FilterValue;
   defaultValue?: FilterValue;
   /** Called when people press Show, Clear all, or remove a chip. */
@@ -173,8 +207,51 @@ function FilterRoot(props: FilterProps) {
         setContent,
       }}
     >
-      {props.children}
+      {"sections" in props ? <Built sections={props.sections} title={props.title} /> : props.children}
     </FilterContext>
+  );
+}
+
+/** The button, the chips and the panel from the root's `sections`. */
+function Built(props: { sections?: FilterSection[]; title?: JSX.Element }) {
+  // Read once: the sections build their titles and labels again on every read.
+  const sections = createMemo(() => props.sections ?? []);
+
+  return (
+    <>
+      <Trigger />
+      <Chips />
+      <Portal>
+        <Overlay />
+        <Content>
+          <Header>{props.title}</Header>
+          <For each={sections()}>
+            {(section) =>
+              section.type === "range" ? (
+                <Section name={section.name} title={section.title} type="range">
+                  <Range
+                    format={section.format}
+                    placeholderFrom={section.placeholderFrom}
+                    placeholderTo={section.placeholderTo}
+                  />
+                </Section>
+              ) : (
+                <Section name={section.name} title={section.title}>
+                  <For each={section.options}>
+                    {(option) => (
+                      <Option value={option.value} count={option.count} disabled={option.disabled}>
+                        {option.label}
+                      </Option>
+                    )}
+                  </For>
+                </Section>
+              )
+            }
+          </For>
+          <Footer />
+        </Content>
+      </Portal>
+    </>
   );
 }
 

@@ -1,48 +1,32 @@
-import { createSignal, For } from "solid-js";
+import { createSignal } from "solid-js";
 import { Filter, type FilterValue } from "yosegi";
 import { Case } from "../ui/case";
 import { countBy, invoices, matches, methodLabels, money, statusLabels } from "../ui/invoices";
 
-/** The invoice filter, as the Table and Filter pages use it. */
+/** The invoice filter, as the Filter page uses it. */
 export function InvoiceFilter(props: { value: FilterValue; onChange: (value: FilterValue) => void }) {
+  const options = (field: "status" | "method", labels: Record<string, string>) =>
+    Object.entries(labels).map(([value, label]) => ({ value, label, count: countBy(field, invoices)[value] ?? 0 }));
+
   return (
     <Filter
       value={props.value}
       onChange={props.onChange}
       resultCount={(draft) => invoices.filter((invoice) => matches(invoice, draft)).length}
       noun="invoices"
-    >
-      <Filter.Trigger />
-      <Filter.Chips />
-      <Filter.Portal>
-        <Filter.Overlay />
-        <Filter.Content>
-          <Filter.Header>Filters</Filter.Header>
-          <Filter.Section name="status" title="Status">
-            <For each={Object.entries(statusLabels)}>
-              {([value, label]) => (
-                <Filter.Option value={value} count={countBy("status", invoices)[value] ?? 0}>
-                  {label}
-                </Filter.Option>
-              )}
-            </For>
-          </Filter.Section>
-          <Filter.Section name="method" title="Method">
-            <For each={Object.entries(methodLabels)}>
-              {([value, label]) => (
-                <Filter.Option value={value} count={countBy("method", invoices)[value] ?? 0}>
-                  {label}
-                </Filter.Option>
-              )}
-            </For>
-          </Filter.Section>
-          <Filter.Section name="amount" title="Amount" type="range">
-            <Filter.Range placeholderFrom="$0" placeholderTo="Any" format={(value) => money.format(value)} />
-          </Filter.Section>
-          <Filter.Footer />
-        </Filter.Content>
-      </Filter.Portal>
-    </Filter>
+      sections={[
+        { name: "status", title: "Status", options: options("status", statusLabels) },
+        { name: "method", title: "Method", options: options("method", methodLabels) },
+        {
+          name: "amount",
+          title: "Amount",
+          type: "range",
+          placeholderFrom: "$0",
+          placeholderTo: "Any",
+          format: (value) => money.format(value),
+        },
+      ]}
+    />
   );
 }
 
