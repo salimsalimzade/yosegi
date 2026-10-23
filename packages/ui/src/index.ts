@@ -18,6 +18,7 @@ export {
 } from "./components/combobox/combobox";
 export {
   Command,
+  type CommandAction,
   type CommandDialogProps,
   type CommandGroupProps,
   type CommandItemProps,

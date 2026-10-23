@@ -2,8 +2,10 @@ import type { JSX } from "@solidjs/web";
 import {
   createContext,
   createEffect,
+  createMemo,
   createSignal,
   createUniqueId,
+  For,
   omit,
   onSettled,
   Show,
@@ -14,6 +16,7 @@ import {
 import { nextItem } from "../../primitives/active-descendant";
 import { callHandler, dataAttr } from "../../primitives/dom";
 import { SearchIcon } from "../../primitives/icons";
+import { groupOptions } from "../../primitives/option-groups";
 import { Dialog } from "../dialog/dialog";
 import styles from "./command.module.scss";
 
@@ -60,8 +63,36 @@ const defaultFilter: Filter = (value, search, keywords) => {
     .every((word) => haystack.includes(word));
 };
 
-/** A searchable list of actions, for a command palette or a quick switcher. */
-export interface CommandProps extends JSX.HTMLAttributes<HTMLDivElement> {
+/** One action, when Command builds itself from `items`. */
+export interface CommandAction {
+  /** What the search matches against, and the action's identity. Shown when there's no label. */
+  value: string;
+  label?: JSX.Element;
+  icon?: JSX.Element;
+  /** Other words that should find it: "settings" for Preferences. */
+  keywords?: string[];
+  /** A key hint at the end, like "⌘N". */
+  shortcut?: JSX.Element;
+  /** Actions with a group sit under its heading, with a line between groups. */
+  group?: string;
+  disabled?: boolean;
+  /** Runs when it's picked, before the root's onSelect. */
+  onSelect?: (value: string) => void;
+}
+
+/**
+ * A searchable list of actions, for a command palette or a quick switcher.
+ * Give it `items` and it builds the search, the list and its groups itself.
+ * Without them, put the parts together yourself.
+ */
+export interface CommandProps extends Omit<JSX.HTMLAttributes<HTMLDivElement>, "onSelect"> {
+  items?: CommandAction[];
+  /** The search's placeholder, with `items`. "Type a command or search…" by default. */
+  placeholder?: string;
+  /** Shown when nothing matches, with `items`. "No results found." by default. */
+  empty?: JSX.Element;
+  /** Runs when any of the `items` is picked. */
+  onSelect?: (value: string) => void;
   /** Names the list for screen readers. "Commands" by default. */
   label?: string;
   /** Decides which items match the search. By default every word must appear in the value or keywords. */
@@ -74,7 +105,7 @@ function CommandRoot(props: CommandProps) {
   const [active, setActive] = createSignal<string | undefined>(undefined, { ownedWrite: true });
   const [list, setList] = createSignal<HTMLElement | undefined>(undefined, { ownedWrite: true });
   const items = createRegistry();
-  const rest = omit(props, "label", "filter", "class", "children");
+  const rest = omit(props, "label", "filter", "class", "children", "items", "placeholder", "empty", "onSelect");
 
   const move = (direction: "next" | "prev" | "first" | "last") => {
     const item = nextItem(list(), active(), direction);
@@ -106,9 +137,53 @@ function CommandRoot(props: CommandProps) {
       }}
     >
       <div {...rest} class={[styles.root, "yosegi-command", props.class]}>
-        {props.children}
+        {"items" in props ? <Built {...omit(props, "children")} /> : props.children}
       </div>
     </CommandContext>
+  );
+}
+
+/** The search and the list from the root's `items`, with a heading and a line for each group. */
+function Built(props: CommandProps) {
+  // Read once: the items build their icons again on every read.
+  const groups = createMemo(() => groupOptions(props.items ?? []));
+  const select = (item: CommandAction) => (value: string) => {
+    item.onSelect?.(value);
+    props.onSelect?.(value);
+  };
+  const row = (item: CommandAction) => (
+    <Item value={item.value} keywords={item.keywords} disabled={item.disabled} onSelect={select(item)}>
+      {item.icon}
+      {item.label ?? item.value}
+      <Show when={item.shortcut}>
+        <Shortcut>{item.shortcut}</Shortcut>
+      </Show>
+    </Item>
+  );
+
+  return (
+    <>
+      <Input placeholder={props.placeholder} />
+      <List>
+        <Empty>{props.empty}</Empty>
+        <For each={groups()}>
+          {(group, index) => (
+            <>
+              <Show when={index() > 0}>
+                <Separator />
+              </Show>
+              {group.name === undefined ? (
+                <For each={group.options}>{row}</For>
+              ) : (
+                <Group heading={group.name}>
+                  <For each={group.options}>{row}</For>
+                </Group>
+              )}
+            </>
+          )}
+        </For>
+      </List>
+    </>
   );
 }
 
@@ -131,8 +206,8 @@ function Input(props: JSX.InputHTMLAttributes<HTMLInputElement>) {
         type="text"
         autocomplete="off"
         spellcheck={false}
-        placeholder="Type a command or search…"
         {...rest}
+        placeholder={props.placeholder ?? "Type a command or search…"}
         class={[styles.input, "yosegi-command-input", props.class]}
         role="combobox"
         aria-label={command.label()}

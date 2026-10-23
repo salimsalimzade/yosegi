@@ -1,39 +1,26 @@
 import { createSignal, onSettled } from "solid-js";
-import { ArchiveIcon, Button, Command, FileIcon, PlusIcon, SettingsIcon, toast } from "yosegi";
+import { ArchiveIcon, Button, Command, type CommandAction, FileIcon, PlusIcon, SettingsIcon, toast } from "yosegi";
 import { Case, Cases } from "../ui/case";
 
-function Commands(props: { onRun: (name: string) => void }) {
-  return (
-    <>
-      <Command.Input />
-      <Command.List>
-        <Command.Empty />
-        <Command.Group heading="Notes">
-          <Command.Item value="New note" keywords={["create", "add"]} onSelect={props.onRun}>
-            <PlusIcon /> New note
-            <Command.Shortcut>⌘N</Command.Shortcut>
-          </Command.Item>
-          <Command.Item value="Trip to Kyoto" onSelect={props.onRun}>
-            <FileIcon /> Trip to Kyoto
-          </Command.Item>
-          <Command.Item value="Reading list" onSelect={props.onRun}>
-            <FileIcon /> Reading list
-          </Command.Item>
-        </Command.Group>
-        <Command.Separator />
-        <Command.Group heading="Settings">
-          <Command.Item value="Preferences" keywords={["settings", "options"]} onSelect={props.onRun}>
-            <SettingsIcon /> Preferences
-            <Command.Shortcut>⌘,</Command.Shortcut>
-          </Command.Item>
-          <Command.Item value="Billing" disabled onSelect={props.onRun}>
-            <SettingsIcon /> Billing
-          </Command.Item>
-        </Command.Group>
-      </Command.List>
-    </>
-  );
-}
+// A function, so the inline list and the dialog each get their own icons.
+const commands = (): CommandAction[] => [
+  { value: "New note", icon: <PlusIcon />, keywords: ["create", "add"], shortcut: "⌘N", group: "Notes" },
+  { value: "Trip to Kyoto", icon: <FileIcon />, group: "Notes" },
+  { value: "Reading list", icon: <FileIcon />, group: "Notes" },
+  {
+    value: "Preferences",
+    icon: <SettingsIcon />,
+    keywords: ["settings", "options"],
+    shortcut: "⌘,",
+    group: "Settings",
+  },
+  { value: "Billing", icon: <SettingsIcon />, disabled: true, group: "Settings" },
+];
+
+const folders: CommandAction[] = ["Inbox", "Personal", "Work", "Travel"].map((folder) => ({
+  value: folder,
+  icon: <ArchiveIcon />,
+}));
 
 export function CommandPage() {
   const [open, setOpen] = createSignal(false);
@@ -59,30 +46,28 @@ export function CommandPage() {
       <Cases>
         <Case
           title="Inline"
-          description="Type to filter: “sett” finds Preferences by keyword. ↑ ↓ move, Enter runs, Billing is disabled."
+          description="Type to filter: “sett” finds Preferences by keyword. ↑ ↓ move, Enter runs, Billing is disabled. group puts items under headings."
           layout="fill"
         >
-          <Command>
-            <Commands onRun={run} />
-          </Command>
+          <Command items={commands()} onSelect={run} />
         </Case>
-        <Case title="Short list, no groups" description="Items straight in the list." layout="fill">
-          <Command label="Move note">
-            <Command.Input placeholder="Move to…" />
-            <Command.List>
-              <Command.Empty>No folder by that name.</Command.Empty>
-              {["Inbox", "Personal", "Work", "Travel"].map((folder) => (
-                <Command.Item value={folder} onSelect={run}>
-                  <ArchiveIcon /> {folder}
-                </Command.Item>
-              ))}
-            </Command.List>
-          </Command>
+        <Case
+          title="Short list, no groups"
+          description="Items straight in the list, with their own empty text."
+          layout="fill"
+        >
+          <Command
+            label="Move note"
+            placeholder="Move to…"
+            empty="No folder by that name."
+            items={folders}
+            onSelect={run}
+          />
         </Case>
       </Cases>
       <Case
         title="Palette in a dialog"
-        description="Command.Dialog; open it with the button, or ⌘K / Ctrl+K anywhere on this page."
+        description="Command.Dialog takes the same items; open it with the button, or ⌘K / Ctrl+K anywhere on this page."
       >
         <Button
           label={
@@ -93,9 +78,13 @@ export function CommandPage() {
           variant="outline"
           onClick={() => setOpen(true)}
         />
-        <Command.Dialog open={open()} onOpenChange={setOpen} label="Command palette">
-          <Commands onRun={run} />
-        </Command.Dialog>
+        <Command.Dialog
+          open={open()}
+          onOpenChange={setOpen}
+          label="Command palette"
+          items={commands()}
+          onSelect={run}
+        />
       </Case>
     </>
   );

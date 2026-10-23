@@ -38,7 +38,7 @@ export function resolveOptions<T>(options: readonly T[], accessors: OptionAccess
   });
 }
 
-export interface OptionGroup<T extends Option> {
+export interface OptionGroup<T extends { group?: string }> {
   /** The heading; undefined for options without a group. */
   name: string | undefined;
   options: T[];
@@ -48,7 +48,7 @@ export interface OptionGroup<T extends Option> {
  * Splits options into runs under their group headings, in the order they
  * come. Options without a group form runs of their own, with no heading.
  */
-export function groupOptions<T extends Option>(options: T[]): OptionGroup<T>[] {
+export function groupOptions<T extends { group?: string }>(options: T[]): OptionGroup<T>[] {
   const groups: OptionGroup<T>[] = [];
   for (const option of options) {
     const last = groups[groups.length - 1];
