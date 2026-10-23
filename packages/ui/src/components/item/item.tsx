@@ -1,13 +1,26 @@
 import type { JSX } from "@solidjs/web";
-import { createContext, omit, useContext } from "solid-js";
+import { children, createContext, omit, Show, useContext } from "solid-js";
 import { createPart, createTag, type PartProps } from "../../primitives/create-part";
 import { dataAttr } from "../../primitives/dom";
 import styles from "./item.module.scss";
 
 const InGroup = createContext(false);
 
-/** A row of content: media, a title and description, and actions. */
-export interface ItemProps extends PartProps {
+/**
+ * A row of content: media, a title and description, and actions. Give it a
+ * title and it builds the row itself, with any children after the content.
+ * Without one, put the parts together yourself.
+ */
+export interface ItemProps extends Omit<PartProps, "title"> {
+  /** An icon, picture or initials at the start. */
+  media?: JSX.Element;
+  /** How the media is framed, as on Item.Media. default by default. */
+  mediaVariant?: ItemMediaProps["variant"];
+  /** The row's title. It isn't the HTML title attribute. */
+  title?: JSX.Element;
+  description?: JSX.Element;
+  /** Buttons or an icon at the end. */
+  actions?: JSX.Element;
   /** default is plain; outline adds a border; muted fills it. */
   variant?: "default" | "outline" | "muted";
   /** md (default), sm, or xs for dense lists. */
@@ -25,7 +38,22 @@ export interface ItemProps extends PartProps {
 function ItemRoot(props: ItemProps) {
   const inGroup = useContext(InGroup);
   const Tag = createTag(() => props.as ?? "div");
-  const rest = omit(props, "as", "variant", "size", "interactive", "selected", "disabled", "class", "children");
+  const rest = omit(
+    props,
+    "as",
+    "variant",
+    "size",
+    "interactive",
+    "selected",
+    "disabled",
+    "class",
+    "children",
+    "media",
+    "mediaVariant",
+    "title",
+    "description",
+    "actions",
+  );
 
   return (
     <Tag
@@ -40,8 +68,33 @@ function ItemRoot(props: ItemProps) {
       data-selected={dataAttr(props.selected)}
       data-disabled={dataAttr(props.disabled)}
     >
-      {props.children}
+      {"title" in props ? <Built {...omit(props, "children")}>{props.children}</Built> : props.children}
     </Tag>
+  );
+}
+
+/** The media, content and actions from the root's props, when it has a title. */
+function Built(props: ItemProps) {
+  const media = children(() => props.media);
+  const description = children(() => props.description);
+  const actions = children(() => props.actions);
+
+  return (
+    <>
+      <Show when={media()}>
+        <Media variant={props.mediaVariant}>{media()}</Media>
+      </Show>
+      <Content>
+        <Title>{props.title}</Title>
+        <Show when={description()}>
+          <Description>{description()}</Description>
+        </Show>
+      </Content>
+      {props.children}
+      <Show when={actions()}>
+        <Actions>{actions()}</Actions>
+      </Show>
+    </>
   );
 }
 
@@ -73,14 +126,19 @@ function Group(props: JSX.HTMLAttributes<HTMLDivElement>) {
   );
 }
 
+const Content = createPart("div", styles.content, "yosegi-item-content");
+const Title = createPart("div", styles.title, "yosegi-item-title");
+const Description = createPart<HTMLParagraphElement>("p", styles.description, "yosegi-item-description");
+const Actions = createPart("div", styles.actions, "yosegi-item-actions");
+
 export const Item = Object.assign(ItemRoot, {
   Group,
   Separator: createPart<HTMLHRElement>("hr", styles.separator, "yosegi-item-separator", { "aria-hidden": "true" }),
   Media,
-  Content: createPart("div", styles.content, "yosegi-item-content"),
-  Title: createPart("div", styles.title, "yosegi-item-title"),
-  Description: createPart<HTMLParagraphElement>("p", styles.description, "yosegi-item-description"),
-  Actions: createPart("div", styles.actions, "yosegi-item-actions"),
+  Content,
+  Title,
+  Description,
+  Actions,
   Header: createPart("div", styles.header, "yosegi-item-header"),
   Footer: createPart("div", styles.footer, "yosegi-item-footer"),
 });

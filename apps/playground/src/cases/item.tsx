@@ -14,15 +14,13 @@ export function ItemPage() {
       <Case title="Variants" description="default is plain, outline adds a border, muted fills it." layout="stack">
         <For each={["default", "outline", "muted"] as const}>
           {(variant) => (
-            <Item variant={variant} style={{ width: "100%" }}>
-              <Item.Content>
-                <Item.Title>{variant[0].toUpperCase() + variant.slice(1)} item</Item.Title>
-                <Item.Description>A title, a description and one action.</Item.Description>
-              </Item.Content>
-              <Item.Actions>
-                <Button label="Open" size="sm" variant="outline" />
-              </Item.Actions>
-            </Item>
+            <Item
+              variant={variant}
+              style={{ width: "100%" }}
+              title={`${variant[0].toUpperCase() + variant.slice(1)} item`}
+              description="A title, a description and one action."
+              actions={<Button label="Open" size="sm" variant="outline" />}
+            />
           )}
         </For>
       </Case>
@@ -34,46 +32,41 @@ export function ItemPage() {
       >
         <For each={["md", "sm", "xs"] as const}>
           {(size) => (
-            <Item variant="outline" size={size} style={{ width: "100%" }}>
-              <Item.Media variant="icon">
-                <FileIcon />
-              </Item.Media>
-              <Item.Content>
-                <Item.Title>Size {size}</Item.Title>
-              </Item.Content>
-            </Item>
+            <Item
+              variant="outline"
+              size={size}
+              style={{ width: "100%" }}
+              media={<FileIcon />}
+              mediaVariant="icon"
+              title={`Size ${size}`}
+            />
           )}
         </For>
       </Case>
 
       <Cases>
         <Case title="With an icon and an action" layout="fill">
-          <Item variant="outline">
-            <Item.Media variant="icon">
-              <ShieldIcon />
-            </Item.Media>
-            <Item.Content>
-              <Item.Title>New sign-in</Item.Title>
-              <Item.Description>From an unknown device in Kyoto.</Item.Description>
-            </Item.Content>
-            <Item.Actions>
-              <Button label="Review" size="sm" />
-            </Item.Actions>
-          </Item>
+          <Item
+            variant="outline"
+            media={<ShieldIcon />}
+            mediaVariant="icon"
+            title="New sign-in"
+            description="From an unknown device in Kyoto."
+            actions={<Button label="Review" size="sm" />}
+          />
         </Case>
 
         <Case title="As a link" description='as="a": the whole row is the link.' layout="fill">
-          <Item as="a" href="#item" variant="muted" size="sm">
-            <Item.Media variant="icon">
-              <TickIcon />
-            </Item.Media>
-            <Item.Content>
-              <Item.Title>Your profile is verified</Item.Title>
-            </Item.Content>
-            <Item.Actions>
-              <ChevronRightIcon />
-            </Item.Actions>
-          </Item>
+          <Item
+            as="a"
+            href="#item"
+            variant="muted"
+            size="sm"
+            media={<TickIcon />}
+            mediaVariant="icon"
+            title="Your profile is verified"
+            actions={<ChevronRightIcon />}
+          />
         </Case>
 
         <Case
@@ -86,23 +79,29 @@ export function ItemPage() {
               {(person, index) => (
                 <>
                   {index() > 0 && <Item.Separator />}
-                  <Item size="sm" selected={index() === 0} disabled={index() === 2}>
-                    <Item.Media variant="avatar">{person.initials}</Item.Media>
-                    <Item.Content>
-                      <Item.Title>{person.name}</Item.Title>
-                      <Item.Description>{person.email}</Item.Description>
-                    </Item.Content>
-                    <Item.Actions>
+                  <Item
+                    size="sm"
+                    selected={index() === 0}
+                    disabled={index() === 2}
+                    media={person.initials}
+                    mediaVariant="avatar"
+                    title={person.name}
+                    description={person.email}
+                    actions={
                       <Button size="sm" variant="ghost" icon={<PlusIcon />} aria-label={`Invite ${person.name}`} />
-                    </Item.Actions>
-                  </Item>
+                    }
+                  />
                 </>
               )}
             </For>
           </Item.Group>
         </Case>
 
-        <Case title="Header and footer" description="Full lines above and below the row." layout="fill">
+        <Case
+          title="Header and footer"
+          description="Full lines above and below the row: put the parts together for this one."
+          layout="fill"
+        >
           <Item variant="outline">
             <Item.Header>
               <Item.Title>Trip to Kyoto</Item.Title>
