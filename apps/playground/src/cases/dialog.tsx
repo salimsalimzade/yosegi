@@ -67,11 +67,7 @@ export function DialogPage() {
                 <Dialog.CloseButton />
               </Dialog.Header>
               <Dialog.Body>
-                <TextField value={name()} onChange={setName}>
-                  <TextField.Label>Name</TextField.Label>
-                  <TextField.Input />
-                  <TextField.Description>Shown in the sidebar and in shared links.</TextField.Description>
-                </TextField>
+                <TextField label="Name" value={name()} onChange={setName} description="Shown in the sidebar and in shared links." />
               </Dialog.Body>
               <Dialog.Footer>
                 <Button variant="outline" onClick={() => setRenameOpen(false)}>

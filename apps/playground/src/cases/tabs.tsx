@@ -1,19 +1,6 @@
 import { Checkbox, Tabs } from "yosegi";
 import { Case } from "../ui/case";
 
-function Option(props: { label: string; hint?: string; checked?: boolean }) {
-  return (
-    <Checkbox defaultChecked={props.checked}>
-      <Checkbox.Input />
-      <Checkbox.Control>
-        <Checkbox.Indicator />
-      </Checkbox.Control>
-      <Checkbox.Label>{props.label}</Checkbox.Label>
-      {props.hint && <Checkbox.Description>{props.hint}</Checkbox.Description>}
-    </Checkbox>
-  );
-}
-
 export function TabsPage() {
   return (
     <>
@@ -49,8 +36,8 @@ export function TabsPage() {
           <Tabs.Content value="profile">Your name and photo.</Tabs.Content>
           <Tabs.Content value="notifications">
             <div style={{ display: "grid", gap: "12px", "max-width": "380px" }}>
-              <Option label="Weekly summary" hint="Every Monday, one email." checked />
-              <Option label="Mentions" />
+              <Checkbox label="Weekly summary" description="Every Monday, one email." defaultChecked />
+              <Checkbox label="Mentions" />
             </div>
           </Tabs.Content>
         </Tabs>
