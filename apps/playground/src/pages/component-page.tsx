@@ -15,14 +15,12 @@ export function ComponentPage() {
     <Show
       when={entry()}
       fallback={
-        <NotFound>
-          <NotFound.Code>404</NotFound.Code>
-          <NotFound.Title>No such component</NotFound.Title>
-          <NotFound.Description>Pick one from the list on the left.</NotFound.Description>
-          <NotFound.Actions>
-            <Button label="All components" as="a" href={playgroundPath()} />
-          </NotFound.Actions>
-        </NotFound>
+        <NotFound
+          code="404"
+          title="No such component"
+          description="Pick one from the list on the left."
+          actions={<Button label="All components" as="a" href={playgroundPath()} />}
+        />
       }
     >
       {(found) => (

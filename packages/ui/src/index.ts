@@ -29,7 +29,7 @@ export { Dialog, type DialogProps, type DialogTriggerProps } from "./components/
 export { EmptyState, type EmptyStateProps } from "./components/empty-state/empty-state";
 export { ErrorState, type ErrorStateProps } from "./components/error-state/error-state";
 export { Item, type ItemMediaProps, type ItemProps } from "./components/item/item";
-export { NotFound } from "./components/not-found/not-found";
+export { NotFound, type NotFoundProps } from "./components/not-found/not-found";
 export { NumberField, type NumberFieldProps } from "./components/number-field/number-field";
 export { Popover, type PopoverProps, type PopoverTriggerProps } from "./components/popover/popover";
 export { Select, type SelectListboxProps, type SelectOption, type SelectProps } from "./components/select/select";

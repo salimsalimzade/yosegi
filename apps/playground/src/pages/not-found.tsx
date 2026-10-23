@@ -6,14 +6,12 @@ import styles from "./page.module.scss";
 export function NotFound() {
   return (
     <main class={styles["not-found"]}>
-      <NotFoundState>
-        <NotFoundState.Code>404</NotFoundState.Code>
-        <NotFoundState.Title>Page not found</NotFoundState.Title>
-        <NotFoundState.Description>There's nothing at this address.</NotFoundState.Description>
-        <NotFoundState.Actions>
-          <Button label="Open the playground" as="a" href={playgroundPath()} />
-        </NotFoundState.Actions>
-      </NotFoundState>
+      <NotFoundState
+        code="404"
+        title="Page not found"
+        description="There's nothing at this address."
+        actions={<Button label="Open the playground" as="a" href={playgroundPath()} />}
+      />
     </main>
   );
 }

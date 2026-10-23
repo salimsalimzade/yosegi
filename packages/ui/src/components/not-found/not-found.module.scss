@@ -9,7 +9,7 @@
   .code {
     margin-bottom: space(100);
     color: knob(not-found, code-fg, color(fg-muted));
-    font: token(font-weight-semibold) 72px / 1 token(font-family-mono);
+    font: token(font-weight-semibold) knob(not-found, code-size, 72px) / 1 token(font-family-mono);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.04em;
   }
