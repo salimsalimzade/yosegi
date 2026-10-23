@@ -71,10 +71,7 @@
   }
 
   .empty {
-    padding: space(600) space(200);
-    font: text(small);
-    color: color(fg-muted);
-    text-align: center;
+    @include list-empty(space(600));
   }
 
   // A keyboard shortcut at the end of an item, like ⌘K.

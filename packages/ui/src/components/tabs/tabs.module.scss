@@ -74,6 +74,13 @@
     }
   }
 
+  // A count after a tab's label, like “All 12”: <span class="yosegi-tabs-count">.
+  .trigger :global(.yosegi-tabs-count) {
+    font: text(code);
+    font-size: 12px;
+    color: color(fg-muted);
+  }
+
   .content {
     color: color(fg);
   }

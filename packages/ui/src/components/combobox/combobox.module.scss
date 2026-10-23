@@ -1,8 +1,12 @@
 @use "../../styles/sass" as *;
 
+// The search select: Select's box, with a search row at the top of its list.
+// With multiple, the box holds chips and a +N counter for those that don't fit.
 @include component {
   .root {
     @include field-root;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
   }
 
   .label {
@@ -17,76 +21,478 @@
     @include field-error;
   }
 
-  .control {
-    @include field-box;
-    display: flex;
-    align-items: stretch;
-    overflow: hidden;
-    @include focus-within-ring;
-  }
-
-  .input {
-    @include bare-input;
+  // On its own: the box. Inside Control: just the chevron.
+  .trigger {
+    @include select-trigger;
     @include touch-text;
   }
 
-  .trigger {
-    display: grid;
-    place-items: center;
-    width: 32px;
-    color: color(fg-muted);
-    @include hover-muted;
-
-    :where(svg) {
-      width: 16px;
-      height: 16px;
-      transition: rotate token(duration-base) token(easing-out);
-    }
-
-    &[data-expanded] :where(svg) {
-      rotate: 180deg;
-    }
+  .value {
+    @include select-value;
   }
 
-  .content {
-    z-index: 50;
-    max-height: knob(combobox, max-height, 280px);
-    overflow-y: auto;
+  // -------------------------------------------------------------- Multiple
+
+  // The field holds the chips, the counter and the chevron. It never grows.
+  .control {
+    @include select-box;
+    flex-wrap: nowrap;
+    gap: space(100);
     padding: space(100);
-    transform-origin: var(--yosegi-combobox-content-transform-origin, center);
-    @include floating-panel(combobox);
-  }
+    cursor: pointer;
 
-  .listbox {
-    display: grid;
-    gap: 1px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
+    > .trigger {
+      width: 28px;
+      min-height: 26px;
+      flex: none;
+      justify-content: center;
+      margin-left: auto;
+      padding: 0;
+      border: 0;
+      border-radius: radius(150);
+      background: transparent;
 
-  .item {
-    @include list-item;
+      &:hover {
+        background: color(bg-muted);
+      }
 
-    &[aria-selected="true"] {
-      color: color(fg-accent);
-      font-weight: token(font-weight-semibold);
+      &:focus-visible {
+        outline-offset: 0;
+      }
+
+      > :where(svg) {
+        margin: 0;
+      }
+    }
+
+    :where([data-readonly]) > & {
+      cursor: default;
+
+      > .trigger {
+        display: none;
+      }
     }
   }
 
-  .item-label {
+  .chips {
+    position: relative;
+    display: flex;
     flex: 1;
+    align-items: center;
+    gap: space(100);
+    min-width: 0;
+    overflow: hidden;
+
+    > .value {
+      padding-left: 6px;
+    }
+  }
+
+  // Every chip at its natural width, off screen, for measuring how many fit.
+  .measure {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    gap: space(100);
+    visibility: hidden;
+    pointer-events: none;
+
+    > * {
+      flex: none;
+    }
+  }
+
+  .chip {
+    display: inline-flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+    height: 26px;
+    padding: 0 2px 0 space(200);
+    border-radius: radius(150);
+    background: color(bg-muted);
+    color: color(fg);
+    font: text(small);
+  }
+
+  .chip-label {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .empty {
+  .chip-remove {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: radius(150);
+    color: color(fg-muted);
+
+    &:hover {
+      background: color(border);
+      color: color(fg);
+    }
+
+    &:focus-visible {
+      outline-offset: 0;
+    }
+
+    :where(svg) {
+      width: 12px;
+      height: 12px;
+    }
+
+    :where([data-readonly], [data-disabled]) & {
+      display: none;
+    }
+  }
+
+  .chip:has(.chip-remove:disabled) {
+    padding-right: space(200);
+  }
+
+  .chip-count {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    height: 26px;
+    min-width: 30px;
+    padding: 0 space(200);
+    border: 1px solid color(border-strong);
+    border-radius: radius(150);
+    background: transparent;
+    color: color(fg);
+    font: text(label);
+    font-variant-numeric: tabular-nums;
+    @include transition(background-color);
+
+    &:hover {
+      background: color(bg-muted);
+    }
+
+    &:focus-visible {
+      outline-offset: 0;
+    }
+
+    &[aria-expanded="true"] {
+      background: color(bg-muted);
+      color: color(fg-accent);
+    }
+  }
+
+  // The panel the counter opens: the chips that aren't shown, each removable.
+  .overflow {
+    z-index: 50;
+    display: grid;
+    gap: space(200);
+    width: knob(combobox, overflow-width, 240px);
+    max-width: calc(100vw - 32px);
+    padding: space(300);
+    transform-origin: var(--yosegi-combobox-overflow-content-transform-origin, center);
+    @include floating-panel(combobox);
+  }
+
+  .overflow-title {
+    padding: 0 space(100);
+    font: text(label);
+    color: color(fg-muted);
+  }
+
+  .overflow-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+    max-height: 200px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+  }
+
+  .overflow-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: space(200);
+    min-height: 32px;
+    padding: 0 space(100) 0 space(200);
+    border-radius: radius(150);
+    font: text(body);
+
+    &:hover {
+      background: color(bg-muted);
+    }
+
+    > span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  // How many are chosen, with Clear all: at the foot of the list and of the counter's panel.
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: space(200);
+    padding-top: space(200);
+    border-top: 1px solid color(border);
+    font: text(small);
+    color: color(fg-muted);
+  }
+
+  .body > .footer {
+    margin-top: space(100);
+    padding: space(100) 0 0 space(200);
+  }
+
+  // ----------------------------------------------------------------- Panel
+
+  // The search row on top; only the list below it scrolls.
+  .content {
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    max-height: knob(combobox, max-height, 320px);
+    overflow: hidden;
+    transform-origin: var(--yosegi-combobox-content-transform-origin, center);
+    @include floating-panel(combobox);
+  }
+
+  .search {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: space(200);
+    min-height: 40px;
+    padding: 0 space(300);
+    border-bottom: 1px solid color(border);
+    color: color(fg-muted);
+
+    > :where(svg) {
+      flex: none;
+      width: 16px;
+      height: 16px;
+    }
+
+    &:has(:focus-visible) {
+      box-shadow: inset 0 -2px 0 color(border-focus);
+    }
+
+    // Searching again: the results stay and a small Spinner turns here.
+    > :global(.yosegi-spinner) {
+      --yosegi-spinner-size: 14px;
+    }
+  }
+
+  .search-input {
+    @include bare-input;
+    @include touch-text;
+    min-height: 38px;
+    padding: 0;
+    color: color(fg);
+    text-overflow: ellipsis;
+  }
+
+  .body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: space(100);
+  }
+
+  .listbox,
+  .group {
+    @include option-list;
+  }
+
+  .listbox:empty {
+    display: none;
+  }
+
+  .section {
+    @include option-section;
+  }
+
+  .separator {
+    height: 1px;
+    margin: space(100) calc(-1 * #{space(100)});
+    background: color(border);
+  }
+
+  .item {
+    @include list-item;
+    @include list-item-selected;
+  }
+
+  .item-label {
+    @include list-item-label;
+  }
+
+  // A detail on the right of a row, like a country, to tell similar options apart.
+  .item :global(.yosegi-combobox-item-detail) {
+    flex: none;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font: text(small);
+    font-weight: token(font-weight-regular);
+    color: color(fg-muted);
+  }
+
+  // Multiple: rows have checkboxes and the chosen text stays plain.
+  .content[data-multiple] .item[aria-selected="true"] {
+    color: color(fg);
+    font-weight: token(font-weight-regular);
+  }
+
+  .item-checkbox {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border: 1px solid knob(checkbox, border, color(border-strong));
+    border-radius: knob(checkbox, radius, radius(150));
+    background: color(bg-surface);
+    color: knob(checkbox, checked-fg, color(fg-on-accent));
+
+    .item[aria-selected="true"] & {
+      border-color: knob(checkbox, checked-bg, color(bg-accent));
+      background: knob(checkbox, checked-bg, color(bg-accent));
+    }
+
+    :where(svg) {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  // Create: adds what was searched as a new option.
+  .create {
+    color: color(fg-accent);
+  }
+
+  // ------------------------------------------------------------- Searching
+
+  // Before searching, too short, or the limit reached.
+  .hint {
     padding: space(200);
     font: text(small);
     color: color(fg-muted);
+  }
+
+  .listbox:not(:empty) + .hint {
+    margin-top: space(100);
+    border-top: 1px solid color(border);
+  }
+
+  .empty {
+    @include list-empty(space(400));
+
+    :global(strong) {
+      font-weight: token(font-weight-semibold);
+      color: color(fg);
+    }
+
+    :global(span) {
+      display: block;
+    }
+  }
+
+  // Couldn't load: not a validation error, so the field stays as it is.
+  .error {
+    display: grid;
+    justify-items: center;
+    gap: space(200);
+    padding: space(300) space(200);
+    font: text(small);
+    color: color(fg-muted);
     text-align: center;
+  }
+
+  .error-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: color(fg-danger);
+
+    &::before {
+      content: "!";
+      display: inline-grid;
+      flex: none;
+      place-items: center;
+      width: 14px;
+      height: 14px;
+      border-radius: radius(full);
+      background: color(fg-danger);
+      color: color(bg);
+      font-size: 10px;
+      font-weight: 700;
+    }
+  }
+
+  // Loading the first results: grey rows the size of real ones, pulsing gently.
+  .skeleton {
+    display: grid;
+    gap: 1px;
+  }
+
+  .skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: space(200);
+    min-height: 32px;
+    padding: 0 space(200);
+
+    &:nth-child(2) .skeleton-bar {
+      animation-delay: 120ms;
+    }
+
+    &:nth-child(3) .skeleton-bar {
+      animation-delay: 240ms;
+    }
+
+    &:nth-child(4) .skeleton-bar {
+      animation-delay: 360ms;
+    }
+  }
+
+  .skeleton-bar {
+    width: var(--yosegi-skeleton-width, 60%);
+    height: 10px;
+    border-radius: radius(full);
+    background: color(bg-muted);
+    animation: skeleton-pulse 1.4s token(easing-out) infinite;
+
+    &[data-shape="box"] {
+      flex: none;
+      width: 16px;
+      height: 16px;
+      border-radius: knob(checkbox, radius, radius(150));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+
+  .visually-hidden {
+    @include visually-hidden;
+  }
+
+  @keyframes skeleton-pulse {
+    50% {
+      opacity: 0.45;
+    }
   }
 
   @include keyframes(floating-in);

@@ -14,6 +14,7 @@
     "dev": "pnpm --parallel --filter playground --filter web dev",
     "dev:playground": "pnpm --filter playground dev",
     "dev:web": "pnpm --filter web dev",
+    "generate": "pnpm --filter yosegi generate",
     "build": "pnpm --recursive build",
     "typecheck": "pnpm --recursive typecheck",
     "changeset": "changeset",

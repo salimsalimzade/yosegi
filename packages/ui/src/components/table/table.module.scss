@@ -45,6 +45,10 @@
     }
   }
 
+  .body .empty-row:hover {
+    background: none;
+  }
+
   .footer {
     border-top: 1px solid knob(table, border, color(border));
     font-weight: token(font-weight-semibold);
@@ -65,7 +69,6 @@
     vertical-align: middle;
   }
 
-  // align="end" on a Head or Cell, for numbers.
   :is(.head, .cell)[data-align="end"] {
     text-align: end;
   }
@@ -74,12 +77,305 @@
     text-align: center;
   }
 
-  // The first and last columns line up with the table's edges.
+  // A heading people sort by: the label is the button, the chevron the direction.
+  .sort {
+    display: inline-flex;
+    align-items: center;
+    gap: space(100);
+    padding: 0;
+    border: 0;
+    border-radius: radius(150);
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    @include transition(color);
+
+    &:hover,
+    &[data-direction] {
+      color: color(fg);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    :where(svg) {
+      width: 14px;
+      height: 14px;
+      opacity: 0;
+      transition:
+        opacity token(duration-fast) token(easing-out),
+        rotate token(duration-base) token(easing-out);
+    }
+
+    &:hover :where(svg),
+    &:focus-visible :where(svg),
+    &[data-direction] :where(svg) {
+      opacity: 1;
+    }
+
+    &[data-direction="asc"] :where(svg) {
+      rotate: 180deg;
+    }
+  }
+
+  // Numbers keep their label on the column's edge; the chevron goes inside.
+  .head[data-align="end"] .sort {
+    flex-direction: row-reverse;
+  }
+
+  // A row that opens: by click, by Enter, or through the link in its first cell.
+  .body .row[data-clickable] {
+    cursor: pointer;
+
+    &:focus-visible,
+    &:has(.row-link:focus-visible) {
+      outline: token(focus-ring-width) solid color(border-focus);
+      outline-offset: calc(-1 * token(focus-ring-width));
+    }
+  }
+
+  // The link covers the whole row; the row's own controls sit above it.
+  .body .row:has(.row-link) {
+    position: relative;
+
+    :is(a, button, input, label, :global(.yosegi-checkbox)):not(.row-link) {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  .row-link {
+    color: inherit;
+    text-decoration: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  // In a plain table the first and last columns line up with its edges.
   :is(.head, .cell):first-child {
     padding-inline-start: 0;
   }
 
   :is(.head, .cell):last-child {
     padding-inline-end: 0;
+  }
+
+  // A 32px column for a row's Checkbox.
+  :is(.head, .cell)[data-selection] {
+    width: 32px;
+
+    :global(.yosegi-checkbox) {
+      display: inline-grid;
+      vertical-align: middle;
+    }
+
+    :global(.yosegi-checkbox-control) {
+      margin-top: 0;
+    }
+  }
+
+  // ---------------------------------------------------------------- The box
+  // One surface: a top bar (title, actions), a toolbar (search, Filter, chips),
+  // the table on a muted heading band, and a bottom bar with the range and pages.
+
+  .box {
+    // Narrow boxes trim Pagination down to its arrows.
+    container: table-box / inline-size;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid knob(table, box-border, color(border));
+    border-radius: knob(table, box-radius, radius(400));
+    background: color(bg-surface);
+
+    .header .row {
+      border-top: 1px solid knob(table, border, color(border));
+      background: color(bg-muted);
+    }
+
+    :is(.head, .cell):first-child {
+      padding-inline-start: space(400);
+    }
+
+    :is(.head, .cell):last-child {
+      padding-inline-end: space(400);
+    }
+
+    // Data in the box stays on one line; narrow screens scroll the table instead.
+    .cell {
+      white-space: nowrap;
+    }
+
+    // Rows are on their way: the old ones stay, dimmed, until the new ones come.
+    .body {
+      @include transition(opacity);
+    }
+
+    &[data-loading] .body {
+      opacity: 0.6;
+    }
+
+    // height: the rows area is always this tall; maxHeight: at most this tall.
+    // Either way the rows scroll inside it, under headings that stay put.
+    &[data-scroll] .root {
+      height: var(--yosegi-table-height, auto);
+      max-height: var(--yosegi-table-max-height, none);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    &[data-scroll] .head {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: color(bg-muted);
+      // Collapsed borders scroll away from a sticky cell; this line stays with it.
+      box-shadow: inset 0 -1px 0 knob(table, border, color(border));
+    }
+  }
+
+  .top-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: space(300);
+    padding: space(400) space(400) 0;
+  }
+
+  .title {
+    font: text(heading);
+    color: color(fg);
+  }
+
+  .description {
+    font: text(small);
+    color: color(fg-muted);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: space(200);
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: space(200);
+    padding: space(300) space(400) space(400);
+
+    > :global(.yosegi-text-field) {
+      width: min(240px, 100%);
+    }
+  }
+
+  // Takes the place of the top bar and toolbar while rows are selected.
+  .selection-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: space(200);
+    min-height: 64px;
+    padding: space(300) space(400);
+    background: color(bg-muted);
+
+    :global(.yosegi-table-selection-count) {
+      font-weight: token(font-weight-semibold);
+
+      span {
+        font: text(small);
+        font-weight: token(font-weight-regular);
+        color: color(fg-muted);
+      }
+    }
+  }
+
+  // Nothing to show: no rows yet, or the filters match nothing.
+  .empty {
+    display: grid;
+    justify-items: center;
+    gap: space(200);
+    padding: space(800) space(400);
+    color: color(fg-muted);
+    text-align: center;
+    white-space: normal;
+
+    strong {
+      color: color(fg);
+      font-weight: token(font-weight-semibold);
+    }
+  }
+
+  .bottom-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: space(200);
+    padding: space(200) space(200) space(200) space(400);
+    border-top: 1px solid knob(table, border, color(border));
+  }
+
+  .bottom-bar-start {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: space(200) space(400);
+  }
+
+  .bottom-bar > :global(.yosegi-pagination) {
+    margin-left: auto;
+  }
+
+  // Rows per page: a small Select with its label beside it.
+  .page-size {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    font: text(small);
+    color: color(fg-muted);
+
+    :global(.yosegi-select) {
+      display: inline-flex;
+      align-items: center;
+      gap: space(200);
+    }
+
+    :global(.yosegi-select-label) {
+      font: text(small);
+      color: color(fg-muted);
+    }
+
+    :global(.yosegi-select-trigger) {
+      width: auto;
+      min-height: 32px;
+      gap: space(100);
+      padding: 0 space(200);
+      font-variant-numeric: tabular-nums;
+
+      > svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+
+  .range {
+    font: text(small);
+    color: color(fg-muted);
+    font-variant-numeric: tabular-nums;
   }
 }

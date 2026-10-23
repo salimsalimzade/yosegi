@@ -40,19 +40,40 @@
     display: flex;
     align-items: center;
     gap: space(200);
-    padding-right: 10px;
+    padding-inline: 10px;
     overflow: hidden;
     @include focus-within-ring;
 
+    // The group pads both ends, so a leading icon or a trailing spinner sits
+    // 10px from the border and the gap alone separates it from the text.
     > .input {
       @include bare-input;
       min-height: 34px;
+      padding-inline: 0;
       border-radius: 0;
     }
 
     > :is(svg, :global(.yosegi-spinner)) {
       flex: none;
       color: color(fg-muted);
+    }
+  }
+
+  // TextField.Icon: a leading icon, like the search glass. It sizes its own
+  // svg, whatever styles the page puts on bare svg elements.
+  .icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    color: color(fg-muted);
+
+    > :where(svg) {
+      display: block;
+      width: 16px;
+      height: 16px;
+      margin: 0;
     }
   }
 

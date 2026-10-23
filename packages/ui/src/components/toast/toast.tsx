@@ -182,11 +182,13 @@ function ToastItem(props: {
 
   // The timer runs while not paused; an update (a new version) starts it again.
   createEffect(
-    () => [props.paused, props.toast.type, props.toast.version, props.toast.closing] as const,
-    ([paused, type, currentVersion, closing]) => {
+    // Everything the timer depends on is read here, where it's tracked; the
+    // callback below only uses what it's handed.
+    () => [props.paused, props.toast.type, props.toast.version, props.toast.closing, props.toast.duration ?? props.duration] as const,
+    ([paused, type, currentVersion, closing, duration]) => {
       if (currentVersion !== version) {
         version = currentVersion;
-        remaining = props.toast.duration ?? props.duration;
+        remaining = duration;
       }
       if (paused || closing || type === "loading" || !Number.isFinite(remaining)) return;
       const started = Date.now();

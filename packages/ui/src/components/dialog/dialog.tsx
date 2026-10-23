@@ -113,18 +113,20 @@ function Content(props: JSX.DialogHtmlAttributes<HTMLDialogElement>) {
 
   const [element, setElement] = createSignal<HTMLDialogElement | undefined>(undefined, { ownedWrite: true });
 
+  // Everything the callback and its cleanup use is read here, where it's tracked.
   createEffect(
-    () => (dialog.open() ? element() : undefined),
-    (el) => {
+    () => (dialog.open() ? ([element(), dialog.modal(), dialog.trigger()] as const) : undefined),
+    (opened) => {
+      const [el, modal, triggerEl] = opened ?? [];
       if (!el) return;
       // The element that had focus gets it back when the dialog closes.
       const returnTo = document.activeElement as HTMLElement | null;
-      if (dialog.modal()) el.showModal();
+      if (modal) el.showModal();
       else el.show();
       focusFirst(el);
       return () => {
         if (el.open) el.close();
-        (returnTo?.isConnected ? returnTo : dialog.trigger())?.focus();
+        (returnTo?.isConnected ? returnTo : triggerEl)?.focus();
       };
     },
   );

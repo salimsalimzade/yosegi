@@ -42,7 +42,8 @@
     }
   },
   "scripts": {
-    "build": "vite build && tsc -p tsconfig.build.json && node scripts/copy-assets.js",
+    "generate": "node scripts/generate-icons.js",
+    "build": "node scripts/generate-icons.js --check && vite build && tsc -p tsconfig.build.json && node scripts/copy-assets.js",
     "typecheck": "tsc",
     "prepublishOnly": "pnpm build"
   },
@@ -55,6 +56,7 @@
     "@solidjs/web": "catalog:",
     "sass-embedded": "catalog:",
     "solid-js": "catalog:",
+    "svgo": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
   },

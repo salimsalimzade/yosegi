@@ -1,0 +1,62 @@
+@use "../../styles/sass" as *;
+
+// Picks from a short list (3–10) with no search. Combobox shares the box, the
+// rows and the section headings through the select mixins.
+@include component {
+  .root {
+    @include field-root;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+  }
+
+  .label {
+    @include field-label;
+  }
+
+  .description {
+    @include field-description;
+  }
+
+  .error-message {
+    @include field-error;
+  }
+
+  .trigger {
+    @include select-trigger;
+    @include touch-text;
+  }
+
+  .value {
+    @include select-value;
+  }
+
+  // Select's panel is just the list, and scrolls itself.
+  .content {
+    z-index: 50;
+    max-height: knob(select, max-height, 280px);
+    overflow-y: auto;
+    padding: space(100);
+    transform-origin: var(--yosegi-select-content-transform-origin, center);
+    @include floating-panel(select);
+  }
+
+  .listbox,
+  .group {
+    @include option-list;
+  }
+
+  .section {
+    @include option-section;
+  }
+
+  .item {
+    @include list-item;
+    @include list-item-selected;
+  }
+
+  .item-label {
+    @include list-item-label;
+  }
+
+  @include keyframes(floating-in);
+}
