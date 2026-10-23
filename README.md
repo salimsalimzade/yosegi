@@ -23,13 +23,14 @@ pnpm install
 pnpm dev:playground   # the playground, at http://localhost:5173
 pnpm dev:web          # the website, at http://localhost:5174
 pnpm dev              # both at once
+pnpm generate         # icon components from packages/ui/src/icons/*.svg
 ```
 
-The playground is laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, and a page for each component under `/playground` (`/playground/button`, `/playground/date-picker`, …) that shows every case on its own. The Assets group has the Icons page, with all 24 icons to copy or download. A switch at the top changes between the light and dark themes. Changes to `packages/ui` show up as you save.
+The playground is laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, and a page for each component under `/playground` (`/playground/button`, `/playground/date-picker`, …) that shows every case on its own. The Assets group has the Icons page, with every icon to copy or download. To add one, put its SVG in `packages/ui/src/icons/` and run `pnpm generate`. A switch at the top changes between the light and dark themes. Changes to `packages/ui` show up as you save.
 
 ## Components
 
-Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Combobox, Command, Accordion, Tabs, Tooltip, Popover, Dialog, Toast, Table, Item, Separator, NotFound, ErrorState and EmptyState.
+Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Select, Combobox, Filter, Command, Accordion, Tabs, Pagination, Tooltip, Popover, Dialog, Toast, Table, Item, Separator, NotFound, ErrorState and EmptyState.
 
 Each one is a root that holds state, with its parts on it:
 

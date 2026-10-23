@@ -21,7 +21,7 @@ Exceptions are the standard uppercase files that tools look for by name: `README
 - Global styles live in `packages/ui/src/styles/`. `fonts.css` declares the fonts, whose woff2 files and licence live in `packages/ui/src/fonts/`, `tokens.css` holds the design tokens and themes, `global.css` holds the reset and base layers, and `index.css` loads all three.
 - The cascade layers are `yosegi.reset, yosegi.tokens, yosegi.base, yosegi.components`. Every entry file starts with that `@layer` statement, so the order holds whichever file loads first.
 - Components use system tokens (`--yosegi-color-*`), never the palette (`--yosegi-green-700`).
-- Each component lives in its own folder, `packages/ui/src/components/<name>/`, and gets its own SCSS module named after the component file: `button.tsx` is styled by `button.module.scss`, in the same folder.
+- Each component lives in its own folder, `packages/ui/src/components/<name>/`, and gets its own SCSS module named after the component file: `button.tsx` is styled by `button.module.scss`, in the same folder. The one exception is the table family: Pagination and Filter live next to Table in `components/table/` (`pagination.tsx`, `filter.tsx`), each with its own module.
 - Write module class names in lowercase, with dashes between words (`.root`, `.error-message`), and read them as `styles.root` or `styles["error-message"]`.
 - Every part also renders its stable public class, `yosegi-{component}-{part}`, next to the module class and the app's class. States are `data-*` attributes. To style another component from a module, target its stable class with `:global(.yosegi-button)`.
 - Start every module with `@use "../../styles/sass" as *;` and wrap its rules in `@include component { … }`. That mixin writes the layer order and puts the rules in `yosegi.components`, so the app's own CSS can always override them.
@@ -30,7 +30,7 @@ Exceptions are the standard uppercase files that tools look for by name: `README
 
 ## Components
 
-- Behaviour is written by hand (Kobalte supports Solid 1 only). Shared pieces live in `packages/ui/src/primitives/`: controlled state, field wiring, positioning (`@floating-ui/dom`), dismissal, focus and icons. The icons in `primitives/icons.tsx` are public too: `index.ts` exports them, and each matches a file in `apps/playground/public/icons/` and in the design system's Icons group, so a new icon goes in all three.
+- Behaviour is written by hand (Kobalte supports Solid 1 only). Shared pieces live in `packages/ui/src/primitives/`: controlled state, field wiring, positioning (`@floating-ui/dom`), dismissal, focus and icons. Icons start as SVGs in `packages/ui/src/icons/`, one per file, named like `search-off.svg` and matching the design system's Icons group. `pnpm generate` cleans them with SVGO and writes `primitives/icons.tsx` (`SearchOffIcon`) and the playground's `public/icons/`, so never edit those by hand. `index.ts` exports every icon, and `pnpm build` fails while they are out of date. Icons can't use ids (masks, gradients): draw them with strokes and fills in `currentColor`.
 - The API follows the design system's `index.d.ts`: a root that holds state and parts on it, such as `Tooltip.Trigger`.
 - Pass `children` explicitly rather than through a props spread, and never call `onSettled` inside a `ref` callback.
 - A prop that holds JSX (`children`, `icon`) creates its elements every time it's read. Resolve it once with `children(() => props.icon)` and read that.
