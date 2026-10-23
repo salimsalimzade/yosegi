@@ -1,4 +1,13 @@
-import { arrow, autoUpdate, computePosition, flip, offset, shift, size, type Placement } from "@floating-ui/dom";
+import {
+  arrow,
+  autoUpdate,
+  computePosition,
+  flip,
+  offset,
+  shift,
+  size,
+  type Placement,
+} from "@floating-ui/dom";
 import { createEffect } from "solid-js";
 
 export type { Placement };
@@ -16,14 +25,33 @@ export interface FloatingOptions {
   name: string;
 }
 
-const SIDE_ORIGIN = { top: "bottom", bottom: "top", left: "right", right: "left" } as const;
+const SIDE_ORIGIN = {
+  top: "bottom",
+  bottom: "top",
+  left: "right",
+  right: "left",
+} as const;
 
 /** The corner or edge of the floating element that touches the reference, e.g. "top left" for bottom-start. */
 function transformOrigin(placement: Placement) {
-  const [side, align] = placement.split("-") as [keyof typeof SIDE_ORIGIN, "start" | "end" | undefined];
+  const [side, align] = placement.split("-") as [
+    keyof typeof SIDE_ORIGIN,
+    "start" | "end" | undefined,
+  ];
   const vertical = side === "top" || side === "bottom";
-  const cross = align === "start" ? (vertical ? "left" : "top") : align === "end" ? (vertical ? "right" : "bottom") : "center";
-  return vertical ? `${SIDE_ORIGIN[side]} ${cross}` : `${cross} ${SIDE_ORIGIN[side]}`;
+  const cross =
+    align === "start"
+      ? vertical
+        ? "left"
+        : "top"
+      : align === "end"
+        ? vertical
+          ? "right"
+          : "bottom"
+        : "center";
+  return vertical
+    ? `${SIDE_ORIGIN[side]} ${cross}`
+    : `${cross} ${SIDE_ORIGIN[side]}`;
 }
 
 /**
@@ -36,9 +64,20 @@ function transformOrigin(placement: Placement) {
  * which the styles use to keep the element hidden.
  */
 export function createFloating(options: FloatingOptions) {
+  // Everything the position depends on is read here, where it's tracked, so a
+  // new placement or gutter moves an open panel; the callback only uses what it's handed.
   createEffect(
-    () => [options.open(), options.reference(), options.floating(), options.arrow?.()] as const,
-    ([open, reference, floating, arrowEl]) => {
+    () =>
+      [
+        options.open(),
+        options.reference(),
+        options.floating(),
+        options.arrow?.(),
+        options.placement(),
+        options.gutter(),
+        !!options.sameWidth?.(),
+      ] as const,
+    ([open, reference, floating, arrowEl, placement, gutter, sameWidth]) => {
       if (!open || !reference || !floating) return;
 
       floating.style.position = "fixed";
@@ -47,12 +86,12 @@ export function createFloating(options: FloatingOptions) {
       const update = async () => {
         const result = await computePosition(reference, floating, {
           strategy: "fixed",
-          placement: options.placement(),
+          placement,
           middleware: [
-            offset(options.gutter()),
+            offset(gutter),
             flip({ padding: 8 }),
             shift({ padding: 8 }),
-            options.sameWidth?.() &&
+            sameWidth &&
               size({
                 apply: ({ rects }) => {
                   floating.style.width = `${rects.reference.width}px`;
@@ -65,7 +104,10 @@ export function createFloating(options: FloatingOptions) {
         const side = result.placement.split("-")[0] as keyof typeof SIDE_ORIGIN;
         floating.style.top = `${Math.round(result.y)}px`;
         floating.style.left = `${Math.round(result.x)}px`;
-        floating.style.setProperty(`--yosegi-${options.name}-content-transform-origin`, transformOrigin(result.placement));
+        floating.style.setProperty(
+          `--yosegi-${options.name}-content-transform-origin`,
+          transformOrigin(result.placement),
+        );
         floating.dataset.placement = result.placement;
 
         if (arrowEl) {

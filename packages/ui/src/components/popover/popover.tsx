@@ -1,10 +1,28 @@
 import type { JSX, ValidComponent } from "@solidjs/web";
-import { createContext, createEffect, createSignal, createUniqueId, omit, onSettled, Show, useContext } from "solid-js";
+import {
+  createContext,
+  createEffect,
+  createSignal,
+  createUniqueId,
+  omit,
+  onSettled,
+  Show,
+  untrack,
+  useContext,
+} from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createDismiss } from "../../primitives/create-dismiss";
-import { createFloating, type Placement } from "../../primitives/create-floating";
+import {
+  createFloating,
+  type Placement,
+} from "../../primitives/create-floating";
 import { createTag } from "../../primitives/create-part";
-import { callHandler, dataAttr, focusFirst, getFocusable } from "../../primitives/dom";
+import {
+  callHandler,
+  dataAttr,
+  focusFirst,
+  getFocusable,
+} from "../../primitives/dom";
 import { CloseIcon } from "../../primitives/icons";
 import { Portal } from "../../primitives/portal";
 import styles from "./popover.module.scss";
@@ -50,13 +68,16 @@ function PopoverRoot(props: PopoverProps) {
     defaultValue: () => props.defaultOpen ?? false,
     onChange: (next) => props.onOpenChange?.(next),
   });
-  const element = () => createSignal<HTMLElement | undefined>(undefined, { ownedWrite: true });
+  const element = () =>
+    createSignal<HTMLElement | undefined>(undefined, { ownedWrite: true });
   const [trigger, setTrigger] = element();
   const [anchor, setAnchor] = element();
   const [content, setContent] = element();
   const [arrow, setArrow] = element();
   const [hasTitle, setHasTitle] = createSignal(false, { ownedWrite: true });
-  const [hasDescription, setHasDescription] = createSignal(false, { ownedWrite: true });
+  const [hasDescription, setHasDescription] = createSignal(false, {
+    ownedWrite: true,
+  });
 
   createFloating({
     open,
@@ -79,14 +100,19 @@ function PopoverRoot(props: PopoverProps) {
   });
 
   // Focus moves into the content when it opens, and back to the trigger
-  // when it closes from inside.
+  // when it closes from inside. The trigger is read once, as it is at
+  // closing time; untrack says so, since the effect needn't re-run for it.
   createEffect(
     () => [open(), content()] as const,
     ([isOpen, el]) => {
       if (!isOpen || !el) return;
       requestAnimationFrame(() => focusFirst(el));
       return () => {
-        if (el.contains(document.activeElement) || document.activeElement === document.body) trigger()?.focus();
+        if (
+          el.contains(document.activeElement) ||
+          document.activeElement === document.body
+        )
+          untrack(trigger)?.focus();
       };
     },
   );
@@ -97,7 +123,11 @@ function PopoverRoot(props: PopoverProps) {
         open,
         setOpen,
         modal: () => !!props.modal,
-        ids: { content: `${id}-content`, title: `${id}-title`, description: `${id}-description` },
+        ids: {
+          content: `${id}-content`,
+          title: `${id}-title`,
+          description: `${id}-description`,
+        },
         hasTitle,
         hasDescription,
         setHasTitle,
@@ -174,7 +204,9 @@ function Content(props: JSX.HTMLAttributes<HTMLDivElement>) {
         class={[styles.content, "yosegi-popover-content", props.class]}
         aria-modal={popover.modal() ? "true" : undefined}
         aria-labelledby={popover.hasTitle() ? popover.ids.title : undefined}
-        aria-describedby={popover.hasDescription() ? popover.ids.description : undefined}
+        aria-describedby={
+          popover.hasDescription() ? popover.ids.description : undefined
+        }
         data-expanded=""
         onKeyDown={(event) => {
           callHandler(props.onKeyDown, event);
@@ -226,7 +258,11 @@ function Title(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
   });
   const rest = omit(props, "class", "children");
   return (
-    <h2 {...rest} id={popover.ids.title} class={[styles.title, "yosegi-popover-title", props.class]}>
+    <h2
+      {...rest}
+      id={popover.ids.title}
+      class={[styles.title, "yosegi-popover-title", props.class]}
+    >
       {props.children}
     </h2>
   );
@@ -240,7 +276,11 @@ function Description(props: JSX.HTMLAttributes<HTMLParagraphElement>) {
   });
   const rest = omit(props, "class", "children");
   return (
-    <p {...rest} id={popover.ids.description} class={[styles.description, "yosegi-popover-description", props.class]}>
+    <p
+      {...rest}
+      id={popover.ids.description}
+      class={[styles.description, "yosegi-popover-description", props.class]}
+    >
       {props.children}
     </p>
   );
@@ -256,7 +296,11 @@ function CloseButton(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
       type="button"
       aria-label="Close"
       {...rest}
-      class={[styles["close-button"], "yosegi-popover-close-button", props.class]}
+      class={[
+        styles["close-button"],
+        "yosegi-popover-close-button",
+        props.class,
+      ]}
       onClick={(event) => {
         popover.setOpen(false);
         popover.trigger()?.focus();
