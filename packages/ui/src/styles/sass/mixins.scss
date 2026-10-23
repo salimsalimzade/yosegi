@@ -237,6 +237,139 @@
   }
 }
 
+// The chosen option in a list: accent colour and semibold.
+@mixin list-item-selected {
+  &[aria-selected="true"] {
+    color: color(fg-accent);
+    font-weight: token(font-weight-semibold);
+  }
+}
+
+// An option's text, on one line ending in an ellipsis when it doesn't fit.
+@mixin list-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// The message a list shows when nothing matches.
+@mixin list-empty($padding-block: space(200)) {
+  padding: $padding-block space(200);
+  font: text(small);
+  color: color(fg-muted);
+  text-align: center;
+}
+
+// A trigger's chevron, which turns over while its list is open (data-expanded).
+@mixin expand-chevron {
+  :where(svg) {
+    transition: rotate token(duration-base) token(easing-out);
+  }
+
+  &[data-expanded] :where(svg) {
+    rotate: 180deg;
+  }
+}
+
+// --------------------------------------------------- Select and Combobox
+
+// The box of a Select or Combobox: a button showing the value, or the field
+// that holds Combobox's chips. Invalid and read-only come from the root.
+@mixin select-box {
+  display: flex;
+  align-items: center;
+  gap: space(200);
+  width: 100%;
+  min-width: 0;
+  min-height: knob(input, height, 36px);
+  padding: 0 10px;
+  border: 1px solid knob(input, border, color(border-strong));
+  border-radius: knob(input, radius, radius(300));
+  background: knob(input, bg, color(bg-surface));
+  color: knob(input, fg, color(fg));
+  font: text(body);
+  text-align: start;
+  @include transition(background-color);
+
+  :where([data-invalid]) > & {
+    border-color: knob(input, border-invalid, color(border-danger));
+  }
+
+  // Read-only: the value is shown, not changed. A quieter box.
+  :where([data-readonly]) > & {
+    border-color: color(border);
+    background: color(bg-muted);
+  }
+}
+
+// The box as a button, with the chevron after its children. The chevron
+// turns over while the list is open, and read-only boxes have none.
+@mixin select-trigger {
+  @include select-box;
+  cursor: pointer;
+
+  &:hover {
+    background: color(bg-muted);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  > :where(svg) {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+    color: color(fg-muted);
+    transition: rotate token(duration-base) token(easing-out);
+  }
+
+  &[aria-expanded="true"] > :where(svg) {
+    rotate: 180deg;
+  }
+
+  :where([data-readonly]) > & {
+    cursor: default;
+
+    > :where(svg) {
+      display: none;
+    }
+  }
+}
+
+// The chosen label in the box, or the placeholder.
+@mixin select-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &[data-placeholder-shown] {
+    color: color(fg-muted);
+  }
+}
+
+// A listbox, or one group of it.
+@mixin option-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// A group's heading in a listbox.
+@mixin option-section {
+  padding: space(200) space(200) space(100);
+  font: text(label);
+  color: color(fg-muted);
+}
+
 // NotFound, ErrorState and EmptyState: one centred column.
 @mixin state-layout($component, $max-width) {
   display: grid;

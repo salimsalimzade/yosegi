@@ -1,0 +1,76 @@
+@use "../../styles/sass" as *;
+
+// Numbered pages with Previous and Next. Lives in the table folder, since it
+// pages through a table's rows, but works under any long list.
+@include component {
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .item,
+  .step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: space(100);
+    min-width: knob(pagination, size, 32px);
+    height: knob(pagination, size, 32px);
+    padding: 0 space(200);
+    border-radius: knob(pagination, radius, radius(300));
+    color: color(fg);
+    font: text(body);
+    font-variant-numeric: tabular-nums;
+    @include transition(background-color);
+
+    &:hover {
+      background: color(bg-muted);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  .item[aria-current="page"] {
+    background: color(bg-muted);
+    color: color(fg-accent);
+    font-weight: token(font-weight-semibold);
+    box-shadow: inset 0 0 0 1px color(border-strong);
+  }
+
+  // Previous and Next.
+  .step {
+    font-weight: token(font-weight-semibold);
+
+    :where(svg) {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:disabled {
+      @include disabled;
+    }
+  }
+
+  // In a table box narrower than 640px, Previous and Next keep only their
+  // arrows, so the bottom bar stays on one line. Their names stay.
+  @container table-box (max-width: 640px) {
+    .label {
+      display: none;
+    }
+  }
+
+  .ellipsis {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: knob(pagination, size, 32px);
+    color: color(fg-muted);
+  }
+}

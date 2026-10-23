@@ -1,7 +1,7 @@
 import type { JSX } from "@solidjs/web";
 import { createContext, createMemo, createSignal, omit, Show, untrack, useContext } from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
-import { createField, type Field, type FieldState } from "../../primitives/create-field";
+import { createField, type Field, type FieldState, type FieldTextProps } from "../../primitives/create-field";
 import { callHandler, dataAttr } from "../../primitives/dom";
 import { createFieldParts } from "../../primitives/field-parts";
 import { MinusIcon, PlusIcon } from "../../primitives/icons";
@@ -25,8 +25,11 @@ interface NumberFieldContextValue {
 const NumberFieldContext = createContext<NumberFieldContextValue>();
 const useNumberField = () => useContext(NumberFieldContext);
 
-/** A labelled number input with − and + buttons, limits and steps. */
-export interface NumberFieldProps extends FieldState, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+/**
+ * A labelled number input with − and + buttons, limits and steps. With no
+ * children it builds itself from label, placeholder, description and errorMessage.
+ */
+export interface NumberFieldProps extends FieldState, FieldTextProps, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
   value?: number;
   defaultValue?: number;
   onChange?: (value: number) => void;
@@ -40,6 +43,7 @@ export interface NumberFieldProps extends FieldState, Omit<JSX.HTMLAttributes<HT
   /** The browser's locale by default. */
   locale?: string;
   name?: string;
+  placeholder?: string;
 }
 
 function NumberFieldRoot(props: NumberFieldProps) {
@@ -107,7 +111,8 @@ function NumberFieldRoot(props: NumberFieldProps) {
   const rest = omit(
     props,
     "value", "defaultValue", "onChange", "minValue", "maxValue", "step", "largeStep", "formatOptions", "locale", "name",
-    "validationState", "required", "disabled", "readOnly", "class", "children",
+    "label", "description", "errorMessage", "placeholder", "validationState", "required", "disabled", "readOnly", "class",
+    "children", "aria-label",
   );
 
   return (
@@ -133,8 +138,20 @@ function NumberFieldRoot(props: NumberFieldProps) {
         data-invalid={dataAttr(field.invalid())}
         data-disabled={dataAttr(field.disabled())}
         data-readonly={dataAttr(field.readOnly())}
+        // Without parts, the name goes on the input, which is what gets focus.
+        aria-label={"children" in props ? props["aria-label"] : undefined}
       >
-        {props.children}
+        {"children" in props ? (
+          props.children
+        ) : (
+          <Layout label={props.label} description={props.description}>
+            <Group>
+              <Input placeholder={props.placeholder} aria-label={props["aria-label"]} />
+              <NumberField.DecrementTrigger />
+              <NumberField.IncrementTrigger />
+            </Group>
+          </Layout>
+        )}
         <Show when={props.name}>
           <input type="hidden" name={props.name} value={Number.isNaN(value()) ? "" : String(value())} />
         </Show>
@@ -237,7 +254,7 @@ function createTrigger(direction: 1 | -1) {
   };
 }
 
-const parts = createFieldParts(
+const { Layout, ...parts } = createFieldParts(
   () => useNumberField().field,
   { label: styles.label, description: styles.description, errorMessage: styles["error-message"] },
   "yosegi-number-field",

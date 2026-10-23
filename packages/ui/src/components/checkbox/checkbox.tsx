@@ -1,7 +1,7 @@
 import type { JSX } from "@solidjs/web";
-import { createContext, createEffect, omit, Show, useContext } from "solid-js";
+import { children, createContext, createEffect, omit, Show, untrack, useContext } from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
-import { createField, type Field, type FieldState } from "../../primitives/create-field";
+import { createField, type Field, type FieldState, type FieldTextProps } from "../../primitives/create-field";
 import { callHandler, dataAttr } from "../../primitives/dom";
 import { createFieldParts } from "../../primitives/field-parts";
 import { DashIcon, TickIcon } from "../../primitives/icons";
@@ -20,8 +20,12 @@ interface CheckboxContextValue {
 const CheckboxContext = createContext<CheckboxContextValue>();
 const useCheckbox = () => useContext(CheckboxContext);
 
-/** A box that turns one option on or off. */
-export interface CheckboxProps extends Omit<FieldState, "readOnly">, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+/**
+ * A box that turns one option on or off. With no children it builds itself
+ * from label, description and errorMessage; with no label, give it aria-label.
+ */
+export interface CheckboxProps
+  extends Omit<FieldState, "readOnly">, FieldTextProps, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
   checked?: boolean;
   defaultChecked?: boolean;
   onChange?: (checked: boolean) => void;
@@ -40,8 +44,12 @@ function CheckboxRoot(props: CheckboxProps) {
   });
   const rest = omit(
     props,
-    "checked", "defaultChecked", "onChange", "indeterminate", "name", "value", "validationState", "required", "disabled", "class",
+    "checked", "defaultChecked", "onChange", "indeterminate", "name", "value", "label", "description", "errorMessage",
+    "validationState", "required", "disabled", "class", "children", "aria-label",
   );
+  const label = children(() => props.label);
+  const description = children(() => props.description);
+  const hasChildren = "children" in props;
   const ctx: CheckboxContextValue = {
     field,
     checked,
@@ -60,7 +68,29 @@ function CheckboxRoot(props: CheckboxProps) {
         data-indeterminate={dataAttr(props.indeterminate)}
         data-invalid={dataAttr(field.invalid())}
         data-disabled={dataAttr(field.disabled())}
-      />
+        // Without parts, the name goes on the input, which is what gets focus.
+        aria-label={hasChildren ? props["aria-label"] : undefined}
+      >
+        {hasChildren ? (
+          props.children
+        ) : (
+          <>
+            <Input aria-label={props["aria-label"]} />
+            <Control>
+              <Indicator />
+            </Control>
+            <Show when={label()}>
+              <parts.Label>{label()}</parts.Label>
+            </Show>
+            <Show when={description()}>
+              <parts.Description>{description()}</parts.Description>
+            </Show>
+            <Show when={field.hasErrorText()}>
+              <parts.ErrorMessage />
+            </Show>
+          </>
+        )}
+      </div>
     </CheckboxContext>
   );
 }
@@ -88,7 +118,8 @@ function Input(props: JSX.InputHTMLAttributes<HTMLInputElement>) {
         (el: HTMLInputElement) => {
           input = el;
           ctx.input = el;
-          el.indeterminate = ctx.indeterminate();
+          // The effect above keeps it in step; this only sets the starting state.
+          el.indeterminate = untrack(ctx.indeterminate);
         },
         props.ref as any,
       ]}
@@ -143,7 +174,7 @@ function Indicator(props: JSX.HTMLAttributes<HTMLDivElement>) {
   );
 }
 
-const parts = createFieldParts(
+const { Layout: _, ...parts } = createFieldParts(
   () => useCheckbox().field,
   { label: styles.label, description: styles.description, errorMessage: styles["error-message"] },
   "yosegi-checkbox",

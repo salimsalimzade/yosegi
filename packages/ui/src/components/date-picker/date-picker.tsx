@@ -2,7 +2,7 @@ import type { JSX } from "@solidjs/web";
 import { createContext, createEffect, createMemo, createSignal, createUniqueId, flush, For, omit, Show, untrack, useContext } from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { createDismiss } from "../../primitives/create-dismiss";
-import { createField, type Field, type FieldState } from "../../primitives/create-field";
+import { createField, type Field, type FieldState, type FieldTextProps } from "../../primitives/create-field";
 import { createPart } from "../../primitives/create-part";
 import { createFloating, type Placement } from "../../primitives/create-floating";
 import {
@@ -60,8 +60,11 @@ interface DatePickerContextValue {
 const DatePickerContext = createContext<DatePickerContextValue>();
 const useDatePicker = () => useContext(DatePickerContext);
 
-/** A date input with a calendar that opens below it. */
-export interface DatePickerProps extends FieldState, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
+/**
+ * A date input with a calendar that opens below it. With no children it builds
+ * itself from label, description and errorMessage.
+ */
+export interface DatePickerProps extends FieldState, FieldTextProps, Omit<JSX.HTMLAttributes<HTMLDivElement>, "onChange"> {
   value?: Date | null;
   defaultValue?: Date | null;
   onChange?: (date: Date | null) => void;
@@ -153,8 +156,8 @@ function DatePickerRoot(props: DatePickerProps) {
   const rest = omit(
     props,
     "value", "defaultValue", "onChange", "minValue", "maxValue", "isDateUnavailable", "locale", "firstDayOfWeek",
-    "open", "defaultOpen", "onOpenChange", "closeOnSelect", "placement", "name",
-    "validationState", "required", "disabled", "readOnly", "class", "children",
+    "open", "defaultOpen", "onOpenChange", "closeOnSelect", "placement", "name", "label", "description", "errorMessage",
+    "validationState", "required", "disabled", "readOnly", "class", "children", "aria-label",
   );
 
   return (
@@ -188,8 +191,29 @@ function DatePickerRoot(props: DatePickerProps) {
         data-invalid={dataAttr(field.invalid())}
         data-disabled={dataAttr(field.disabled())}
         data-readonly={dataAttr(field.readOnly())}
+        // Without parts, the name goes on the input, which is what gets focus.
+        aria-label={"children" in props ? props["aria-label"] : undefined}
       >
-        {props.children}
+        {"children" in props ? (
+          props.children
+        ) : (
+          <Layout label={props.label} description={props.description}>
+            <Control>
+              <Input aria-label={props["aria-label"]} />
+              <Trigger />
+            </Control>
+            <Portal>
+              <Content>
+                <DatePicker.Header>
+                  <DatePicker.PrevTrigger />
+                  <Heading />
+                  <DatePicker.NextTrigger />
+                </DatePicker.Header>
+                <Grid />
+              </Content>
+            </Portal>
+          </Layout>
+        )}
         <Show when={props.name}>
           <input type="hidden" name={props.name} value={value() ? toKey(value()!) : ""} />
         </Show>
@@ -500,7 +524,7 @@ function CellTrigger(props: DatePickerCellTriggerProps) {
   );
 }
 
-const parts = createFieldParts(
+const { Layout, ...parts } = createFieldParts(
   () => useDatePicker().field,
   { label: styles.label, description: styles.description, errorMessage: styles["error-message"] },
   "yosegi-date-picker",
