@@ -26,7 +26,7 @@ export {
   type DatePickerProps,
 } from "./components/date-picker/date-picker";
 export { Dialog, type DialogProps, type DialogTriggerProps } from "./components/dialog/dialog";
-export { EmptyState } from "./components/empty-state/empty-state";
+export { EmptyState, type EmptyStateProps } from "./components/empty-state/empty-state";
 export { ErrorState } from "./components/error-state/error-state";
 export { Item, type ItemMediaProps, type ItemProps } from "./components/item/item";
 export { NotFound } from "./components/not-found/not-found";
