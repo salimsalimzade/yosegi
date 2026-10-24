@@ -67,7 +67,24 @@ interface DatePickerContextValue {
   setInput: (el: HTMLInputElement) => void;
   setControl: (el: HTMLElement) => void;
   setContent: (el: HTMLElement | undefined) => void;
+  labels: () => DatePickerLabels;
 }
+
+/** The text DatePicker writes itself, for another language. */
+export interface DatePickerLabels {
+  /** The calendar button's name. “Choose a date” by default. */
+  trigger: string;
+  /** “Previous month” by default. */
+  previousMonth: string;
+  /** “Next month” by default. */
+  nextMonth: string;
+}
+
+const defaultLabels: DatePickerLabels = {
+  trigger: "Choose a date",
+  previousMonth: "Previous month",
+  nextMonth: "Next month",
+};
 
 const DatePickerContext = createContext<DatePickerContextValue>();
 const useDatePicker = () => useContext(DatePickerContext);
@@ -98,6 +115,8 @@ export interface DatePickerProps
   /** bottom-start by default. */
   placement?: Placement;
   name?: string;
+  /** The text it writes itself, like the calendar button's name. Month and day names come from `locale`. */
+  labels?: Partial<DatePickerLabels>;
 }
 
 function DatePickerRoot(props: DatePickerProps) {
@@ -184,6 +203,7 @@ function DatePickerRoot(props: DatePickerProps) {
     "closeOnSelect",
     "placement",
     "name",
+    "labels",
     "label",
     "description",
     "errorMessage",
@@ -208,6 +228,7 @@ function DatePickerRoot(props: DatePickerProps) {
         select,
         commitText,
         locale: () => props.locale,
+        labels: () => ({ ...defaultLabels, ...props.labels }),
         firstDayOfWeek: () => props.firstDayOfWeek ?? 1,
         isUnavailable,
         canGoBack: () => !props.minValue || startOfMonth(focused()) > startOfDay(props.minValue),
@@ -338,7 +359,7 @@ function Trigger(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       type="button"
-      aria-label="Choose a date"
+      aria-label={picker.labels().trigger}
       {...rest}
       class={[styles.trigger, "yosegi-date-picker-trigger", props.class]}
       aria-haspopup="dialog"
@@ -423,7 +444,7 @@ function createMonthTrigger(direction: 1 | -1) {
     return (
       <button
         type="button"
-        aria-label={direction > 0 ? "Next month" : "Previous month"}
+        aria-label={direction > 0 ? picker.labels().nextMonth : picker.labels().previousMonth}
         {...rest}
         class={[styles[`${name}-trigger`], `yosegi-date-picker-${name}-trigger`, props.class]}
         disabled={unavailable()}

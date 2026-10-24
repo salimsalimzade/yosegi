@@ -50,6 +50,7 @@ interface FilterContextValue {
   draftCount: () => number | undefined;
   noun: () => string;
   locale: () => string | undefined;
+  labels: () => FilterLabels;
   sections: () => Map<string, SectionInfo>;
   register: (name: string, info: SectionInfo) => void;
   unregister: (name: string) => void;
@@ -60,6 +61,56 @@ interface FilterContextValue {
   setTrigger: (el: HTMLElement) => void;
   setContent: (el: HTMLElement) => void;
 }
+
+/**
+ * The text Filter writes itself, for another language. Counts come with the
+ * number, so each language can say its own plural.
+ */
+export interface FilterLabels {
+  /** The button. “Filter” by default. */
+  trigger: string;
+  /** The count on the button, read out: “2 on”. */
+  active: (count: number) => string;
+  /** A chip's remove button: “Remove Status filter”. */
+  remove: (title: string) => string;
+  /** “Clear all” by default, by the chips and in the panel's footer. */
+  clearAll: string;
+  /** The panel's heading and name. “Filters” by default. */
+  title: string;
+  /** The panel's close button. “Close” by default. */
+  close: string;
+  /** Clears one section. “Clear” by default. */
+  clearSection: string;
+  /** An empty range input. “Any” by default. */
+  any: string;
+  /** Between the range inputs. “to” by default. */
+  rangeTo: string;
+  /** The range inputs' names: “Amount from”, “Amount to”. */
+  from: (title: string) => string;
+  to: (title: string) => string;
+  /** A chip for a range with one end: “over $100”, “under $500”. */
+  over: (value: string) => string;
+  under: (value: string) => string;
+  /** The apply button: “Show 28 invoices”, or “Show invoices” while counting. */
+  show: (count: number | undefined, noun: string) => string;
+}
+
+const defaultLabels: FilterLabels = {
+  trigger: "Filter",
+  active: (count) => `${count} on`,
+  remove: (title) => `Remove ${title} filter`,
+  clearAll: "Clear all",
+  title: "Filters",
+  close: "Close",
+  clearSection: "Clear",
+  any: "Any",
+  rangeTo: "to",
+  from: (title) => `${title} from`,
+  to: (title) => `${title} to`,
+  over: (value) => `over ${value}`,
+  under: (value) => `under ${value}`,
+  show: (count, noun) => (count === undefined ? `Show ${noun}` : `Show ${count} ${noun}`),
+};
 
 const FilterContext = createContext<FilterContextValue>();
 const useFilter = () => useContext(FilterContext);
@@ -103,7 +154,7 @@ export type FilterSection = {
  */
 export interface FilterProps {
   sections?: FilterSection[];
-  /** The panel's heading, with `sections`. “Filters” by default. */
+  /** The panel's heading, with `sections`. `labels.title`, “Filters”, by default. */
   title?: JSX.Element;
   value?: FilterValue;
   defaultValue?: FilterValue;
@@ -115,6 +166,8 @@ export interface FilterProps {
   noun?: string;
   /** How ranges read and show typed numbers: “1.234,5” in German. The browser's locale by default. */
   locale?: string;
+  /** The text it writes itself, like “Clear all” and “Show 28 results”. */
+  labels?: Partial<FilterLabels>;
   children?: JSX.Element;
 }
 
@@ -194,6 +247,7 @@ function FilterRoot(props: FilterProps) {
         draftCount,
         noun: () => props.noun ?? "results",
         locale: () => props.locale,
+        labels: () => ({ ...defaultLabels, ...props.labels }),
         sections,
         register: (name, info) => {
           setSections((map) => new Map(map).set(name, info));
@@ -282,9 +336,12 @@ function Trigger(props: Omit<ButtonProps, "icon">) {
       }}
       label={
         <>
-          {props.children ?? "Filter"}
+          {props.children ?? filter.labels().trigger}
           <Show when={filter.activeCount() > 0}>
-            <span class={[styles.count, "yosegi-filter-count"]} aria-label={`${filter.activeCount()} on`}>
+            <span
+              class={[styles.count, "yosegi-filter-count"]}
+              aria-label={filter.labels().active(filter.activeCount())}
+            >
               {filter.activeCount()}
             </span>
           </Show>
@@ -305,7 +362,9 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement>) {
     if (Array.isArray(value)) return value.map((v) => info?.labels.get(v)?.() ?? v).join(", ");
     const format = info?.format ?? String;
     if (value.from !== undefined && value.to !== undefined) return `${format(value.from)}–${format(value.to)}`;
-    return value.from !== undefined ? `over ${format(value.from)}` : `under ${format(value.to!)}`;
+    return value.from !== undefined
+      ? filter.labels().over(format(value.from))
+      : filter.labels().under(format(value.to!));
   };
 
   return (
@@ -321,7 +380,7 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement>) {
                 <button
                   type="button"
                   class={[styles["chip-remove"], "yosegi-filter-chip-remove"]}
-                  aria-label={`Remove ${title()} filter`}
+                  aria-label={filter.labels().remove(title())}
                   onClick={() => filter.remove(name)}
                 >
                   <CloseIcon />
@@ -330,7 +389,7 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement>) {
             );
           }}
         </For>
-        <Button label="Clear all" variant="ghost" size="sm" onClick={() => filter.clearAll()} />
+        <Button label={filter.labels().clearAll} variant="ghost" size="sm" onClick={() => filter.clearAll()} />
       </span>
     </Show>
   );
@@ -379,7 +438,7 @@ function Content(props: JSX.HTMLAttributes<HTMLElement>) {
     <aside
       role="dialog"
       aria-modal="true"
-      aria-label="Filters"
+      aria-label={filter.labels().title}
       {...rest}
       ref={[(el: HTMLElement) => filter.setContent(el), props.ref as any]}
       id={filter.contentId}
@@ -422,8 +481,14 @@ function Header(props: JSX.HTMLAttributes<HTMLDivElement>) {
   const rest = omit(props, "class", "children");
   return (
     <div {...rest} class={[styles.header, "yosegi-filter-header", props.class]}>
-      <h2 class={[styles.title, "yosegi-filter-title"]}>{props.children ?? "Filters"}</h2>
-      <Button variant="ghost" size="sm" icon={<CloseIcon />} aria-label="Close" onClick={() => filter.close()} />
+      <h2 class={[styles.title, "yosegi-filter-title"]}>{props.children ?? filter.labels().title}</h2>
+      <Button
+        variant="ghost"
+        size="sm"
+        icon={<CloseIcon />}
+        aria-label={filter.labels().close}
+        onClick={() => filter.close()}
+      />
     </div>
   );
 }
@@ -487,7 +552,7 @@ function Section(props: FilterSectionProps) {
               class={[styles["section-clear"], "yosegi-filter-section-clear"]}
               onClick={() => filter.setDraftKey(props.name, undefined)}
             >
-              Clear
+              {filter.labels().clearSection}
             </button>
           </Show>
         </div>
@@ -582,17 +647,17 @@ function Range(props: FilterRangeProps) {
       <input
         type="text"
         inputmode="decimal"
-        aria-label={`${section.title()} from`}
-        placeholder={props.placeholderFrom ?? "Any"}
+        aria-label={filter.labels().from(section.title())}
+        placeholder={props.placeholderFrom ?? filter.labels().any}
         value={show(current().from)}
         onChange={(event) => set("from", event.currentTarget.value)}
       />
-      <span>to</span>
+      <span>{filter.labels().rangeTo}</span>
       <input
         type="text"
         inputmode="decimal"
-        aria-label={`${section.title()} to`}
-        placeholder={props.placeholderTo ?? "Any"}
+        aria-label={filter.labels().to(section.title())}
+        placeholder={props.placeholderTo ?? filter.labels().any}
         value={show(current().to)}
         onChange={(event) => set("to", event.currentTarget.value)}
       />
@@ -604,14 +669,10 @@ function Range(props: FilterRangeProps) {
 function Footer(props: JSX.HTMLAttributes<HTMLDivElement>) {
   const filter = useFilter();
   const rest = omit(props, "class", "children");
-  const label = () => {
-    const count = filter.draftCount();
-    return count === undefined ? `Show ${filter.noun()}` : `Show ${count} ${filter.noun()}`;
-  };
   return (
     <div {...rest} class={[styles.footer, "yosegi-filter-footer", props.class]}>
-      <Button label="Clear all" variant="ghost" onClick={() => filter.clearAll()} />
-      <Button label={label()} onClick={() => filter.apply()} />
+      <Button label={filter.labels().clearAll} variant="ghost" onClick={() => filter.clearAll()} />
+      <Button label={filter.labels().show(filter.draftCount(), filter.noun())} onClick={() => filter.apply()} />
     </div>
   );
 }

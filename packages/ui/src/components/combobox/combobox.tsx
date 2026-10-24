@@ -89,7 +89,74 @@ interface ComboboxContextValue {
   setContent: (el: HTMLElement | undefined) => void;
   setListbox: (el: HTMLElement | undefined) => void;
   setOverflow: (el: HTMLElement | undefined) => void;
+  labels: () => ComboboxLabels;
 }
+
+/**
+ * The text Combobox writes itself, for another language. Counts come with the
+ * number, so each language can say its own plural.
+ */
+export interface ComboboxLabels {
+  /** The chevron's name inside Combobox.Control. “Show options” by default. */
+  showOptions: string;
+  /** The search box's name. “Search options” by default. */
+  search: string;
+  /** The list's name when the field has no label. “Options” by default. */
+  options: string;
+  /** A chip's remove button: “Remove Tokyo”. */
+  remove: (label: string) => string;
+  /** The +N counter's name: “Show 4 more tags”. `noun` is the field's label in lower case. */
+  showMore: (count: number, noun: string) => string;
+  /** The hidden chips panel's title: “4 more tags”. */
+  more: (count: number, noun: string) => string;
+  /** “3 chosen”. */
+  chosen: (count: number) => string;
+  /** At `max`: “3 of 3 chosen. Remove one to pick another.” */
+  limit: (count: number, max: number) => string;
+  /** “Clear all” by default. */
+  clearAll: string;
+  /** Below `minQueryLength`: “Type 3 or more letters to search.” */
+  tooShort: (min: number) => string;
+  /** Announced as people type: “12 results”. */
+  results: (count: number) => string;
+  /** When nothing matches: “No results for “tokio”.” */
+  noResults: (query: string) => string;
+  /** Under noResults: “Check the spelling, or try another word.” */
+  noResultsHint: string;
+  /** The create row: “Create “tokio””. */
+  create: (query: string) => string;
+  /** Under errorText: “Check your connection, then try again.” */
+  errorHint: string;
+  /** The error's button. “Try again” by default. */
+  retry: string;
+}
+
+const defaultLabels: ComboboxLabels = {
+  showOptions: "Show options",
+  search: "Search options",
+  options: "Options",
+  remove: (label) => `Remove ${label}`,
+  showMore: (count, noun) => `Show ${count} more ${noun}`,
+  more: (count, noun) => `${count} more ${noun}`,
+  chosen: (count) => `${count} chosen`,
+  limit: (count, max) => `${count} of ${max} chosen. Remove one to pick another.`,
+  clearAll: "Clear all",
+  tooShort: (min) => `Type ${min} or more letters to search.`,
+  results: (count) => `${count} ${count === 1 ? "result" : "results"}`,
+  noResults: (query) => `No results for “${query}”.`,
+  noResultsHint: "Check the spelling, or try another word.",
+  create: (query) => `Create “${query}”`,
+  errorHint: "Check your connection, then try again.",
+  retry: "Try again",
+};
+
+/** No results for “query”, and what to try instead. */
+const defaultEmptyText = (labels: ComboboxLabels, query: string) => (
+  <>
+    <strong>{labels.noResults(query)}</strong>
+    <span>{labels.noResultsHint}</span>
+  </>
+);
 
 const ComboboxContext = createContext<ComboboxContextValue>();
 const useCombobox = () => useContext(ComboboxContext);
@@ -136,6 +203,8 @@ interface ComboboxBaseProps<T>
   emptyText?: ComboboxContentProps["emptyText"];
   /** Renders each row's content, like an icon or a detail on the right. The tick, search and keys stay the same. */
   renderOption?: (option: T) => JSX.Element;
+  /** The rest of the text it writes itself, like “Clear all” and “3 chosen”. */
+  labels?: Partial<ComboboxLabels>;
 }
 
 /** The search select: picks one option from a long list, searched in the panel. */
@@ -369,6 +438,7 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
     "searchPlaceholder",
     "emptyText",
     "renderOption",
+    "labels",
     "getOptionValue",
     "getOptionLabel",
     "getOptionGroup",
@@ -430,6 +500,7 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
         setContent,
         setListbox,
         setOverflow,
+        labels: () => ({ ...defaultLabels, ...props.labels }),
       }}
     >
       <div
@@ -495,7 +566,7 @@ function Trigger(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       type="button"
-      aria-label={inControl ? "Show options" : undefined}
+      aria-label={inControl ? combobox.labels().showOptions : undefined}
       {...rest}
       ref={[(el: HTMLButtonElement) => !inControl && combobox.setReference(el), props.ref as any]}
       id={inControl ? undefined : combobox.field.controlId}
@@ -688,7 +759,7 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
       <button
         type="button"
         class={[styles["chip-remove"], "yosegi-combobox-chip-remove"]}
-        aria-label={`Remove ${label(chipProps.value)}`}
+        aria-label={combobox.labels().remove(label(chipProps.value))}
         disabled={combobox.field.disabled() || combobox.field.readOnly()}
         onClick={(event) => {
           event.stopPropagation();
@@ -725,7 +796,7 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
             ref={setCounter}
             type="button"
             class={[styles["chip-count"], "yosegi-combobox-chip-count"]}
-            aria-label={`Show ${hidden().length} more ${combobox.noun()}`}
+            aria-label={combobox.labels().showMore(hidden().length, combobox.noun())}
             aria-haspopup="dialog"
             aria-expanded={overflowOpen() ? "true" : "false"}
             onClick={(event) => {
@@ -761,11 +832,11 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
               combobox.setOverflow(el);
             }}
             role="dialog"
-            aria-label={`${hidden().length} more ${combobox.noun()}`}
+            aria-label={combobox.labels().more(hidden().length, combobox.noun())}
             class={[styles.overflow, "yosegi-combobox-overflow"]}
           >
             <p class={[styles["overflow-title"], "yosegi-combobox-overflow-title"]}>
-              {hidden().length} more {combobox.noun()}
+              {combobox.labels().more(hidden().length, combobox.noun())}
             </p>
             <ul class={[styles["overflow-list"], "yosegi-combobox-overflow-list"]}>
               <For each={hidden()}>
@@ -775,7 +846,7 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
                     <button
                       type="button"
                       class={[styles["chip-remove"], "yosegi-combobox-chip-remove"]}
-                      aria-label={`Remove ${label(value)}`}
+                      aria-label={combobox.labels().remove(label(value))}
                       onClick={() => combobox.remove(value)}
                     >
                       <CloseIcon />
@@ -785,10 +856,10 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement> & { placeholder?: JSX.
               </For>
             </ul>
             <div class={[styles.footer, styles["overflow-footer"], "yosegi-combobox-overflow-footer"]}>
-              <span aria-live="polite">{combobox.chosen().length} chosen</span>
+              <span aria-live="polite">{combobox.labels().chosen(combobox.chosen().length)}</span>
               <Show when={combobox.clearable()}>
                 <Button
-                  label="Clear all"
+                  label={combobox.labels().clearAll}
                   variant="ghost"
                   size="sm"
                   onClick={() => {
@@ -816,14 +887,8 @@ interface ContentContextValue {
   emptyText: (query: string) => JSX.Element;
 }
 
-const ContentContext = createContext<ContentContextValue>({
-  emptyText: (query) => (
-    <>
-      <strong>No results for “{query}”.</strong>
-      <span>Check the spelling, or try another word.</span>
-    </>
-  ),
-});
+// Outside Content, the Listbox falls back to the built-in text.
+const ContentContext = createContext<ContentContextValue>({ emptyText: () => undefined });
 
 /** The floating panel: Search on top, Listbox below. Renders both by itself when it has no children. */
 function Content(props: ComboboxContentProps) {
@@ -831,16 +896,16 @@ function Content(props: ComboboxContentProps) {
   const rest = omit(props, "class", "ref", "emptyText", "onPointerDown", "children");
   const resolved = children(() => props.children);
   const isSearch = (node: unknown) => node instanceof Element && node.classList.contains("yosegi-combobox-search");
-  const fallback = useContext(ContentContext);
+  const labels = () => combobox.labels();
 
   const announcement = () => {
     if (combobox.error()) return "";
-    if (combobox.tooShort()) return `Type ${combobox.minQueryLength()} or more letters to search.`;
+    if (combobox.tooShort()) return labels().tooShort(combobox.minQueryLength());
     if (combobox.loading()) return combobox.loadingText();
     const count = combobox.visible().length;
     if (combobox.query().trim() && count === 0 && !combobox.createQuery())
-      return `No results for “${combobox.query().trim()}”.`;
-    return combobox.query().trim() ? `${count} ${count === 1 ? "result" : "results"}` : "";
+      return labels().noResults(combobox.query().trim());
+    return combobox.query().trim() ? labels().results(count) : "";
   };
 
   return (
@@ -850,7 +915,7 @@ function Content(props: ComboboxContentProps) {
           emptyText: (query) => {
             const text = props.emptyText;
             if (typeof text === "function") return text(query);
-            return text ?? fallback.emptyText(query);
+            return text ?? defaultEmptyText(labels(), query);
           },
         }}
       >
@@ -929,7 +994,7 @@ function Search(props: JSX.InputHTMLAttributes<HTMLInputElement> & { placeholder
         type="text"
         autocomplete="off"
         spellcheck={false}
-        aria-label="Search options"
+        aria-label={combobox.labels().search}
         placeholder="Search…"
         {...rest}
         ref={[setInput, props.ref as any]}
@@ -1036,8 +1101,8 @@ function Listbox(props: ComboboxListboxProps) {
       <Show when={combobox.error()}>
         <div role="alert" class={[styles.error, "yosegi-combobox-error"]}>
           <p class={[styles["error-title"], "yosegi-combobox-error-title"]}>{combobox.errorText()}</p>
-          <p>Check your connection, then try again.</p>
-          <Button label="Try again" variant="outline" size="sm" onClick={() => combobox.retry()} />
+          <p>{combobox.labels().errorHint}</p>
+          <Button label={combobox.labels().retry} variant="outline" size="sm" onClick={() => combobox.retry()} />
         </div>
       </Show>
       <Show when={!combobox.error()}>
@@ -1051,7 +1116,7 @@ function Listbox(props: ComboboxListboxProps) {
           role="listbox"
           aria-multiselectable={combobox.multiple() ? "true" : undefined}
           aria-labelledby={document.getElementById(combobox.field.labelId) ? combobox.field.labelId : undefined}
-          aria-label={document.getElementById(combobox.field.labelId) ? undefined : "Options"}
+          aria-label={document.getElementById(combobox.field.labelId) ? undefined : combobox.labels().options}
           class={[styles.listbox, "yosegi-combobox-listbox", props.class]}
         >
           <For each={groupOptions(combobox.visible())}>
@@ -1095,23 +1160,25 @@ function Listbox(props: ComboboxListboxProps) {
                   onClick={() => combobox.pickActive()}
                 >
                   <PlusIcon />
-                  <span class={[styles["item-label"], "yosegi-combobox-item-label"]}>Create “{query()}”</span>
+                  <span class={[styles["item-label"], "yosegi-combobox-item-label"]}>
+                    {combobox.labels().create(query())}
+                  </span>
                 </li>
               </>
             )}
           </Show>
         </ul>
         <Show when={nothingFound() && !combobox.loading()}>
-          <p class={[styles.empty, "yosegi-combobox-empty"]}>{content.emptyText(combobox.query().trim())}</p>
+          <p class={[styles.empty, "yosegi-combobox-empty"]}>
+            {content.emptyText(combobox.query().trim()) ?? defaultEmptyText(combobox.labels(), combobox.query().trim())}
+          </p>
         </Show>
         <Show when={combobox.tooShort()}>
-          <p class={[styles.hint, "yosegi-combobox-hint"]}>
-            Type {combobox.minQueryLength()} or more letters to search.
-          </p>
+          <p class={[styles.hint, "yosegi-combobox-hint"]}>{combobox.labels().tooShort(combobox.minQueryLength())}</p>
         </Show>
         <Show when={limitReached()}>
           <p class={[styles.hint, "yosegi-combobox-hint"]}>
-            {combobox.chosen().length} of {combobox.max()} chosen. Remove one to pick another.
+            {combobox.labels().limit(combobox.chosen().length, combobox.max()!)}
           </p>
         </Show>
         <Show when={combobox.hint() && !combobox.tooShort() && !limitReached()}>
@@ -1119,9 +1186,14 @@ function Listbox(props: ComboboxListboxProps) {
         </Show>
         <Show when={combobox.multiple() && combobox.chosen().length > 0}>
           <div class={[styles.footer, "yosegi-combobox-footer"]}>
-            <span aria-live="polite">{combobox.chosen().length} chosen</span>
+            <span aria-live="polite">{combobox.labels().chosen(combobox.chosen().length)}</span>
             <Show when={combobox.clearable()}>
-              <Button label="Clear all" variant="ghost" size="sm" onClick={() => combobox.clearAll()} />
+              <Button
+                label={combobox.labels().clearAll}
+                variant="ghost"
+                size="sm"
+                onClick={() => combobox.clearAll()}
+              />
             </Show>
           </div>
         </Show>

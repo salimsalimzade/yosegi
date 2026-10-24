@@ -97,13 +97,24 @@ export interface ToasterProps extends JSX.HTMLAttributes<HTMLElement> {
   duration?: number;
   /** The most toasts shown at once; older ones close. 3 by default. */
   max?: number;
+  /** The text it writes itself, like each toast's close button. The region's name is its aria-label. */
+  labels?: Partial<ToasterLabels>;
 }
+
+/** The text Toaster writes itself, for another language. */
+export interface ToasterLabels {
+  /** Each toast's close button. “Dismiss” by default. */
+  dismiss: string;
+}
+
+const defaultLabels: ToasterLabels = { dismiss: "Dismiss" };
 
 /** Where toasts appear. Mount one, near the root of the app. */
 export function Toaster(props: ToasterProps) {
   const [toasts, setToasts] = createStore<{ list: ToastData[] }>({ list: [] });
   const [paused, setPaused] = createSignal(false);
-  const rest = omit(props, "position", "duration", "max", "class");
+  const rest = omit(props, "position", "duration", "max", "labels", "class");
+  const labels = () => ({ ...defaultLabels, ...props.labels });
 
   const close = (id: ToastId) =>
     setToasts((s) => {
@@ -160,6 +171,7 @@ export function Toaster(props: ToasterProps) {
               toast={item}
               paused={paused()}
               duration={props.duration ?? 4000}
+              labels={labels()}
               onClose={() => close(item.id)}
               onRemove={() => remove(item.id)}
             />
@@ -190,6 +202,7 @@ function ToastItem(props: {
   toast: ToastData;
   paused: boolean;
   duration: number;
+  labels: ToasterLabels;
   onClose: () => void;
   onRemove: () => void;
 }) {
@@ -271,7 +284,7 @@ function ToastItem(props: {
       <button
         type="button"
         class={[styles.close, "yosegi-toast-close"]}
-        aria-label="Dismiss"
+        aria-label={props.labels.dismiss}
         onClick={() => props.onClose()}
       >
         <CloseIcon />

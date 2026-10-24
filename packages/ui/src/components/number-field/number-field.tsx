@@ -21,7 +21,18 @@ interface NumberFieldContextValue {
   min: () => number | undefined;
   max: () => number | undefined;
   largeStep: () => number;
+  labels: () => NumberFieldLabels;
 }
+
+/** The text NumberField writes itself, for another language. */
+export interface NumberFieldLabels {
+  /** The + button's name. “Increase” by default. */
+  increment: string;
+  /** The − button's name. “Decrease” by default. */
+  decrement: string;
+}
+
+const defaultLabels: NumberFieldLabels = { increment: "Increase", decrement: "Decrease" };
 
 const NumberFieldContext = createContext<NumberFieldContextValue>();
 const useNumberField = () => useContext(NumberFieldContext);
@@ -48,6 +59,8 @@ export interface NumberFieldProps
   locale?: string;
   name?: string;
   placeholder?: string;
+  /** The text it writes itself: the − and + buttons' names. */
+  labels?: Partial<NumberFieldLabels>;
 }
 
 function NumberFieldRoot(props: NumberFieldProps) {
@@ -119,6 +132,7 @@ function NumberFieldRoot(props: NumberFieldProps) {
     "formatOptions",
     "locale",
     "name",
+    "labels",
     "label",
     "description",
     "errorMessage",
@@ -147,6 +161,7 @@ function NumberFieldRoot(props: NumberFieldProps) {
         min: () => props.minValue,
         max: () => props.maxValue,
         largeStep: () => props.largeStep ?? 10,
+        labels: () => ({ ...defaultLabels, ...props.labels }),
       }}
     >
       <div
@@ -252,7 +267,7 @@ function createTrigger(direction: 1 | -1) {
         type="button"
         // The arrow keys do the same job, so the triggers stay out of the tab order.
         tabindex="-1"
-        aria-label={direction > 0 ? "Increase" : "Decrease"}
+        aria-label={direction > 0 ? ctx.labels().increment : ctx.labels().decrement}
         aria-controls={ctx.field.controlId}
         {...rest}
         class={[styles[`${name}-trigger`], `yosegi-number-field-${name}-trigger`, props.class]}

@@ -20,8 +20,8 @@ import { Checkbox } from "../checkbox/checkbox";
 import { Select } from "../select/select";
 import { Spinner } from "../spinner/spinner";
 import { TextField } from "../text-field/text-field";
-import { Filter, type FilterValue } from "./filter";
-import { Pagination } from "./pagination";
+import { Filter, type FilterLabels, type FilterValue } from "./filter";
+import { Pagination, type PaginationLabels } from "./pagination";
 import {
   columnText,
   countValues,
@@ -120,22 +120,87 @@ function Empty(props: TableEmptyProps) {
   );
 }
 
+/**
+ * The text Table writes itself, for another language. Counts come already
+ * written in the table's locale, so each language can place them and say its
+ * own plural. `noun` is the table's `noun`.
+ */
+export interface TableLabels {
+  /** The search box's name and placeholder, unless searchPlaceholder is set: “Search invoices”. */
+  search: (noun: string) => string;
+  /** On the selection bar: “3 selected”. */
+  selected: (count: string) => string;
+  /** After it, quieter: “of 40”. */
+  selectedOf: (total: string) => string;
+  /** Ends the selection. “Clear” by default. */
+  clearSelection: string;
+  /** The heading checkbox. “Select all on this page” by default. */
+  selectAll: string;
+  /** A row's checkbox, with its first cell's text: “Select INV-1042”. */
+  selectRow: (text: string) => string;
+  /** While the first rows load: “Loading invoices…”. */
+  loading: (noun: string) => string;
+  /** With no rows at all, unless `empty` is set: “No invoices yet.” */
+  noRows: (noun: string) => string;
+  /** When the search and filters leave nothing: “No invoices match.” */
+  noMatches: (noun: string) => string;
+  /** Under it. “Try a shorter search or fewer filters, or clear them all.” by default. */
+  noMatchesHint: string;
+  /** The button under it. “Clear filters” by default. */
+  clearFilters: string;
+  /** Next to the page size. “Rows per page” by default. */
+  rowsPerPage: string;
+  /** The rows shown: “21–40 of 312”. */
+  range: (from: string, to: string, total: string) => string;
+  /** With no rows to show: “0 of 312”. */
+  rangeEmpty: (total: string) => string;
+  /** The pagination's name: “invoices pages”. */
+  pages: (noun: string) => string;
+  /** For the Filter inside the table. */
+  filter: Partial<FilterLabels>;
+  /** For the Pagination inside the table. */
+  pagination: Partial<PaginationLabels>;
+}
+
+const defaultLabels: TableLabels = {
+  search: (noun) => `Search ${noun}`,
+  selected: (count) => `${count} selected`,
+  selectedOf: (total) => `of ${total}`,
+  clearSelection: "Clear",
+  selectAll: "Select all on this page",
+  selectRow: (text) => `Select ${text}`,
+  loading: (noun) => `Loading ${noun}…`,
+  noRows: (noun) => `No ${noun} yet.`,
+  noMatches: (noun) => `No ${noun} match.`,
+  noMatchesHint: "Try a shorter search or fewer filters, or clear them all.",
+  clearFilters: "Clear filters",
+  rowsPerPage: "Rows per page",
+  range: (from, to, total) => `${from}–${to} of ${total}`,
+  rangeEmpty: (total) => `0 of ${total}`,
+  pages: (noun) => `${noun} pages`,
+  filter: {},
+  pagination: {},
+};
+
 export interface TableRangeProps extends JSX.HTMLAttributes<HTMLSpanElement> {
   from: number;
   to: number;
   total: number;
   /** For the numbers. The browser's locale by default. */
   locale?: string;
+  /** The text it writes: “21–40 of 312” and “0 of 312”. */
+  labels?: Partial<Pick<TableLabels, "range" | "rangeEmpty">>;
 }
 
 /** “21–40 of 312”, or “0 of 312” when there are no rows. */
 function Range(props: TableRangeProps) {
-  const rest = omit(props, "from", "to", "total", "locale", "class", "children");
+  const rest = omit(props, "from", "to", "total", "locale", "labels", "class", "children");
   const count = createMemo(() => new Intl.NumberFormat(props.locale));
+  const labels = () => ({ ...defaultLabels, ...props.labels });
   const text = () =>
     props.to < props.from || props.to === 0
-      ? `0 of ${count().format(props.total)}`
-      : `${count().format(props.from)}–${count().format(props.to)} of ${count().format(props.total)}`;
+      ? labels().rangeEmpty(count().format(props.total))
+      : labels().range(count().format(props.from), count().format(props.to), count().format(props.total));
   return (
     <span {...rest} class={[styles.range, "yosegi-table-range", props.class]}>
       {text()}
@@ -174,11 +239,13 @@ export interface TablePageSizeProps extends Omit<JSX.HTMLAttributes<HTMLDivEleme
   onChange?: (size: number) => void;
   /** [10, 20, 50, 100] by default. */
   options?: number[];
+  /** The text it writes: “Rows per page”. */
+  labels?: Partial<Pick<TableLabels, "rowsPerPage">>;
 }
 
 /** “Rows per page” and a small Select. Changing it changes the page count. */
 function PageSize(props: TablePageSizeProps) {
-  const rest = omit(props, "value", "defaultValue", "onChange", "options", "class", "children");
+  const rest = omit(props, "value", "defaultValue", "onChange", "options", "labels", "class", "children");
   const [size, setSize] = createControllableSignal({
     value: () => props.value,
     defaultValue: () => props.defaultValue ?? 10,
@@ -198,7 +265,7 @@ function PageSize(props: TablePageSizeProps) {
         onChange={(value) => setSize(Number(value))}
         placement="top-start"
       >
-        <Select.Label>Rows per page</Select.Label>
+        <Select.Label>{props.labels?.rowsPerPage ?? defaultLabels.rowsPerPage}</Select.Label>
         <Select.Trigger />
         <Select.Portal>
           <Select.Content />
@@ -274,6 +341,8 @@ export interface DataTableProps<T> extends Omit<JSX.HTMLAttributes<HTMLElement>,
    * default; set it when the page renders on a server too, so both agree.
    */
   locale?: string;
+  /** The text it writes itself, like “Rows per page”, and its Filter's and Pagination's. */
+  labels?: Partial<TableLabels>;
 }
 
 /** 480 → "480px"; a string, like "60vh", as it is. */
@@ -340,6 +409,7 @@ function DataTable<T>(props: DataTableProps<T>) {
     "rowHref",
     "empty",
     "locale",
+    "labels",
     "aria-label",
     "style",
   );
@@ -350,6 +420,7 @@ function DataTable<T>(props: DataTableProps<T>) {
   const empty = children(() => props.empty);
   const titleId = `yosegi-table-title-${createUniqueId()}`;
   const noun = () => props.noun ?? "rows";
+  const labels = () => ({ ...defaultLabels, ...props.labels });
   let tableEl: HTMLTableElement | undefined;
 
   const [query, setQuery] = createControllableSignal<TableQuery>({
@@ -514,8 +585,8 @@ function DataTable<T>(props: DataTableProps<T>) {
                       </TextField.Icon>
                       <TextField.Input
                         type="search"
-                        placeholder={props.searchPlaceholder ?? `Search ${noun()}`}
-                        aria-label={props.searchPlaceholder ?? `Search ${noun()}`}
+                        placeholder={props.searchPlaceholder ?? labels().search(noun())}
+                        aria-label={props.searchPlaceholder ?? labels().search(noun())}
                       />
                       <Show when={searching()}>
                         <Spinner />
@@ -530,13 +601,14 @@ function DataTable<T>(props: DataTableProps<T>) {
                     resultCount={countDraft}
                     noun={noun()}
                     locale={props.locale}
+                    labels={labels().filter}
                   >
                     <Filter.Trigger />
                     <Filter.Chips />
                     <Filter.Portal>
                       <Filter.Overlay />
                       <Filter.Content>
-                        <Filter.Header>Filters</Filter.Header>
+                        <Filter.Header />
                         <For each={filterable()}>
                           {(column) => {
                             // Read once: in server mode the page's values could flip the kind.
@@ -589,11 +661,12 @@ function DataTable<T>(props: DataTableProps<T>) {
       >
         <SelectionBar>
           <span class="yosegi-table-selection-count">
-            {count().format(selected().length)} selected <span>of {count().format(allCount())}</span>
+            {labels().selected(count().format(selected().length))}{" "}
+            <span>{labels().selectedOf(count().format(allCount()))}</span>
           </span>
           <Actions>
             {props.selectionActions?.(selection())}
-            <Button label="Clear" variant="ghost" size="sm" onClick={() => setSelected([])} />
+            <Button label={labels().clearSelection} variant="ghost" size="sm" onClick={() => setSelected([])} />
           </Actions>
         </SelectionBar>
       </Show>
@@ -609,7 +682,7 @@ function DataTable<T>(props: DataTableProps<T>) {
             <Show when={props.selectable}>
               <Head selection>
                 <RowCheck
-                  label="Select all on this page"
+                  label={labels().selectAll}
                   checked={pageRows().length > 0 && pageSelected() === pageRows().length}
                   indeterminate={pageSelected() > 0 && pageSelected() < pageRows().length}
                   onChange={(on) => toggle(pageRows(), on)}
@@ -653,14 +726,14 @@ function DataTable<T>(props: DataTableProps<T>) {
                   fallback={
                     <>
                       <Spinner />
-                      Loading {noun()}…
+                      {labels().loading(noun())}
                     </>
                   }
                 >
-                  <Show when={filtering()} fallback={empty() ?? <strong>No {noun()} yet.</strong>}>
-                    <strong>No {noun()} match.</strong>
-                    Try a shorter search or fewer filters, or clear them all.
-                    <Button label="Clear filters" variant="outline" size="sm" onClick={clearAll} />
+                  <Show when={filtering()} fallback={empty() ?? <strong>{labels().noRows(noun())}</strong>}>
+                    <strong>{labels().noMatches(noun())}</strong>
+                    {labels().noMatchesHint}
+                    <Button label={labels().clearFilters} variant="outline" size="sm" onClick={clearAll} />
                   </Show>
                 </Show>
               </Empty>
@@ -684,7 +757,9 @@ function DataTable<T>(props: DataTableProps<T>) {
                 <Show when={props.selectable}>
                   <Cell selection>
                     <RowCheck
-                      label={`Select ${keyOf(row())}`}
+                      label={labels().selectRow(
+                        props.columns[0] ? columnText(props.columns[0], row(), props.locale) : keyOf(row()),
+                      )}
                       checked={isSelected(row())}
                       onChange={(on) => toggle([row()], on)}
                     />
@@ -717,7 +792,7 @@ function DataTable<T>(props: DataTableProps<T>) {
       <BottomBar>
         {/* Rows per page hides with Pagination when nothing matches. */}
         <Show when={total() > 0}>
-          <PageSize value={pageSize()} onChange={setPageSize} options={props.pageSizeOptions} />
+          <PageSize value={pageSize()} onChange={setPageSize} options={props.pageSizeOptions} labels={labels()} />
         </Show>
         {/* With no matches, the range reads “0 of 312”: none of all the rows. It's announced when it changes. */}
         <Range
@@ -726,9 +801,16 @@ function DataTable<T>(props: DataTableProps<T>) {
           to={offset() + pageRows().length}
           total={total() || allCount()}
           locale={props.locale}
+          labels={labels()}
         />
         <Show when={total() > 0}>
-          <Pagination count={pageCount()} page={page()} onPageChange={goTo} aria-label={`${noun()} pages`} />
+          <Pagination
+            count={pageCount()}
+            page={page()}
+            onPageChange={goTo}
+            aria-label={labels().pages(noun())}
+            labels={labels().pagination}
+          />
         </Show>
       </BottomBar>
     </Box>

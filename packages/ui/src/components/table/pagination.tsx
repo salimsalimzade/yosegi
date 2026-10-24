@@ -13,6 +13,7 @@ interface PaginationContextValue {
   go: (page: number) => void;
   slots: () => PaginationSlot[];
   showLabels: () => boolean;
+  labels: () => PaginationLabels;
 }
 
 const PaginationContext = createContext<PaginationContextValue>();
@@ -58,7 +59,31 @@ export interface PaginationProps extends Omit<JSX.HTMLAttributes<HTMLElement>, "
   siblingCount?: number;
   /** “Previous” and “Next” next to the arrows. True by default. */
   showLabels?: boolean;
+  /** The text it writes itself, like “Previous” and each page's name. The list's name is its aria-label. */
+  labels?: Partial<PaginationLabels>;
 }
+
+/** The text Pagination writes itself, for another language. */
+export interface PaginationLabels {
+  /** Next to the back arrow. “Previous” by default. */
+  previous: string;
+  /** Next to the forward arrow. “Next” by default. */
+  next: string;
+  /** The back button's name. “Previous page” by default. */
+  previousPage: string;
+  /** The forward button's name. “Next page” by default. */
+  nextPage: string;
+  /** A page button's name: “Page 3”. */
+  page: (page: number) => string;
+}
+
+const defaultLabels: PaginationLabels = {
+  previous: "Previous",
+  next: "Next",
+  previousPage: "Previous page",
+  nextPage: "Next page",
+  page: (page) => `Page ${page}`,
+};
 
 function PaginationRoot(props: PaginationProps) {
   const count = () => Math.max(1, props.count);
@@ -76,6 +101,7 @@ function PaginationRoot(props: PaginationProps) {
     "onPageChange",
     "siblingCount",
     "showLabels",
+    "labels",
     "class",
     "children",
   );
@@ -88,6 +114,7 @@ function PaginationRoot(props: PaginationProps) {
         go: (next) => setPage(Math.min(Math.max(1, next), count())),
         slots: () => paginationSlots(count(), current(), props.siblingCount ?? 1),
         showLabels: () => props.showLabels !== false,
+        labels: () => ({ ...defaultLabels, ...props.labels }),
       }}
     >
       <nav aria-label="Pages" {...rest} class={[styles.root, "yosegi-pagination", props.class]}>
@@ -118,7 +145,7 @@ function Previous(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
       <button
         type="button"
         // Named even when only the arrow shows: without labels, or in a narrow table box.
-        aria-label="Previous page"
+        aria-label={pagination.labels().previousPage}
         {...rest}
         class={[styles.step, "yosegi-pagination-previous", props.class]}
         disabled={pagination.page() <= 1}
@@ -129,7 +156,9 @@ function Previous(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
       >
         <ChevronLeftIcon />
         <Show when={pagination.showLabels()}>
-          <span class={[styles.label, "yosegi-pagination-label"]}>{props.children ?? "Previous"}</span>
+          <span class={[styles.label, "yosegi-pagination-label"]}>
+            {props.children ?? pagination.labels().previous}
+          </span>
         </Show>
       </button>
     </li>
@@ -143,7 +172,7 @@ function Next(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
     <li>
       <button
         type="button"
-        aria-label="Next page"
+        aria-label={pagination.labels().nextPage}
         {...rest}
         class={[styles.step, "yosegi-pagination-next", props.class]}
         disabled={pagination.page() >= pagination.count()}
@@ -153,7 +182,7 @@ function Next(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
         }}
       >
         <Show when={pagination.showLabels()}>
-          <span class={[styles.label, "yosegi-pagination-label"]}>{props.children ?? "Next"}</span>
+          <span class={[styles.label, "yosegi-pagination-label"]}>{props.children ?? pagination.labels().next}</span>
         </Show>
         <ChevronRightIcon />
       </button>
@@ -180,7 +209,7 @@ function Item(props: JSX.ButtonHTMLAttributes<HTMLButtonElement> & { page: numbe
     <li>
       <button
         type="button"
-        aria-label={`Page ${props.page}`}
+        aria-label={pagination.labels().page(props.page)}
         {...rest}
         class={[styles.item, "yosegi-pagination-item", props.class]}
         aria-current={pagination.page() === props.page ? "page" : undefined}

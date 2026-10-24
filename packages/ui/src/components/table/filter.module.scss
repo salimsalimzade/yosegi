@@ -208,13 +208,19 @@
     }
   }
 
+  // Labels too long for one line, as in some languages, put Show on its own line, still on the end side.
   .footer {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: space(200);
     padding: space(300) space(400);
     border-top: 1px solid color(border);
+
+    > :last-child {
+      margin-inline-start: auto;
+    }
   }
 
   @include keyframes(fade-in);

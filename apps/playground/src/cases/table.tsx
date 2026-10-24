@@ -8,6 +8,7 @@ import {
   Table,
   type DataTableProps,
   type TableColumn,
+  type TableLabels,
   type TableQuery,
   TickIcon,
   toast,
@@ -85,6 +86,64 @@ const columns: TableColumn<Invoice>[] = [
     format: (amount: number) => money.format(amount),
   },
 ];
+
+const euro = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+
+const germanColumns: TableColumn<Invoice>[] = [
+  { key: "id", label: "Rechnung", sortable: true },
+  { key: "customer", label: "Kunde", sortable: true },
+  { key: "status", label: "Status", filter: true, options: { paid: "Bezahlt", pending: "Offen", unpaid: "Unbezahlt" } },
+  { key: "method", label: "Zahlungsart", filter: true, options: { card: "Karte", bank: "Überweisung", cash: "Bar" } },
+  {
+    key: "amount",
+    label: "Betrag",
+    align: "end",
+    sortable: true,
+    filter: "range",
+    format: (amount: number) => euro.format(amount),
+  },
+];
+
+const germanLabels: Partial<TableLabels> = {
+  search: () => "Rechnungen suchen",
+  selected: (count) => `${count} ausgewählt`,
+  selectedOf: (total) => `von ${total}`,
+  clearSelection: "Aufheben",
+  selectAll: "Alle auf dieser Seite auswählen",
+  selectRow: (text) => `${text} auswählen`,
+  loading: () => "Rechnungen werden geladen …",
+  noRows: () => "Noch keine Rechnungen.",
+  noMatches: () => "Keine Rechnung passt.",
+  noMatchesHint: "Kürzer suchen, weniger filtern oder alles zurücksetzen.",
+  clearFilters: "Filter zurücksetzen",
+  rowsPerPage: "Zeilen pro Seite",
+  range: (from, to, total) => `${from}–${to} von ${total}`,
+  rangeEmpty: (total) => `0 von ${total}`,
+  pages: () => "Rechnungsseiten",
+  filter: {
+    trigger: "Filtern",
+    active: (count) => `${count} aktiv`,
+    remove: (title) => `Filter ${title} entfernen`,
+    clearAll: "Alle zurücksetzen",
+    title: "Filter",
+    close: "Schließen",
+    clearSection: "Zurücksetzen",
+    any: "Beliebig",
+    rangeTo: "bis",
+    from: (title) => `${title} von`,
+    to: (title) => `${title} bis`,
+    over: (value) => `ab ${value}`,
+    under: (value) => `bis ${value}`,
+    show: (count) => (count === undefined ? "Rechnungen zeigen" : `${count} Rechnungen zeigen`),
+  },
+  pagination: {
+    previous: "Zurück",
+    next: "Weiter",
+    previousPage: "Vorige Seite",
+    nextPage: "Nächste Seite",
+    page: (page) => `Seite ${page}`,
+  },
+};
 
 /** Invoices in the box: title and actions, search, Filter, sorting, selection and pages. */
 function InvoiceTable(props: Partial<DataTableProps<Invoice>>) {
@@ -243,6 +302,23 @@ export function TablePage() {
         layout="fill"
       >
         <ServerTable />
+      </Case>
+
+      <Case
+        title="In German"
+        description="locale=&quot;de-DE&quot; writes the counts and reads typed amounts the German way (1.234,5), and labels gives every word the table writes, its Filter's and its Pagination's too."
+        layout="fill"
+      >
+        <Table
+          title="Rechnungen"
+          noun="Rechnungen"
+          locale="de-DE"
+          labels={germanLabels}
+          selectable
+          data={invoices}
+          columns={germanColumns}
+          defaultQuery={{ filters: { amount: { from: 500 } } }}
+        />
       </Case>
 
       <Case

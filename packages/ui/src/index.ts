@@ -10,6 +10,7 @@ export { Checkbox, type CheckboxProps } from "./components/checkbox/checkbox";
 export {
   Combobox,
   type ComboboxContentProps,
+  type ComboboxLabels,
   type ComboboxListboxProps,
   type ComboboxMultipleProps,
   type ComboboxOption,
@@ -29,20 +30,27 @@ export {
   type DatePickerCellTriggerProps,
   type DatePickerDay,
   type DatePickerGridProps,
+  type DatePickerLabels,
   type DatePickerProps,
 } from "./components/date-picker/date-picker";
-export { Dialog, type DialogProps, type DialogTriggerProps } from "./components/dialog/dialog";
+export { Dialog, type DialogLabels, type DialogProps, type DialogTriggerProps } from "./components/dialog/dialog";
 export { EmptyState, type EmptyStateProps } from "./components/empty-state/empty-state";
 export { ErrorState, type ErrorStateProps } from "./components/error-state/error-state";
 export { Item, type ItemMediaProps, type ItemProps } from "./components/item/item";
 export { NotFound, type NotFoundProps } from "./components/not-found/not-found";
-export { NumberField, type NumberFieldProps } from "./components/number-field/number-field";
-export { Popover, type PopoverProps, type PopoverTriggerProps } from "./components/popover/popover";
+export { NumberField, type NumberFieldLabels, type NumberFieldProps } from "./components/number-field/number-field";
+export {
+  Popover,
+  type PopoverLabels,
+  type PopoverProps,
+  type PopoverTriggerProps,
+} from "./components/popover/popover";
 export { Select, type SelectListboxProps, type SelectOption, type SelectProps } from "./components/select/select";
 export { Separator, type SeparatorProps } from "./components/separator/separator";
 export { Spinner, type SpinnerProps } from "./components/spinner/spinner";
 export {
   Filter,
+  type FilterLabels,
   type FilterOptionProps,
   type FilterProps,
   type FilterRangeProps,
@@ -52,13 +60,20 @@ export {
   type FilterSectionProps,
   type FilterValue,
 } from "./components/table/filter";
-export { Pagination, paginationSlots, type PaginationProps, type PaginationSlot } from "./components/table/pagination";
+export {
+  Pagination,
+  paginationSlots,
+  type PaginationLabels,
+  type PaginationProps,
+  type PaginationSlot,
+} from "./components/table/pagination";
 export {
   Table,
   type DataTableProps,
   type TableCellProps,
   type TableEmptyProps,
   type TableHeadProps,
+  type TableLabels,
   type TablePageSizeProps,
   type TableRangeProps,
   type TableRowProps,
@@ -70,6 +85,7 @@ export { TextField, type TextFieldProps, type TextFieldTextAreaProps } from "./c
 export {
   toast,
   Toaster,
+  type ToasterLabels,
   type ToasterProps,
   type ToastId,
   type ToastOptions,

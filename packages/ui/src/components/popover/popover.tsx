@@ -37,7 +37,16 @@ interface PopoverContextValue {
   setAnchor: (el: HTMLElement) => void;
   setContent: (el: HTMLElement | undefined) => void;
   setArrow: (el: HTMLElement | undefined) => void;
+  labels: () => PopoverLabels;
 }
+
+/** The text Popover writes itself, for another language. */
+export interface PopoverLabels {
+  /** The close button's name. “Close” by default. */
+  close: string;
+}
+
+const defaultLabels: PopoverLabels = { close: "Close" };
 
 const PopoverContext = createContext<PopoverContextValue>();
 const usePopover = () => useContext(PopoverContext);
@@ -75,6 +84,8 @@ export interface PopoverProps {
   sameWidth?: boolean;
   /** false by default. When true, focus stays inside until it closes. */
   modal?: boolean;
+  /** The text it writes itself, like the close button's name. */
+  labels?: Partial<PopoverLabels>;
   children?: JSX.Element;
 }
 
@@ -149,6 +160,7 @@ function PopoverRoot(props: PopoverProps) {
         setAnchor,
         setContent,
         setArrow,
+        labels: () => ({ ...defaultLabels, ...props.labels }),
       }}
     >
       {"trigger" in props ? <Built {...omit(props, "children")}>{props.children}</Built> : props.children}
@@ -340,7 +352,7 @@ function CloseButton(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       type="button"
-      aria-label="Close"
+      aria-label={popover.labels().close}
       {...rest}
       class={[styles["close-button"], "yosegi-popover-close-button", props.class]}
       onClick={(event) => {

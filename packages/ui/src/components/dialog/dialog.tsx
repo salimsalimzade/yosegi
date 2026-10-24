@@ -30,7 +30,16 @@ interface DialogContextValue {
   setHasDescription: (has: boolean) => void;
   trigger: () => HTMLElement | undefined;
   setTrigger: (el: HTMLElement) => void;
+  labels: () => DialogLabels;
 }
+
+/** The text Dialog writes itself, for another language. */
+export interface DialogLabels {
+  /** The close button's name. “Close” by default. */
+  close: string;
+}
+
+const defaultLabels: DialogLabels = { close: "Close" };
 
 const DialogContext = createContext<DialogContextValue>();
 const useDialog = () => useContext(DialogContext);
@@ -64,6 +73,8 @@ export interface DialogProps {
   onOpenChange?: (open: boolean) => void;
   /** true by default: the page behind is inert and scrolling is locked. */
   modal?: boolean;
+  /** The text it writes itself, like the close button's name. */
+  labels?: Partial<DialogLabels>;
   children?: JSX.Element;
 }
 
@@ -91,6 +102,7 @@ function DialogRoot(props: DialogProps) {
         setHasDescription,
         trigger,
         setTrigger,
+        labels: () => ({ ...defaultLabels, ...props.labels }),
       }}
     >
       {"trigger" in props || "title" in props ? (
@@ -283,7 +295,7 @@ function CloseButton(props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       type="button"
-      aria-label="Close"
+      aria-label={dialog.labels().close}
       {...rest}
       class={[styles["close-button"], "yosegi-dialog-close-button", props.class]}
       onClick={(event) => {
