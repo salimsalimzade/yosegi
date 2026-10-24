@@ -121,17 +121,17 @@ function Empty(props: TableEmptyProps) {
 }
 
 /**
- * The text Table writes itself, for another language. Counts come already
- * written in the table's locale, so each language can place them and say its
- * own plural. `noun` is the table's `noun`.
+ * The text Table writes itself, for another language. A count comes as the
+ * number, to pick the plural by, and as text written in the table's locale, to
+ * show. `noun` is the table's `noun`.
  */
 export interface TableLabels {
   /** The search box's name and placeholder, unless searchPlaceholder is set: “Search invoices”. */
   search: (noun: string) => string;
   /** On the selection bar: “3 selected”. */
-  selected: (count: string) => string;
+  selected: (count: number, text: string) => string;
   /** After it, quieter: “of 40”. */
-  selectedOf: (total: string) => string;
+  selectedOf: (total: number, text: string) => string;
   /** Ends the selection. “Clear” by default. */
   clearSelection: string;
   /** The heading checkbox. “Select all on this page” by default. */
@@ -150,7 +150,7 @@ export interface TableLabels {
   clearFilters: string;
   /** Next to the page size. “Rows per page” by default. */
   rowsPerPage: string;
-  /** The rows shown: “21–40 of 312”. */
+  /** The rows shown, written in the locale: “21–40 of 312”. */
   range: (from: string, to: string, total: string) => string;
   /** With no rows to show: “0 of 312”. */
   rangeEmpty: (total: string) => string;
@@ -164,8 +164,8 @@ export interface TableLabels {
 
 const defaultLabels: TableLabels = {
   search: (noun) => `Search ${noun}`,
-  selected: (count) => `${count} selected`,
-  selectedOf: (total) => `of ${total}`,
+  selected: (_, text) => `${text} selected`,
+  selectedOf: (_, text) => `of ${text}`,
   clearSelection: "Clear",
   selectAll: "Select all on this page",
   selectRow: (text) => `Select ${text}`,
@@ -661,8 +661,8 @@ function DataTable<T>(props: DataTableProps<T>) {
       >
         <SelectionBar>
           <span class="yosegi-table-selection-count">
-            {labels().selected(count().format(selected().length))}{" "}
-            <span>{labels().selectedOf(count().format(allCount()))}</span>
+            {labels().selected(selected().length, count().format(selected().length))}{" "}
+            <span>{labels().selectedOf(allCount(), count().format(allCount()))}</span>
           </span>
           <Actions>
             {props.selectionActions?.(selection())}

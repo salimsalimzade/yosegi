@@ -106,8 +106,8 @@ const germanColumns: TableColumn<Invoice>[] = [
 
 const germanLabels: Partial<TableLabels> = {
   search: () => "Rechnungen suchen",
-  selected: (count) => `${count} ausgewählt`,
-  selectedOf: (total) => `von ${total}`,
+  selected: (_, text) => `${text} ausgewählt`,
+  selectedOf: (_, text) => `von ${text}`,
   clearSelection: "Aufheben",
   selectAll: "Alle auf dieser Seite auswählen",
   selectRow: (text) => `${text} auswählen`,

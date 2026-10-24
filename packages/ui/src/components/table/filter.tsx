@@ -360,7 +360,7 @@ function Chips(props: JSX.HTMLAttributes<HTMLSpanElement>) {
     filter.version();
     const info = filter.sections().get(name);
     if (Array.isArray(value)) return value.map((v) => info?.labels.get(v)?.() ?? v).join(", ");
-    const format = info?.format ?? String;
+    const format = info?.format ?? new Intl.NumberFormat(filter.locale()).format;
     if (value.from !== undefined && value.to !== undefined) return `${format(value.from)}–${format(value.to)}`;
     return value.from !== undefined
       ? filter.labels().over(format(value.from))
