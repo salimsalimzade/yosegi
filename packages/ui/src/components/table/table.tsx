@@ -124,17 +124,18 @@ export interface TableRangeProps extends JSX.HTMLAttributes<HTMLSpanElement> {
   from: number;
   to: number;
   total: number;
+  /** For the numbers. The browser's locale by default. */
+  locale?: string;
 }
-
-const count = new Intl.NumberFormat();
 
 /** “21–40 of 312”, or “0 of 312” when there are no rows. */
 function Range(props: TableRangeProps) {
-  const rest = omit(props, "from", "to", "total", "class", "children");
+  const rest = omit(props, "from", "to", "total", "locale", "class", "children");
+  const count = createMemo(() => new Intl.NumberFormat(props.locale));
   const text = () =>
     props.to < props.from || props.to === 0
-      ? `0 of ${count.format(props.total)}`
-      : `${count.format(props.from)}–${count.format(props.to)} of ${count.format(props.total)}`;
+      ? `0 of ${count().format(props.total)}`
+      : `${count().format(props.from)}–${count().format(props.to)} of ${count().format(props.total)}`;
   return (
     <span {...rest} class={[styles.range, "yosegi-table-range", props.class]}>
       {text()}
@@ -268,6 +269,11 @@ export interface DataTableProps<T> extends Omit<JSX.HTMLAttributes<HTMLElement>,
   rowHref?: (row: T) => string | undefined;
   /** Shown when there are no rows at all. “No rows yet.” by default. */
   empty?: JSX.Element;
+  /**
+   * For dates, numbers, the search and the sort. The browser's locale by
+   * default; set it when the page renders on a server too, so both agree.
+   */
+  locale?: string;
 }
 
 /** 480 → "480px"; a string, like "60vh", as it is. */
@@ -333,6 +339,7 @@ function DataTable<T>(props: DataTableProps<T>) {
     "onRowClick",
     "rowHref",
     "empty",
+    "locale",
     "aria-label",
     "style",
   );
@@ -410,9 +417,11 @@ function DataTable<T>(props: DataTableProps<T>) {
   const matching = createMemo(() =>
     props.manual
       ? props.data
-      : props.data.filter((row) => rowMatches(row, props.columns, query().filters, query().search)),
+      : props.data.filter((row) => rowMatches(row, props.columns, query().filters, query().search, props.locale)),
   );
-  const sorted = createMemo(() => (props.manual ? matching() : sortRows(matching(), props.columns, query().sort)));
+  const sorted = createMemo(() =>
+    props.manual ? matching() : sortRows(matching(), props.columns, query().sort, props.locale),
+  );
   const total = () => (props.manual ? (props.rowCount ?? props.data.length) : matching().length);
   const pageCount = () => Math.max(1, Math.ceil(total() / pageSize()));
   // A page past the end, after the rows shrink, shows the last one.
@@ -458,11 +467,13 @@ function DataTable<T>(props: DataTableProps<T>) {
     : (draft: FilterValue) =>
         props.manual
           ? props.resultCount!(draft)
-          : props.data.filter((row) => rowMatches(row, props.columns, draft, untrack(query).search)).length;
+          : props.data.filter((row) => rowMatches(row, props.columns, draft, untrack(query).search, props.locale))
+              .length;
 
   const colspan = () => props.columns.length + (props.selectable ? 1 : 0);
   const filterable = () => props.columns.filter((column) => column.filter);
   const clickable = () => !!props.onRowClick && !props.rowHref;
+  const count = createMemo(() => new Intl.NumberFormat(props.locale));
 
   return (
     <Box
@@ -518,6 +529,7 @@ function DataTable<T>(props: DataTableProps<T>) {
                     onChange={(filters) => update({ filters })}
                     resultCount={countDraft}
                     noun={noun()}
+                    locale={props.locale}
                   >
                     <Filter.Trigger />
                     <Filter.Chips />
@@ -540,7 +552,10 @@ function DataTable<T>(props: DataTableProps<T>) {
                                 when={kind === "range"}
                                 fallback={
                                   <Filter.Section name={column.key} title={column.label}>
-                                    <For each={filterOptions(column, props.data)} keyed={(option) => option.value}>
+                                    <For
+                                      each={filterOptions(column, props.data, props.locale)}
+                                      keyed={(option) => option.value}
+                                    >
                                       {(option) => {
                                         // The key, so it never changes for this option.
                                         const value = untrack(option).value;
@@ -574,7 +589,7 @@ function DataTable<T>(props: DataTableProps<T>) {
       >
         <SelectionBar>
           <span class="yosegi-table-selection-count">
-            {count.format(selected().length)} selected <span>of {count.format(allCount())}</span>
+            {count().format(selected().length)} selected <span>of {count().format(allCount())}</span>
           </span>
           <Actions>
             {props.selectionActions?.(selection())}
@@ -678,7 +693,9 @@ function DataTable<T>(props: DataTableProps<T>) {
                 <For each={props.columns}>
                   {(column) => {
                     const content = () =>
-                      column.cell ? column.cell(row(), columnText(column, row())) : columnText(column, row());
+                      column.cell
+                        ? column.cell(row(), columnText(column, row(), props.locale))
+                        : columnText(column, row(), props.locale);
                     const href = () => (column === props.columns[0] ? props.rowHref?.(row()) : undefined);
                     return (
                       <Cell align={column.align} class={column.class}>
@@ -703,7 +720,13 @@ function DataTable<T>(props: DataTableProps<T>) {
           <PageSize value={pageSize()} onChange={setPageSize} options={props.pageSizeOptions} />
         </Show>
         {/* With no matches, the range reads “0 of 312”: none of all the rows. It's announced when it changes. */}
-        <Range aria-live="polite" from={offset() + 1} to={offset() + pageRows().length} total={total() || allCount()} />
+        <Range
+          aria-live="polite"
+          from={offset() + 1}
+          to={offset() + pageRows().length}
+          total={total() || allCount()}
+          locale={props.locale}
+        />
         <Show when={total() > 0}>
           <Pagination count={pageCount()} page={page()} onPageChange={goTo} aria-label={`${noun()} pages`} />
         </Show>

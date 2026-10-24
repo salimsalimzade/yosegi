@@ -16,6 +16,7 @@ import {
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { callHandler, focusFirst, getFocusable } from "../../primitives/dom";
 import { CloseIcon, FilterIcon } from "../../primitives/icons";
+import { parseNumber } from "../../primitives/numbers";
 import { Portal } from "../../primitives/portal";
 import { Button, type ButtonProps } from "../button/button";
 import { Checkbox } from "../checkbox/checkbox";
@@ -48,6 +49,7 @@ interface FilterContextValue {
   /** What the draft would give, for the Show button; undefined while counting or without resultCount. */
   draftCount: () => number | undefined;
   noun: () => string;
+  locale: () => string | undefined;
   sections: () => Map<string, SectionInfo>;
   register: (name: string, info: SectionInfo) => void;
   unregister: (name: string) => void;
@@ -111,6 +113,8 @@ export interface FilterProps {
   resultCount?: (draft: FilterValue) => number | Promise<number>;
   /** What is filtered: “Show 28 invoices”. “results” by default. */
   noun?: string;
+  /** How ranges read and show typed numbers: “1.234,5” in German. The browser's locale by default. */
+  locale?: string;
   children?: JSX.Element;
 }
 
@@ -189,6 +193,7 @@ function FilterRoot(props: FilterProps) {
         activeCount: () => Object.values(value()).filter(isActive).length,
         draftCount,
         noun: () => props.noun ?? "results",
+        locale: () => props.locale,
         sections,
         register: (name, info) => {
           setSections((map) => new Map(map).set(name, info));
@@ -560,8 +565,13 @@ function Range(props: FilterRangeProps) {
     const value = filter.draft()[section.name];
     return value && !Array.isArray(value) ? value : {};
   };
+  // Typed and shown in the locale's marks, without grouping: 1234,5 in German.
+  const shown = createMemo(
+    () => new Intl.NumberFormat(filter.locale(), { useGrouping: false, maximumFractionDigits: 20 }),
+  );
+  const show = (number: number | undefined) => (number === undefined ? "" : shown().format(number));
   const parse = (text: string) => {
-    const number = Number.parseFloat(text.replace(/[^\d.-]/g, ""));
+    const number = parseNumber(text, filter.locale());
     return Number.isFinite(number) ? number : undefined;
   };
   const set = (end: "from" | "to", text: string) =>
@@ -574,7 +584,7 @@ function Range(props: FilterRangeProps) {
         inputmode="decimal"
         aria-label={`${section.title()} from`}
         placeholder={props.placeholderFrom ?? "Any"}
-        value={current().from ?? ""}
+        value={show(current().from)}
         onChange={(event) => set("from", event.currentTarget.value)}
       />
       <span>to</span>
@@ -583,7 +593,7 @@ function Range(props: FilterRangeProps) {
         inputmode="decimal"
         aria-label={`${section.title()} to`}
         placeholder={props.placeholderTo ?? "Any"}
-        value={current().to ?? ""}
+        value={show(current().to)}
         onChange={(event) => set("to", event.currentTarget.value)}
       />
     </div>

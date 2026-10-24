@@ -5,6 +5,7 @@ import { createField, type Field, type FieldState, type FieldTextProps } from ".
 import { callHandler, dataAttr } from "../../primitives/dom";
 import { createFieldParts } from "../../primitives/field-parts";
 import { MinusIcon, PlusIcon } from "../../primitives/icons";
+import { parseNumber } from "../../primitives/numbers";
 import styles from "./number-field.module.scss";
 
 interface NumberFieldContextValue {
@@ -70,17 +71,7 @@ function NumberFieldRoot(props: NumberFieldProps) {
   };
 
   const parse = (text: string) => {
-    const parts = new Intl.NumberFormat(props.locale).formatToParts(-12345.6);
-    const group = parts.find((p) => p.type === "group")?.value ?? ",";
-    const decimal = parts.find((p) => p.type === "decimal")?.value ?? ".";
-    const normalised = text
-      .split(group)
-      .join("")
-      .replace(/\s/g, "")
-      .replace(decimal, ".")
-      .replace(/[^\d.-]/g, "");
-    if (normalised === "" || normalised === "-") return NaN;
-    const n = Number(normalised);
+    const n = parseNumber(text, props.locale);
     return percent() ? n / 100 : n;
   };
 
