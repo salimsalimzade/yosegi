@@ -187,7 +187,7 @@ export interface TableRangeProps extends JSX.HTMLAttributes<HTMLSpanElement> {
   from: number;
   to: number;
   total: number;
-  /** For the numbers. A LocaleProvider's, or the browser's, by default. */
+  /** For the numbers. A LocaleProvider's, or English (en-US), by default. */
   locale?: string;
   /** The text it writes: “21–40 of 312” and “0 of 312”. */
   labels?: Partial<Pick<TableLabels, "range" | "rangeEmpty">>;
@@ -340,9 +340,8 @@ export interface DataTableProps<T> extends Omit<JSX.HTMLAttributes<HTMLElement>,
   /** Shown when there are no rows at all. “No rows yet.” by default. */
   empty?: JSX.Element;
   /**
-   * For dates, numbers, the search and the sort. A LocaleProvider's, or the
-   * browser's, by default; set one when the page renders on a server too, so
-   * both agree.
+   * For dates, numbers, the search and the sort. A LocaleProvider's, or
+   * English (en-US), by default.
    */
   locale?: string;
   /** The text it writes itself, like “Rows per page”, and its Filter's and Pagination's. */

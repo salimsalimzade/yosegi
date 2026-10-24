@@ -56,7 +56,7 @@ export interface NumberFieldProps
   /** Used by Page Up and Page Down. 10 by default. */
   largeStep?: number;
   formatOptions?: Intl.NumberFormatOptions;
-  /** A LocaleProvider's, or the browser's, by default. */
+  /** A LocaleProvider's, or English (en-US), by default. */
   locale?: string;
   name?: string;
   placeholder?: string;

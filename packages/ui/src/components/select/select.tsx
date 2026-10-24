@@ -29,6 +29,7 @@ import {
   type ResolvedOption,
 } from "../../primitives/option-groups";
 import { Portal } from "../../primitives/portal";
+import { useLocale } from "../locale-provider/locale-provider";
 import styles from "./select.module.scss";
 
 export type SelectOption = Option;
@@ -95,6 +96,8 @@ const firstEnabled = (list: SelectOption[], from: "first" | "last" = "first") =>
 function SelectRoot<T = SelectOption>(props: SelectProps<T>) {
   const id = `yosegi-select-${createUniqueId()}`;
   const field = createField(props, "yosegi-select");
+  // The provider's locale, for matching typed letters the way its language does.
+  const locale = useLocale();
   const options = createMemo(() => resolveOptions(props.options, props));
   const itemFor = (value: string) => untrack(options).find((option) => option.value === value)?.item as T;
   const [value, setValue] = createControllableSignal<string | null>({
@@ -133,7 +136,7 @@ function SelectRoot<T = SelectOption>(props: SelectProps<T>) {
   const typeahead = (key: string) => {
     clearTimeout(typedTimer);
     typedTimer = setTimeout(() => (typed = ""), 500);
-    typed += key.toLocaleLowerCase();
+    typed += key.toLocaleLowerCase(locale());
 
     const enabled = untrack(options).filter((option) => !option.disabled);
     const current = untrack(open) ? untrack(active) : untrack(value);
@@ -142,7 +145,7 @@ function SelectRoot<T = SelectOption>(props: SelectProps<T>) {
     const needle = repeated ? typed[0] : typed;
     const start = repeated ? index + 1 : Math.max(index, 0);
     const match = [...enabled.slice(start), ...enabled.slice(0, start)].find((option) =>
-      option.label.toLocaleLowerCase().startsWith(needle),
+      option.label.toLocaleLowerCase(locale()).startsWith(needle),
     );
     if (!match) return;
     if (untrack(open)) setActive(match.value);

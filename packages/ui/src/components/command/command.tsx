@@ -18,6 +18,7 @@ import { callHandler, dataAttr } from "../../primitives/dom";
 import { SearchIcon } from "../../primitives/icons";
 import { groupOptions } from "../../primitives/option-groups";
 import { Dialog } from "../dialog/dialog";
+import { useLocale } from "../locale-provider/locale-provider";
 import styles from "./command.module.scss";
 
 type Filter = (value: string, search: string, keywords: string[]) => boolean;
@@ -55,13 +56,16 @@ const CommandContext = createContext<CommandContextValue>();
 const GroupContext = createContext<ReturnType<typeof createRegistry> | null>(null);
 const useCommand = () => useContext(CommandContext);
 
-const defaultFilter: Filter = (value, search, keywords) => {
-  const haystack = [value, ...keywords].join(" ").toLocaleLowerCase();
-  return search
-    .toLocaleLowerCase()
-    .split(/\s+/)
-    .every((word) => haystack.includes(word));
-};
+// Every word of the search, in the value or its keywords, matched in the locale's letters.
+const defaultFilter =
+  (locale: string): Filter =>
+  (value, search, keywords) => {
+    const haystack = [value, ...keywords].join(" ").toLocaleLowerCase(locale);
+    return search
+      .toLocaleLowerCase(locale)
+      .split(/\s+/)
+      .every((word) => haystack.includes(word));
+  };
 
 /** One action, when Command builds itself from `items`. */
 export interface CommandAction {
@@ -101,6 +105,7 @@ export interface CommandProps extends Omit<JSX.HTMLAttributes<HTMLDivElement>, "
 
 function CommandRoot(props: CommandProps) {
   const id = `yosegi-command-${createUniqueId()}`;
+  const locale = useLocale();
   const [search, setSearch] = createSignal("", { ownedWrite: true });
   const [active, setActive] = createSignal<string | undefined>(undefined, { ownedWrite: true });
   const [list, setList] = createSignal<HTMLElement | undefined>(undefined, { ownedWrite: true });
@@ -124,7 +129,7 @@ function CommandRoot(props: CommandProps) {
         search,
         setSearch,
         matches: (value, keywords) =>
-          !search().trim() || (props.filter ?? defaultFilter)(value, search().trim(), keywords),
+          !search().trim() || (props.filter ?? defaultFilter(locale()))(value, search().trim(), keywords),
         active,
         setActive,
         move,

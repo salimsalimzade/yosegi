@@ -50,7 +50,7 @@ interface FilterContextValue {
   /** What the draft would give, for the Show button; undefined while counting or without resultCount. */
   draftCount: () => number | undefined;
   noun: () => string;
-  locale: () => string | undefined;
+  locale: () => string;
   labels: () => FilterLabels;
   sections: () => Map<string, SectionInfo>;
   register: (name: string, info: SectionInfo) => void;
@@ -165,7 +165,7 @@ export interface FilterProps {
   resultCount?: (draft: FilterValue) => number | Promise<number>;
   /** What is filtered: “Show 28 invoices”. “results” by default. */
   noun?: string;
-  /** How ranges read and show typed numbers: “1.234,5” in German. A LocaleProvider's, or the browser's, by default. */
+  /** How ranges read and show typed numbers: “1.234,5” in German. A LocaleProvider's, or English (en-US), by default. */
   locale?: string;
   /** The text it writes itself, like “Clear all” and “Show 28 results”. */
   labels?: Partial<FilterLabels>;

@@ -26,24 +26,27 @@ export interface LocaleLabels {
 
 /**
  * The locale and labels for every component inside, set once near the root
- * of the app. A component's own `locale` and `labels` still win, and a
+ * of the app. Without one, everything is in English (en-US). A component's own `locale` and `labels` still win, and a
  * LocaleProvider inside another changes only what it sets.
  */
 export interface LocaleProviderProps {
-  /** For dates, numbers, the search and the sort. The browser's locale by default. */
+  /** For dates, numbers, the search and the sort. English (en-US) by default. */
   locale?: string;
   labels?: LocaleLabels;
   children?: JSX.Element;
 }
 
+/** The locale when neither a component nor a LocaleProvider sets one, so a page reads the same everywhere. */
+export const defaultLocale = "en-US";
+
 type Labels<K extends keyof LocaleLabels> = Required<NonNullable<LocaleLabels[K]>>;
 
 interface LocaleContextValue {
-  locale: () => string | undefined;
+  locale: () => string;
   labels: <K extends keyof LocaleLabels>(name: K) => LocaleLabels[K];
 }
 
-const LocaleContext = createContext<LocaleContextValue>({ locale: () => undefined, labels: () => undefined });
+const LocaleContext = createContext<LocaleContextValue>({ locale: () => defaultLocale, labels: () => undefined });
 
 const isGroup = (value: unknown): value is object => typeof value === "object" && value !== null;
 
@@ -75,10 +78,10 @@ export function LocaleProvider(props: LocaleProviderProps) {
   );
 }
 
-/** The locale a component uses: its own, then the nearest LocaleProvider's, then the browser's (undefined). */
-export function useLocale(own: () => string | undefined) {
+/** The locale a component uses: its own, then the nearest LocaleProvider's, then English (en-US). */
+export function useLocale(own?: () => string | undefined) {
   const context = useContext(LocaleContext);
-  return () => own() ?? context.locale();
+  return () => own?.() ?? context.locale();
 }
 
 /** The labels a component uses: its own, then the nearest LocaleProvider's, then its English defaults. */

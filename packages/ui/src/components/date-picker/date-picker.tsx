@@ -57,7 +57,7 @@ interface DatePickerContextValue {
   setFocused: (date: Date) => void;
   select: (date: Date) => void;
   commitText: (text: string) => void;
-  locale: () => string | undefined;
+  locale: () => string;
   firstDayOfWeek: () => WeekDay;
   isUnavailable: (date: Date) => boolean;
   canGoBack: () => boolean;
@@ -104,7 +104,7 @@ export interface DatePickerProps
   minValue?: Date;
   maxValue?: Date;
   isDateUnavailable?: (date: Date) => boolean;
-  /** For the input format and month names. A LocaleProvider's, or the browser's, by default. */
+  /** For the input format and month names. A LocaleProvider's, or English (en-US), by default. */
   locale?: string;
   /** 1 (Monday) by default; 0 is Sunday. */
   firstDayOfWeek?: WeekDay;

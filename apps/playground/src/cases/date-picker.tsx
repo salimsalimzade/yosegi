@@ -49,8 +49,15 @@ export function DatePickerPage() {
           description="Weekdays only."
         />
       </Case>
-      <Case title="Sunday first, US format" description='locale="en-US" and firstDayOfWeek={0}.' layout="fill">
-        <DatePicker label="Delivery" locale="en-US" firstDayOfWeek={0} defaultValue={inDays(3)} />
+      <Case title="Sunday first" description="firstDayOfWeek={0}, as US calendars do." layout="fill">
+        <DatePicker label="Delivery" firstDayOfWeek={0} defaultValue={inDays(3)} />
+      </Case>
+      <Case
+        title="Another language"
+        description='English (en-US) by default; locale="de-DE" writes the month and day names, and reads typed dates, the German way. The buttons stay English until labels gives them other words.'
+        layout="fill"
+      >
+        <DatePicker label="Lieferung" locale="de-DE" defaultValue={inDays(3)} />
       </Case>
     </Cases>
   );

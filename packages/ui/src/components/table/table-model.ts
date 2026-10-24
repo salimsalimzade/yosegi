@@ -1,4 +1,5 @@
 import type { JSX } from "@solidjs/web";
+import { defaultLocale } from "../locale-provider/locale-provider";
 import type { FilterValue } from "./filter";
 
 export interface TableSort {
@@ -56,10 +57,10 @@ export function columnValue<T>(column: TableColumn<T>, row: T): unknown {
 }
 
 // valueText runs for every cell and Intl objects are slow to make, so each
-// locale's are made once and kept. undefined is the browser's locale.
-function perLocale<F>(make: (locale: string | undefined) => F) {
-  const made = new Map<string | undefined, F>();
-  return (locale?: string) => {
+// locale's are made once and kept. Without one, English (en-US).
+function perLocale<F>(make: (locale: string) => F) {
+  const made = new Map<string, F>();
+  return (locale = defaultLocale) => {
     if (!made.has(locale)) made.set(locale, make(locale));
     return made.get(locale)!;
   };
@@ -114,7 +115,7 @@ export function rowMatches<T>(
   columns: readonly TableColumn<T>[],
   filters: FilterValue,
   search = "",
-  locale?: string,
+  locale = defaultLocale,
 ) {
   const q = search.trim().toLocaleLowerCase(locale);
   if (
@@ -172,7 +173,8 @@ export function sortRows<T>(
 /**
  * Search, filter, sort and page an array, as the table does in the browser. A
  * server can run the same steps, or a pretend server in a demo. Give it the
- * table's `locale`, so the search and the sort read the cells as people see them.
+ * table's `locale`, so the search and the sort read the cells as people see
+ * them; English (en-US) by default.
  */
 export function applyTableQuery<T>(
   data: readonly T[],

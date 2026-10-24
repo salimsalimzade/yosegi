@@ -31,7 +31,7 @@ import {
 } from "../../primitives/option-groups";
 import { Portal } from "../../primitives/portal";
 import { Button } from "../button/button";
-import { useLabels } from "../locale-provider/locale-provider";
+import { useLabels, useLocale } from "../locale-provider/locale-provider";
 import { Spinner } from "../spinner/spinner";
 import styles from "./combobox.module.scss";
 
@@ -237,6 +237,8 @@ const firstEnabled = (values: string[]) => values[0];
 function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
   const id = `yosegi-combobox-${createUniqueId()}`;
   const field = createField(props, "yosegi-combobox");
+  // The provider's locale, for matching letters the way its language does.
+  const locale = useLocale();
   const multiple = () => props.multiple === true;
   const toList = (value: string | string[] | null | undefined) =>
     value === undefined ? undefined : value === null ? [] : Array.isArray(value) ? value : [value];
@@ -277,8 +279,8 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
 
   const matches = (option: ResolvedOption<T>, q: string) => {
     if (typeof props.filter === "function") return props.filter(option.item, q);
-    const label = option.label.toLocaleLowerCase();
-    const needle = q.trim().toLocaleLowerCase();
+    const label = option.label.toLocaleLowerCase(locale());
+    const needle = q.trim().toLocaleLowerCase(locale());
     return props.filter === "startsWith" ? label.startsWith(needle) : label.includes(needle);
   };
 
@@ -297,7 +299,9 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
   const createQuery = () => {
     const q = query().trim();
     if (!props.onCreate || !q || tooShort()) return undefined;
-    const exact = visible().some((option) => option.label.toLocaleLowerCase() === q.toLocaleLowerCase());
+    const exact = visible().some(
+      (option) => option.label.toLocaleLowerCase(locale()) === q.toLocaleLowerCase(locale()),
+    );
     return exact ? undefined : q;
   };
 
@@ -495,7 +499,8 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
           if (current === CREATE) props.onCreate?.(query().trim());
           else if (current !== undefined) pick(current);
         },
-        noun: () => document.getElementById(field.labelId)?.textContent?.trim().toLocaleLowerCase() || "options",
+        noun: () =>
+          document.getElementById(field.labelId)?.textContent?.trim().toLocaleLowerCase(locale()) || "options",
         listboxId: `${id}-listbox`,
         optionId,
         reference,
