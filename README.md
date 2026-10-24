@@ -26,11 +26,11 @@ pnpm dev              # both at once
 pnpm generate         # icon components from packages/ui/src/icons/*.svg
 ```
 
-The playground is laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, and a page for each component under `/playground` (`/playground/button`, `/playground/date-picker`, …) that shows every case on its own. The Assets group has the Icons page, with every icon to copy or download. To add one, put its SVG in `packages/ui/src/icons/` and run `pnpm generate`. A switch at the top changes between the light and dark themes. Changes to `packages/ui` show up as you save.
+The playground is laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, and a page for each component under `/playground` (`/playground/button`, `/playground/date-picker`, …) that shows every case on its own. The Assets group has the Icons page, with every icon to copy or download, and the Setup group has LocaleProvider. To add one, put its SVG in `packages/ui/src/icons/` and run `pnpm generate`. A switch at the top changes between the light and dark themes. Changes to `packages/ui` show up as you save.
 
 ## Components
 
-Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Select, Combobox, Filter, Command, Accordion, Tabs, Pagination, Tooltip, Popover, Dialog, Toast, Table, Item, Separator, NotFound, ErrorState and EmptyState.
+Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Select, Combobox, Filter, Command, Accordion, Tabs, Pagination, Tooltip, Popover, Dialog, Toast, Table, Item, Separator, NotFound, ErrorState, EmptyState and LocaleProvider.
 
 Each one is a root that holds state, with its parts on it:
 
@@ -50,6 +50,34 @@ Toasts need one `<Toaster />` near the root of the app; then call `toast("Saved"
 Every part renders a stable class, `yosegi-{component}-{part}`, next to any `class` you pass, and shows its state as `data-*` attributes (`data-expanded`, `data-invalid`, …). To restyle a component, set its `--yosegi-{component}-*` knobs or target those classes and attributes.
 
 Component styles are SCSS modules, so an app that compiles Yosegi from source needs `sass-embedded` installed.
+
+## Locale and labels
+
+Everything is in English (en-US) until you say otherwise.
+
+Dates and numbers come from the browser's built-in `Intl`, so a `locale` changes month and day names, number marks and how typed dates and numbers are read. DatePicker, NumberField, Table and Filter take one:
+
+```tsx
+<DatePicker label="Lieferung" locale="de-DE" />
+```
+
+The words components write themselves, like “Choose a date” or “Rows per page”, change through a `labels` prop. Give only the ones you change; the rest stay English. Labels with a count are functions, so each language can say its own plural:
+
+```tsx
+<Pagination count={12} labels={{ previous: "Zurück", next: "Weiter", page: (page) => `Seite ${page}` }} />
+```
+
+To set both once for the whole app, wrap it in a `LocaleProvider`. A component's own `locale` and `labels` still win:
+
+```tsx
+import { LocaleProvider } from "yosegi";
+
+<LocaleProvider locale="de-DE" labels={{ pagination: { next: "Weiter" }, table: { rowsPerPage: "Zeilen pro Seite" } }}>
+  <App />
+</LocaleProvider>
+```
+
+Month and day names come from each browser's own locale data, so a language can look different from one browser to another. Some browsers have no Azerbaijani names, for example, and show “2026 M10” for `az`. Check the languages you ship in the browsers your users have.
 
 ## Styles
 
