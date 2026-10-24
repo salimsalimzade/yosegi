@@ -15,6 +15,8 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Controls show their own pressed and hover states instead of the grey flash. */
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
@@ -64,6 +66,11 @@
     border: 0;
     background: none;
     cursor: pointer;
+  }
+
+  /* A tap acts at once, without waiting to see if it's a double-tap zoom. */
+  :is(a, button, input, select, textarea, label, summary, [role="button"], [tabindex]) {
+    touch-action: manipulation;
   }
 
   /* Components set display on their parts, which would otherwise un-hide them. */

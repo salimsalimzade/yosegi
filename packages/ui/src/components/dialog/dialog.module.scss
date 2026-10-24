@@ -20,7 +20,7 @@
     max-width: none;
     max-height: calc(100dvh - 64px);
     margin: 0;
-    overflow: auto;
+    @include scroll-y;
     padding: knob(dialog, padding, space(600));
     border: 1px solid color(border);
     border-radius: knob(dialog, radius, radius(400));

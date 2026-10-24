@@ -2,6 +2,7 @@
 
 @include component {
   // The fixed region in a corner of the screen; new toasts land nearest its edge.
+  // The insets keep it clear of a phone's notch and home bar.
   .region {
     position: fixed;
     z-index: 2147483647;
@@ -11,19 +12,19 @@
     pointer-events: none;
 
     &[data-y="bottom"] {
-      bottom: space(400);
+      bottom: calc(#{space(400)} + env(safe-area-inset-bottom));
     }
 
     &[data-y="top"] {
-      top: space(400);
+      top: calc(#{space(400)} + env(safe-area-inset-top));
     }
 
     &[data-x="end"] {
-      right: space(400);
+      right: calc(#{space(400)} + env(safe-area-inset-right));
     }
 
     &[data-x="start"] {
-      left: space(400);
+      left: calc(#{space(400)} + env(safe-area-inset-left));
     }
 
     &[data-x="center"] {

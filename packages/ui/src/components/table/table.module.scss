@@ -227,8 +227,9 @@
     &[data-scroll] .root {
       height: var(--yosegi-table-height, auto);
       max-height: var(--yosegi-table-max-height, none);
-      overflow-y: auto;
-      overscroll-behavior: contain;
+      @include scroll-y;
+      // A row that takes focus scrolls to just below the headings, not under them.
+      scroll-padding-top: knob(table, head-height, 36px);
     }
 
     &[data-scroll] .head {

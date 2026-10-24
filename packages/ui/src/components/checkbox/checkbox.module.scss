@@ -55,8 +55,11 @@
     }
   }
 
+  // The label reaches back over the gap, so there's no dead strip between it and the box.
   .label {
     grid-column: 2;
+    margin-inline-start: calc(-1 * #{space(200)});
+    padding-inline-start: space(200);
     color: color(fg);
     cursor: pointer;
   }

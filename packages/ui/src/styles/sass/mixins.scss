@@ -153,6 +153,13 @@
 
 // --------------------------------------------------------------- Surfaces
 
+// A box whose content scrolls up and down. At either end the scroll stops
+// there, instead of moving the page behind it.
+@mixin scroll-y {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 // A small square button for an icon: close, previous and next month.
 @mixin icon-button($size: 28px) {
   display: grid;
