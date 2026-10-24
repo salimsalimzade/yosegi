@@ -17,6 +17,7 @@ import { dataAttr, mergeStyle } from "../../primitives/dom";
 import { ChevronDownIcon, SearchIcon } from "../../primitives/icons";
 import { Button } from "../button/button";
 import { Checkbox } from "../checkbox/checkbox";
+import { useLabels, useLocale } from "../locale-provider/locale-provider";
 import { Select } from "../select/select";
 import { Spinner } from "../spinner/spinner";
 import { TextField } from "../text-field/text-field";
@@ -186,7 +187,7 @@ export interface TableRangeProps extends JSX.HTMLAttributes<HTMLSpanElement> {
   from: number;
   to: number;
   total: number;
-  /** For the numbers. The browser's locale by default. */
+  /** For the numbers. A LocaleProvider's, or the browser's, by default. */
   locale?: string;
   /** The text it writes: “21–40 of 312” and “0 of 312”. */
   labels?: Partial<Pick<TableLabels, "range" | "rangeEmpty">>;
@@ -195,8 +196,9 @@ export interface TableRangeProps extends JSX.HTMLAttributes<HTMLSpanElement> {
 /** “21–40 of 312”, or “0 of 312” when there are no rows. */
 function Range(props: TableRangeProps) {
   const rest = omit(props, "from", "to", "total", "locale", "labels", "class", "children");
-  const count = createMemo(() => new Intl.NumberFormat(props.locale));
-  const labels = () => ({ ...defaultLabels, ...props.labels });
+  const locale = useLocale(() => props.locale);
+  const count = createMemo(() => new Intl.NumberFormat(locale()));
+  const labels = useLabels("table", defaultLabels, () => props.labels);
   const text = () =>
     props.to < props.from || props.to === 0
       ? labels().rangeEmpty(count().format(props.total))
@@ -246,6 +248,7 @@ export interface TablePageSizeProps extends Omit<JSX.HTMLAttributes<HTMLDivEleme
 /** “Rows per page” and a small Select. Changing it changes the page count. */
 function PageSize(props: TablePageSizeProps) {
   const rest = omit(props, "value", "defaultValue", "onChange", "options", "labels", "class", "children");
+  const labels = useLabels("table", defaultLabels, () => props.labels);
   const [size, setSize] = createControllableSignal({
     value: () => props.value,
     defaultValue: () => props.defaultValue ?? 10,
@@ -265,7 +268,7 @@ function PageSize(props: TablePageSizeProps) {
         onChange={(value) => setSize(Number(value))}
         placement="top-start"
       >
-        <Select.Label>{props.labels?.rowsPerPage ?? defaultLabels.rowsPerPage}</Select.Label>
+        <Select.Label>{labels().rowsPerPage}</Select.Label>
         <Select.Trigger />
         <Select.Portal>
           <Select.Content />
@@ -337,8 +340,9 @@ export interface DataTableProps<T> extends Omit<JSX.HTMLAttributes<HTMLElement>,
   /** Shown when there are no rows at all. “No rows yet.” by default. */
   empty?: JSX.Element;
   /**
-   * For dates, numbers, the search and the sort. The browser's locale by
-   * default; set it when the page renders on a server too, so both agree.
+   * For dates, numbers, the search and the sort. A LocaleProvider's, or the
+   * browser's, by default; set one when the page renders on a server too, so
+   * both agree.
    */
   locale?: string;
   /** The text it writes itself, like “Rows per page”, and its Filter's and Pagination's. */
@@ -420,7 +424,8 @@ function DataTable<T>(props: DataTableProps<T>) {
   const empty = children(() => props.empty);
   const titleId = `yosegi-table-title-${createUniqueId()}`;
   const noun = () => props.noun ?? "rows";
-  const labels = () => ({ ...defaultLabels, ...props.labels });
+  const locale = useLocale(() => props.locale);
+  const labels = useLabels("table", defaultLabels, () => props.labels);
   let tableEl: HTMLTableElement | undefined;
 
   const [query, setQuery] = createControllableSignal<TableQuery>({
@@ -488,10 +493,10 @@ function DataTable<T>(props: DataTableProps<T>) {
   const matching = createMemo(() =>
     props.manual
       ? props.data
-      : props.data.filter((row) => rowMatches(row, props.columns, query().filters, query().search, props.locale)),
+      : props.data.filter((row) => rowMatches(row, props.columns, query().filters, query().search, locale())),
   );
   const sorted = createMemo(() =>
-    props.manual ? matching() : sortRows(matching(), props.columns, query().sort, props.locale),
+    props.manual ? matching() : sortRows(matching(), props.columns, query().sort, locale()),
   );
   const total = () => (props.manual ? (props.rowCount ?? props.data.length) : matching().length);
   const pageCount = () => Math.max(1, Math.ceil(total() / pageSize()));
@@ -538,13 +543,12 @@ function DataTable<T>(props: DataTableProps<T>) {
     : (draft: FilterValue) =>
         props.manual
           ? props.resultCount!(draft)
-          : props.data.filter((row) => rowMatches(row, props.columns, draft, untrack(query).search, props.locale))
-              .length;
+          : props.data.filter((row) => rowMatches(row, props.columns, draft, untrack(query).search, locale())).length;
 
   const colspan = () => props.columns.length + (props.selectable ? 1 : 0);
   const filterable = () => props.columns.filter((column) => column.filter);
   const clickable = () => !!props.onRowClick && !props.rowHref;
-  const count = createMemo(() => new Intl.NumberFormat(props.locale));
+  const count = createMemo(() => new Intl.NumberFormat(locale()));
 
   return (
     <Box
@@ -600,7 +604,7 @@ function DataTable<T>(props: DataTableProps<T>) {
                     onChange={(filters) => update({ filters })}
                     resultCount={countDraft}
                     noun={noun()}
-                    locale={props.locale}
+                    locale={locale()}
                     labels={labels().filter}
                   >
                     <Filter.Trigger />
@@ -625,7 +629,7 @@ function DataTable<T>(props: DataTableProps<T>) {
                                 fallback={
                                   <Filter.Section name={column.key} title={column.label}>
                                     <For
-                                      each={filterOptions(column, props.data, props.locale)}
+                                      each={filterOptions(column, props.data, locale())}
                                       keyed={(option) => option.value}
                                     >
                                       {(option) => {
@@ -758,7 +762,7 @@ function DataTable<T>(props: DataTableProps<T>) {
                   <Cell selection>
                     <RowCheck
                       label={labels().selectRow(
-                        props.columns[0] ? columnText(props.columns[0], row(), props.locale) : keyOf(row()),
+                        props.columns[0] ? columnText(props.columns[0], row(), locale()) : keyOf(row()),
                       )}
                       checked={isSelected(row())}
                       onChange={(on) => toggle([row()], on)}
@@ -769,8 +773,8 @@ function DataTable<T>(props: DataTableProps<T>) {
                   {(column) => {
                     const content = () =>
                       column.cell
-                        ? column.cell(row(), columnText(column, row(), props.locale))
-                        : columnText(column, row(), props.locale);
+                        ? column.cell(row(), columnText(column, row(), locale()))
+                        : columnText(column, row(), locale());
                     const href = () => (column === props.columns[0] ? props.rowHref?.(row()) : undefined);
                     return (
                       <Cell align={column.align} class={column.class}>
@@ -800,7 +804,7 @@ function DataTable<T>(props: DataTableProps<T>) {
           from={offset() + 1}
           to={offset() + pageRows().length}
           total={total() || allCount()}
-          locale={props.locale}
+          locale={locale()}
           labels={labels()}
         />
         <Show when={total() > 0}>

@@ -37,6 +37,11 @@ export { Dialog, type DialogLabels, type DialogProps, type DialogTriggerProps } 
 export { EmptyState, type EmptyStateProps } from "./components/empty-state/empty-state";
 export { ErrorState, type ErrorStateProps } from "./components/error-state/error-state";
 export { Item, type ItemMediaProps, type ItemProps } from "./components/item/item";
+export {
+  LocaleProvider,
+  type LocaleLabels,
+  type LocaleProviderProps,
+} from "./components/locale-provider/locale-provider";
 export { NotFound, type NotFoundProps } from "./components/not-found/not-found";
 export { NumberField, type NumberFieldLabels, type NumberFieldProps } from "./components/number-field/number-field";
 export {

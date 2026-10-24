@@ -6,6 +6,7 @@ import { callHandler, dataAttr } from "../../primitives/dom";
 import { createFieldParts } from "../../primitives/field-parts";
 import { MinusIcon, PlusIcon } from "../../primitives/icons";
 import { parseNumber } from "../../primitives/numbers";
+import { useLabels, useLocale } from "../locale-provider/locale-provider";
 import styles from "./number-field.module.scss";
 
 interface NumberFieldContextValue {
@@ -55,7 +56,7 @@ export interface NumberFieldProps
   /** Used by Page Up and Page Down. 10 by default. */
   largeStep?: number;
   formatOptions?: Intl.NumberFormatOptions;
-  /** The browser's locale by default. */
+  /** A LocaleProvider's, or the browser's, by default. */
   locale?: string;
   name?: string;
   placeholder?: string;
@@ -65,6 +66,7 @@ export interface NumberFieldProps
 
 function NumberFieldRoot(props: NumberFieldProps) {
   const field = createField(props, "yosegi-number-field");
+  const locale = useLocale(() => props.locale);
   const [value, setValue] = createControllableSignal<number>({
     value: () => props.value,
     defaultValue: () => props.defaultValue ?? NaN,
@@ -73,7 +75,7 @@ function NumberFieldRoot(props: NumberFieldProps) {
   // What the person is typing, until they leave the field or press Enter.
   const [draft, setDraft] = createSignal<string | null>(null, { ownedWrite: true });
 
-  const formatter = createMemo(() => new Intl.NumberFormat(props.locale, props.formatOptions));
+  const formatter = createMemo(() => new Intl.NumberFormat(locale(), props.formatOptions));
   const percent = () => props.formatOptions?.style === "percent";
   const stepSize = () => props.step ?? 1;
 
@@ -84,7 +86,7 @@ function NumberFieldRoot(props: NumberFieldProps) {
   };
 
   const parse = (text: string) => {
-    const n = parseNumber(text, props.locale);
+    const n = parseNumber(text, locale());
     return percent() ? n / 100 : n;
   };
 
@@ -146,6 +148,8 @@ function NumberFieldRoot(props: NumberFieldProps) {
     "aria-label",
   );
 
+  const labels = useLabels("numberField", defaultLabels, () => props.labels);
+
   return (
     <NumberFieldContext
       value={{
@@ -161,7 +165,7 @@ function NumberFieldRoot(props: NumberFieldProps) {
         min: () => props.minValue,
         max: () => props.maxValue,
         largeStep: () => props.largeStep ?? 10,
-        labels: () => ({ ...defaultLabels, ...props.labels }),
+        labels,
       }}
     >
       <div

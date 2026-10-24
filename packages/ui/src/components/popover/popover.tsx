@@ -20,6 +20,7 @@ import { CloseIcon } from "../../primitives/icons";
 import { Portal } from "../../primitives/portal";
 import type { ButtonTriggerProps } from "../button/button";
 import { ButtonTriggerSlot } from "../button/button-trigger";
+import { useLabels } from "../locale-provider/locale-provider";
 import { TextField, type TextFieldProps } from "../text-field/text-field";
 import styles from "./popover.module.scss";
 
@@ -140,6 +141,8 @@ function PopoverRoot(props: PopoverProps) {
     },
   );
 
+  const labels = useLabels("popover", defaultLabels, () => props.labels);
+
   return (
     <PopoverContext
       value={{
@@ -160,7 +163,7 @@ function PopoverRoot(props: PopoverProps) {
         setAnchor,
         setContent,
         setArrow,
-        labels: () => ({ ...defaultLabels, ...props.labels }),
+        labels,
       }}
     >
       {"trigger" in props ? <Built {...omit(props, "children")}>{props.children}</Built> : props.children}

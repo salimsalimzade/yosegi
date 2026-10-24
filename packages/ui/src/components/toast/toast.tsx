@@ -2,6 +2,7 @@ import type { JSX } from "@solidjs/web";
 import { createEffect, createSignal, createStore, flush, For, omit, onSettled, Show } from "solid-js";
 import { CloseIcon, TickIcon } from "../../primitives/icons";
 import { Button } from "../button/button";
+import { useLabels } from "../locale-provider/locale-provider";
 import { Spinner } from "../spinner/spinner";
 import styles from "./toast.module.scss";
 
@@ -114,7 +115,7 @@ export function Toaster(props: ToasterProps) {
   const [toasts, setToasts] = createStore<{ list: ToastData[] }>({ list: [] });
   const [paused, setPaused] = createSignal(false);
   const rest = omit(props, "position", "duration", "max", "labels", "class");
-  const labels = () => ({ ...defaultLabels, ...props.labels });
+  const labels = useLabels("toaster", defaultLabels, () => props.labels);
 
   const close = (id: ToastId) =>
     setToasts((s) => {

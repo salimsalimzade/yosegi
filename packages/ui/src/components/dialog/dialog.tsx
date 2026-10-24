@@ -17,6 +17,7 @@ import { CloseIcon } from "../../primitives/icons";
 import { Portal } from "../../primitives/portal";
 import type { ButtonTriggerProps } from "../button/button";
 import { ButtonTriggerSlot } from "../button/button-trigger";
+import { useLabels } from "../locale-provider/locale-provider";
 import styles from "./dialog.module.scss";
 
 interface DialogContextValue {
@@ -89,6 +90,8 @@ function DialogRoot(props: DialogProps) {
   const [hasTitle, setHasTitle] = createSignal(false, { ownedWrite: true });
   const [hasDescription, setHasDescription] = createSignal(false, { ownedWrite: true });
 
+  const labels = useLabels("dialog", defaultLabels, () => props.labels);
+
   return (
     <DialogContext
       value={{
@@ -102,7 +105,7 @@ function DialogRoot(props: DialogProps) {
         setHasDescription,
         trigger,
         setTrigger,
-        labels: () => ({ ...defaultLabels, ...props.labels }),
+        labels,
       }}
     >
       {"trigger" in props || "title" in props ? (

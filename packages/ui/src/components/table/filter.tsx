@@ -20,6 +20,7 @@ import { parseNumber } from "../../primitives/numbers";
 import { Portal } from "../../primitives/portal";
 import { Button, type ButtonProps } from "../button/button";
 import { Checkbox } from "../checkbox/checkbox";
+import { useLabels, useLocale } from "../locale-provider/locale-provider";
 import styles from "./filter.module.scss";
 
 export type FilterRangeValue = { from?: number; to?: number };
@@ -164,7 +165,7 @@ export interface FilterProps {
   resultCount?: (draft: FilterValue) => number | Promise<number>;
   /** What is filtered: “Show 28 invoices”. “results” by default. */
   noun?: string;
-  /** How ranges read and show typed numbers: “1.234,5” in German. The browser's locale by default. */
+  /** How ranges read and show typed numbers: “1.234,5” in German. A LocaleProvider's, or the browser's, by default. */
   locale?: string;
   /** The text it writes itself, like “Clear all” and “Show 28 results”. */
   labels?: Partial<FilterLabels>;
@@ -218,6 +219,9 @@ function FilterRoot(props: FilterProps) {
     },
   );
 
+  const locale = useLocale(() => props.locale);
+  const labels = useLabels("filter", defaultLabels, () => props.labels);
+
   return (
     <FilterContext
       value={{
@@ -246,8 +250,8 @@ function FilterRoot(props: FilterProps) {
         activeCount: () => Object.values(value()).filter(isActive).length,
         draftCount,
         noun: () => props.noun ?? "results",
-        locale: () => props.locale,
-        labels: () => ({ ...defaultLabels, ...props.labels }),
+        locale,
+        labels,
         sections,
         register: (name, info) => {
           setSections((map) => new Map(map).set(name, info));

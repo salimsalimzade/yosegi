@@ -31,6 +31,7 @@ import {
 } from "../../primitives/option-groups";
 import { Portal } from "../../primitives/portal";
 import { Button } from "../button/button";
+import { useLabels } from "../locale-provider/locale-provider";
 import { Spinner } from "../spinner/spinner";
 import styles from "./combobox.module.scss";
 
@@ -452,6 +453,8 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
     "aria-label",
   );
 
+  const labels = useLabels("combobox", defaultLabels, () => props.labels);
+
   return (
     <ComboboxContext
       value={{
@@ -500,7 +503,7 @@ function ComboboxRoot<T = ComboboxOption>(props: ComboboxProps<T>) {
         setContent,
         setListbox,
         setOverflow,
-        labels: () => ({ ...defaultLabels, ...props.labels }),
+        labels,
       }}
     >
       <div

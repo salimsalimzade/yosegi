@@ -12,6 +12,7 @@ import { ErrorStatePage } from "./cases/error-state";
 import { FilterPage } from "./cases/filter";
 import { IconsPage } from "./cases/icons";
 import { ItemPage } from "./cases/item";
+import { LocaleProviderPage } from "./cases/locale-provider";
 import { NotFoundPage } from "./cases/not-found";
 import { NumberFieldPage } from "./cases/number-field";
 import { PaginationPage } from "./cases/pagination";
@@ -35,7 +36,7 @@ export interface Entry {
   page: Component;
 }
 
-/** The design system's groups, in the order its page shows them, then its asset groups. */
+/** The design system's groups, in the order its page shows them, then its asset groups, then app setup. */
 export const groups = [
   "Actions",
   "Forms",
@@ -45,6 +46,7 @@ export const groups = [
   "Feedback",
   "Layout",
   "Assets",
+  "Setup",
 ] as const;
 export type Group = (typeof groups)[number];
 
@@ -267,6 +269,15 @@ export const catalog: Entry[] = [
     parts: '25 icons · import { PlusIcon } from "yosegi" · <PlusIcon width height />',
     summary:
       "Yosegi's outline icons: a 16px grid, a 1.5px stroke and currentColor, so each follows the text around it.",
+  },
+  {
+    slug: "locale-provider",
+    name: "LocaleProvider",
+    group: "Setup",
+    page: LocaleProviderPage,
+    parts: "One level: <LocaleProvider locale labels> around the app",
+    summary:
+      "Sets the locale and the labels for every component inside, once; a component's own locale and labels still win.",
   },
 ];
 

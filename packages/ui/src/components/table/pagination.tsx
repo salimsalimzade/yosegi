@@ -3,6 +3,7 @@ import { createContext, For, omit, Show, useContext } from "solid-js";
 import { createControllableSignal } from "../../primitives/create-controllable-signal";
 import { callHandler } from "../../primitives/dom";
 import { ChevronLeftIcon, ChevronRightIcon } from "../../primitives/icons";
+import { useLabels } from "../locale-provider/locale-provider";
 import styles from "./pagination.module.scss";
 
 export type PaginationSlot = { type: "page"; page: number } | { type: "ellipsis" };
@@ -106,6 +107,8 @@ function PaginationRoot(props: PaginationProps) {
     "children",
   );
 
+  const labels = useLabels("pagination", defaultLabels, () => props.labels);
+
   return (
     <PaginationContext
       value={{
@@ -114,7 +117,7 @@ function PaginationRoot(props: PaginationProps) {
         go: (next) => setPage(Math.min(Math.max(1, next), count())),
         slots: () => paginationSlots(count(), current(), props.siblingCount ?? 1),
         showLabels: () => props.showLabels !== false,
-        labels: () => ({ ...defaultLabels, ...props.labels }),
+        labels,
       }}
     >
       <nav aria-label="Pages" {...rest} class={[styles.root, "yosegi-pagination", props.class]}>

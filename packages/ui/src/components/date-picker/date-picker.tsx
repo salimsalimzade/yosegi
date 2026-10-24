@@ -36,6 +36,7 @@ import { callHandler, dataAttr } from "../../primitives/dom";
 import { createFieldParts } from "../../primitives/field-parts";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "../../primitives/icons";
 import { Portal } from "../../primitives/portal";
+import { useLabels, useLocale } from "../locale-provider/locale-provider";
 import styles from "./date-picker.module.scss";
 
 export interface DatePickerDay {
@@ -103,7 +104,7 @@ export interface DatePickerProps
   minValue?: Date;
   maxValue?: Date;
   isDateUnavailable?: (date: Date) => boolean;
-  /** For the input format and month names. The browser's locale by default. */
+  /** For the input format and month names. A LocaleProvider's, or the browser's, by default. */
   locale?: string;
   /** 1 (Monday) by default; 0 is Sunday. */
   firstDayOfWeek?: WeekDay;
@@ -122,6 +123,7 @@ export interface DatePickerProps
 function DatePickerRoot(props: DatePickerProps) {
   const id = `yosegi-date-picker-${createUniqueId()}`;
   const field = createField(props, "yosegi-date-picker");
+  const locale = useLocale(() => props.locale);
   const [value, setValue] = createControllableSignal<Date | null>({
     value: () => props.value,
     defaultValue: () => props.defaultValue ?? null,
@@ -165,7 +167,7 @@ function DatePickerRoot(props: DatePickerProps) {
 
   const commitText = (text: string) => {
     if (text.trim() === "") return setValue(null);
-    const date = parseDate(text, props.locale);
+    const date = parseDate(text, locale());
     if (date && !isUnavailable(date)) setValue(date);
   };
 
@@ -216,6 +218,8 @@ function DatePickerRoot(props: DatePickerProps) {
     "aria-label",
   );
 
+  const labels = useLabels("datePicker", defaultLabels, () => props.labels);
+
   return (
     <DatePickerContext
       value={{
@@ -227,8 +231,8 @@ function DatePickerRoot(props: DatePickerProps) {
         setFocused,
         select,
         commitText,
-        locale: () => props.locale,
-        labels: () => ({ ...defaultLabels, ...props.labels }),
+        locale,
+        labels,
         firstDayOfWeek: () => props.firstDayOfWeek ?? 1,
         isUnavailable,
         canGoBack: () => !props.minValue || startOfMonth(focused()) > startOfDay(props.minValue),
