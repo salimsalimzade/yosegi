@@ -37,7 +37,7 @@ The stories are in `apps/playground/src/stories/`, and the config is in `apps/pl
 
 ## Components
 
-Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Select, Combobox, Filter, Command, Accordion, Tabs, Pagination, Tooltip, Popover, Dialog, Toast, Table, Item, Separator, NotFound, ErrorState, EmptyState and LocaleProvider.
+Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Select, Combobox, Filter, Command, Accordion, Tabs, Pagination, Tooltip, Popover, Dialog, Toast, Table, Item, Separator, Kbd, NotFound, ErrorState, EmptyState and LocaleProvider.
 
 Each one is a root that holds state, with its parts on it:
 
