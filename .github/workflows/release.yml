@@ -1,13 +1,19 @@
 name: Release
 
-# Keeps a "version packages" pull request open while there are changesets on main.
-# Merging it bumps the version, writes the changelog and publishes to npm.
+# Publishes the packages in packages/ to the npm registry, separately from the
+# site deploys. Keeps a "version packages" pull request open while there are
+# changesets on main; merging it bumps the version, writes the changelog and
+# publishes to npm.
 #
 # Paused while the kit is in development and npm isn't set up: it only runs
-# when started by hand. To turn it on, replace workflow_dispatch with:
-#   push:
-#     branches: [main]
+# when started by hand. To turn it on, uncomment push.
 on:
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "packages/**"
+  #     - ".changeset/**"
+  #     - ".github/workflows/release.yml"
   workflow_dispatch:
 
 concurrency:

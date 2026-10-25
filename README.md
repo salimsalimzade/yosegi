@@ -116,15 +116,20 @@ Yosegi keeps all of its styles in cascade layers (`yosegi.reset`, `yosegi.tokens
 
 ## Releasing
 
-Run `pnpm changeset` to describe any change to `yosegi` and commit the file it creates. The Release workflow is paused for now, so nothing is published. Once it's turned on, while there are changesets on `main` it keeps a "version packages" pull request open. Merging it bumps the version, updates `CHANGELOG.md` and publishes to npm using trusted publishing.
+Run `pnpm changeset` to describe any change to `yosegi` and commit the file it creates. The Release workflow is paused for now, so nothing is published. Once its `push` trigger is uncommented, while there are changesets on `main` it keeps a "version packages" pull request open. Merging it bumps the version, updates `CHANGELOG.md` and publishes to npm using trusted publishing.
 
 ## Deploying
 
-The Deploy workflow builds each app and deploys it to its own Cloudflare Pages project. It's paused for now and only runs when started by hand from the Actions tab. Once Cloudflare is set up, it will deploy pushes to `main` to production and give pull requests preview URLs.
+Each part ships through its own workflow, so a change only deploys what it touches:
 
-| App | Pages project |
-| --- | --- |
-| `apps/web` | `yosegi-web` |
-| `apps/playground` | `yosegi-playground` |
+| Workflow | What | Where |
+| --- | --- | --- |
+| Deploy web | `apps/web`, the landing page | The `yosegi` Cloudflare Worker, at `yosegi.<account>.workers.dev` |
+| Deploy Storybook | `apps/playground`, the Storybook | The `yosegi-storybook` Cloudflare Worker, at `yosegi-storybook.<account>.workers.dev` |
+| Release | `packages/ui`, published as `yosegi` | The npm registry |
 
-It needs the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. Subdomains are set as custom domains on each Pages project.
+Both sites are Workers that only serve static assets, set up in each app's `wrangler.jsonc`. `main` deploys to production; any other branch or pull request uploads a preview at `<branch>-<worker>.<account>.workers.dev`, which leaves production alone.
+
+All three are paused for now and only run when started by hand from the Actions tab. To turn one on, uncomment the triggers at the top of its file. The deploys then run only when their app, `packages/ui` or the lockfile changes.
+
+The deploys need the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. Without a domain of your own, both sites live on the account's `workers.dev` subdomain; a custom domain can be added to each Worker later.
