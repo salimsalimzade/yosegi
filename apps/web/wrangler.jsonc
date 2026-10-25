@@ -1,5 +1,5 @@
 // The landing page as a Cloudflare Worker that only serves static assets, at
-// yosegi.<account>.workers.dev. Deployed by .github/workflows/deploy-web.yml.
+// yosegi.<account>.workers.dev. Deployed by .github/workflows/ci.yml.
 {
   "name": "yosegi",
   "compatibility_date": "2026-10-01",

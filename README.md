@@ -128,15 +128,19 @@ git push --follow-tags
 
 ## Deploying
 
-Each site deploys through its own workflow, so a change only deploys what it touches. The npm package is released by hand; see Releasing.
+One workflow, CI, checks every push and pull request, then deploys the sites whose files changed. A site only deploys once the type check and build pass. The npm package is released by hand; see Releasing.
 
-| Workflow | What | Where |
+| App | Cloudflare Worker | Production URL |
 | --- | --- | --- |
-| Deploy web | `apps/web`, the landing page | The `yosegi` Cloudflare Worker, at `yosegi.<account>.workers.dev` |
-| Deploy Storybook | `apps/playground`, the Storybook | The `yosegi-storybook` Cloudflare Worker, at `yosegi-storybook.<account>.workers.dev` |
+| `apps/web`, the landing page | `yosegi` | `yosegi.<account>.workers.dev` |
+| `apps/playground`, the Storybook | `yosegi-storybook` | `yosegi-storybook.<account>.workers.dev` |
 
-Both sites are Workers that only serve static assets, set up in each app's `wrangler.jsonc`. `main` deploys to production; any other branch or pull request uploads a preview at `<branch>-<worker>.<account>.workers.dev`, which leaves production alone.
+Both sites are Workers that only serve static assets, named and set up in each app's `wrangler.jsonc`. `main` deploys to production; any other branch or pull request uploads a preview at `<branch>-<worker>.<account>.workers.dev`, which leaves production alone. A site deploys when its app, `packages/ui` or the lockfile changes. Starting CI by hand from the Actions tab deploys both.
 
-Both are paused for now and only run when started by hand from the Actions tab. To turn one on, uncomment the triggers at the top of its file. The deploys then run only when their app, `packages/ui` or the lockfile changes.
+Deploys are paused for now. They need the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets; once those are in, turn deploys on with:
 
-The deploys need the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. Without a domain of your own, both sites live on the account's `workers.dev` subdomain; a custom domain can be added to each Worker later.
+```sh
+gh variable set DEPLOY --body true
+```
+
+Without a domain of your own, both sites live on the account's `workers.dev` subdomain; a custom domain can be added to each Worker later.

@@ -1,9 +1,19 @@
 name: CI
 
+# Checks every push and pull request, then deploys the sites that changed. Each
+# site is a Cloudflare Worker that only serves static assets, named in its
+# app's wrangler.jsonc: apps/web is `yosegi`, apps/playground is
+# `yosegi-storybook`. main deploys to <worker>.<account>.workers.dev; any other
+# branch or pull request uploads a preview at <branch>-<worker>.<account>.workers.dev.
+#
+# Deploys are paused until the Cloudflare secrets are set up. To turn them on,
+# set the DEPLOY repository variable: gh variable set DEPLOY --body true
 on:
   pull_request:
   push:
     branches: [main]
+  # Started by hand, it deploys both sites.
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -25,3 +35,69 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm build
+
+  # Which apps to deploy: the ones whose files, or the kit they compile, changed.
+  changes:
+    if: vars.DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      apps: ${{ github.event_name == 'workflow_dispatch' && '["web","playground"]' || steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            web:
+              - "apps/web/**"
+              - "packages/ui/**"
+              - "pnpm-lock.yaml"
+              - ".github/workflows/ci.yml"
+            playground:
+              - "apps/playground/**"
+              - "packages/ui/**"
+              - "pnpm-lock.yaml"
+              - ".github/workflows/ci.yml"
+
+  deploy:
+    name: Deploy ${{ matrix.app }}
+    needs: [check, changes]
+    # Secrets aren't available to pull requests from forks.
+    if: >-
+      needs.changes.outputs.apps != '[]' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.changes.outputs.apps) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter ${{ matrix.app }} build
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        working-directory: apps/${{ matrix.app }}
+        run: pnpm dlx wrangler@4.151.3 deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # A preview doesn't touch production. Its alias is the branch name, made safe for a hostname.
+      - name: Upload a preview
+        if: github.ref != 'refs/heads/main' || github.event_name == 'pull_request'
+        working-directory: apps/${{ matrix.app }}
+        run: |
+          alias=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -e 's/[^a-z0-9]/-/g' -e 's/--*/-/g' | cut -c1-30 | sed 's/^-//; s/-$//')
+          pnpm dlx wrangler@4.151.3 versions upload --preview-alias="$alias"
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
