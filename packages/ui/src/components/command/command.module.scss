@@ -82,10 +82,6 @@
   // A keyboard shortcut at the end of an item, like ⌘K.
   .shortcut {
     margin-inline-start: auto;
-    font: text(code);
-    font-size: 12px;
-    color: color(fg-muted);
-    letter-spacing: 0.04em;
   }
 
   // Inside a dialog: the dialog draws the box, the command fills it.

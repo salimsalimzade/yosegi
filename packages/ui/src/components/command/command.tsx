@@ -1,5 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import {
+  children,
   createContext,
   createEffect,
   createMemo,
@@ -18,6 +19,7 @@ import { callHandler, dataAttr } from "../../primitives/dom";
 import { SearchIcon } from "../../primitives/icons";
 import { groupOptions } from "../../primitives/option-groups";
 import { Dialog } from "../dialog/dialog";
+import { Kbd, KbdGroup } from "../kbd/kbd";
 import { useLocale } from "../locale-provider/locale-provider";
 import styles from "./command.module.scss";
 
@@ -75,7 +77,7 @@ export interface CommandAction {
   icon?: JSX.Element;
   /** Other words that should find it: "settings" for Preferences. */
   keywords?: string[];
-  /** A key hint at the end, like "⌘N". */
+  /** A key hint at the end: "⌘N" for one keycap, or a KbdGroup for keys pressed together. */
   shortcut?: JSX.Element;
   /** Actions with a group sit under its heading, with a line between groups. */
   group?: string;
@@ -364,12 +366,14 @@ function Separator(props: JSX.HTMLAttributes<HTMLHRElement>) {
   );
 }
 
+/** A key hint at the end of an item. Text becomes one Kbd; Kbds and groups show as given. */
 function Shortcut(props: JSX.HTMLAttributes<HTMLElement>) {
+  const keys = children(() => props.children);
   const rest = omit(props, "class", "children");
   return (
-    <kbd {...rest} class={[styles.shortcut, "yosegi-command-shortcut", props.class]}>
-      {props.children}
-    </kbd>
+    <KbdGroup {...rest} class={[styles.shortcut, "yosegi-command-shortcut", props.class]}>
+      {typeof keys() === "string" ? <Kbd>{keys() as string}</Kbd> : keys()}
+    </KbdGroup>
   );
 }
 

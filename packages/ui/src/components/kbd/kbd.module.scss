@@ -1,0 +1,43 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // A keycap: the key's name in a small raised box.
+  .root {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 space(100);
+    border: 1px solid knob(kbd, border, color(border));
+    border-bottom-width: 2px;
+    border-radius: knob(kbd, radius, radius(150));
+    background: knob(kbd, bg, color(bg-surface));
+    color: knob(kbd, fg, color(fg-muted));
+    font: text(code);
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  // Keys pressed together sit in a row; the group itself draws no box.
+  .group {
+    display: inline-flex;
+    align-items: center;
+    gap: knob(kbd-group, gap, space(100));
+    padding: 0;
+    border-radius: 0;
+    background: none;
+  }
+
+  .separator {
+    font: text(small);
+    color: color(fg-muted);
+  }
+
+  // A symbol's label: read by screen readers, never shown.
+  .visually-hidden {
+    @include visually-hidden;
+  }
+}

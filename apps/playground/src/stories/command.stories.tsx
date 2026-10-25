@@ -6,6 +6,7 @@ import {
   Command,
   type CommandAction,
   FileIcon,
+  KbdGroup,
   PlusIcon,
   SettingsIcon,
   toast,
@@ -13,14 +14,20 @@ import {
 
 // A function, so each story gets its own icons.
 const commands = (): CommandAction[] => [
-  { value: "New note", icon: <PlusIcon />, keywords: ["create", "add"], shortcut: "⌘N", group: "Notes" },
+  {
+    value: "New note",
+    icon: <PlusIcon />,
+    keywords: ["create", "add"],
+    shortcut: <KbdGroup keys={[{ key: "⌘", label: "Command" }, "N"]} />,
+    group: "Notes",
+  },
   { value: "Trip to Kyoto", icon: <FileIcon />, group: "Notes" },
   { value: "Reading list", icon: <FileIcon />, group: "Notes" },
   {
     value: "Preferences",
     icon: <SettingsIcon />,
     keywords: ["settings", "options"],
-    shortcut: "⌘,",
+    shortcut: <KbdGroup keys={[{ key: "⌘", label: "Command" }, ","]} />,
     group: "Settings",
   },
   { value: "Billing", icon: <SettingsIcon />, disabled: true, group: "Settings" },
@@ -100,7 +107,7 @@ export const PaletteInADialog: Story = {
         <Button
           label={
             <>
-              Open command palette <kbd class="yosegi-command-shortcut">⌘K</kbd>
+              Open command palette <KbdGroup keys={[{ key: "⌘", label: "Command" }, "K"]} />
             </>
           }
           variant="outline"
