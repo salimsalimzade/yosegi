@@ -1,5 +1,11 @@
 # yosegi-solid
 
+## 0.2.1
+
+### Patch Changes
+
+- e93afe8: drop some links from readme and add some links for metadata
+
 ## 0.2.0
 
 ### Minor Changes
