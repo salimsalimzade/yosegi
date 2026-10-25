@@ -3,7 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Small, plain SolidJS components that fit together." />
     <title>Yosegi</title>
+    <script>
+      // Apply a theme chosen on an earlier visit before the first paint; without one, the OS decides.
+      try {
+        const theme = localStorage.getItem("yosegi:theme");
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.yosegiTheme = theme;
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

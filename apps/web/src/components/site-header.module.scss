@@ -1,0 +1,77 @@
+.root {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--yosegi-space-400);
+  padding: 14px clamp(16px, 3vw, 32px);
+  border-bottom: 1px solid var(--yosegi-color-border);
+}
+
+.start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--yosegi-space-800);
+}
+
+// No logo yet: the name in plain type.
+.wordmark {
+  color: var(--yosegi-color-fg);
+  font: var(--yosegi-text-title);
+  letter-spacing: var(--yosegi-text-title-tracking);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--yosegi-color-fg);
+  }
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--yosegi-space-600);
+}
+
+.link {
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-font-weight-semibold) 14px / 20px var(--yosegi-font-family-sans);
+  text-decoration: none;
+  transition: color var(--yosegi-duration-fast) var(--yosegi-easing-out);
+
+  &:hover,
+  &[aria-current="page"] {
+    color: var(--yosegi-color-fg);
+  }
+}
+
+// The moon and the sun share one spot; the one for the other theme turns away and shrinks.
+.toggle {
+  position: relative;
+  overflow: hidden;
+
+  svg {
+    position: absolute;
+    inset: 0;
+    width: 18px;
+    height: 18px;
+    margin: auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 300ms var(--yosegi-easing-out), opacity var(--yosegi-duration-base) ease-out;
+  }
+
+  &[data-theme="light"] .sun {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.4);
+  }
+
+  &[data-theme="dark"] .moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.4);
+  }
+}

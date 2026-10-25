@@ -1,0 +1,360 @@
+// The landing fits one screen on a desktop: the introduction on the left, live components on the right.
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 640px;
+  overflow: hidden;
+}
+
+// While the accent changes, colours fade into it.
+.root[data-accent-changing] :is(.intro, .grid) * {
+  transition:
+    background-color 300ms ease-out,
+    color 300ms ease-out,
+    border-color 300ms ease-out,
+    outline-color 300ms ease-out;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  gap: 48px;
+  min-height: 0;
+  padding: var(--yosegi-space-600) var(--yosegi-space-800) var(--yosegi-space-800);
+}
+
+.intro {
+  display: flex;
+  flex: 0 0 360px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.badge {
+  align-self: flex-start;
+  padding: var(--yosegi-space-100) 10px;
+  border: 1px solid var(--yosegi-color-border-strong);
+  border-radius: var(--yosegi-radius-full);
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-label);
+}
+
+.title {
+  font: var(--yosegi-text-display);
+  letter-spacing: var(--yosegi-text-display-tracking);
+  text-wrap: balance;
+}
+
+.lead {
+  color: var(--yosegi-color-fg-muted);
+  font-size: 16px;
+  line-height: 24px;
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--yosegi-space-200);
+}
+
+.accents {
+  display: flex;
+  flex-direction: column;
+  gap: var(--yosegi-space-200);
+  padding: var(--yosegi-space-300);
+  border: 1px solid var(--yosegi-color-border);
+  border-radius: var(--yosegi-radius-300);
+  background: var(--yosegi-color-bg-surface);
+}
+
+.accents-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hex {
+  padding: 0;
+  background: none;
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-code);
+  font-size: 12px;
+}
+
+.accents-row {
+  display: flex;
+  align-items: center;
+  gap: var(--yosegi-space-300);
+}
+
+.swatch {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--yosegi-color-border);
+  border-radius: var(--yosegi-radius-full);
+  transition: transform var(--yosegi-duration-fast) ease-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &[aria-pressed="true"] {
+    outline: 2px solid var(--yosegi-color-fg);
+    outline-offset: 2px;
+  }
+}
+
+// ------------------------------------------------------------------ The grid
+
+.grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: var(--yosegi-space-300);
+  min-width: 0;
+  min-height: 0;
+}
+
+// A card flashes the focus ring when a command points at it.
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--yosegi-space-300);
+  min-height: 0;
+  padding: var(--yosegi-space-400);
+  overflow: hidden;
+  border: 1px solid var(--yosegi-color-border);
+  border-radius: var(--yosegi-radius-400);
+  background: var(--yosegi-color-bg-surface);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color 300ms ease-out;
+
+  &[data-flash] {
+    outline-color: var(--yosegi-color-border-focus);
+  }
+}
+
+.tall {
+  grid-row: span 2;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--yosegi-space-200);
+}
+
+.tag {
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-label);
+}
+
+.muted {
+  color: var(--yosegi-color-fg-muted);
+}
+
+.card-head .muted {
+  font: var(--yosegi-text-small);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--yosegi-space-100);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--yosegi-space-200);
+  margin-top: auto;
+}
+
+// The calendar, open in the card instead of floating under the field.
+.calendar {
+  align-self: flex-start;
+  max-width: 100%;
+  margin-top: var(--yosegi-space-200);
+  padding: var(--yosegi-space-300);
+  overflow-x: auto;
+  border: 1px solid var(--yosegi-color-border-strong);
+  border-radius: var(--yosegi-radius-400);
+  background: var(--yosegi-color-bg-surface);
+}
+
+// ------------------------------------------------------------------- Command
+
+.command {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+
+  > :global(.yosegi-command) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  :global(.yosegi-command-list) {
+    max-height: none;
+  }
+}
+
+.hit {
+  color: var(--yosegi-color-fg-accent);
+  font-weight: var(--yosegi-font-weight-semibold);
+}
+
+// While the search types itself, a caret blinks after the text. A person's own typing gets the real one.
+.caret {
+  position: absolute;
+  display: none;
+  align-items: center;
+  pointer-events: none;
+
+  .command[data-typing] & {
+    display: flex;
+  }
+
+  &::after {
+    content: "";
+    width: 1px;
+    height: 16px;
+    margin-left: 1px;
+    background: var(--yosegi-color-fg);
+    animation: blink 1s steps(1) infinite;
+  }
+}
+
+.ghost {
+  visibility: hidden;
+  white-space: pre;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+// --------------------------------------------------------------------- Toast
+
+.toast-card {
+  gap: var(--yosegi-space-200);
+}
+
+// The page's Toaster lives in this card instead of a corner of the screen, newest on top.
+.toaster {
+  position: static;
+  width: 100%;
+  max-width: none;
+  translate: none;
+
+  :global(.yosegi-toast:nth-last-child(2)) {
+    opacity: 0.85;
+  }
+
+  :global(.yosegi-toast:nth-last-child(3)) {
+    opacity: 0.6;
+  }
+}
+
+// ---------------------------------------------------------------------- Tabs
+
+.tabs {
+  flex: 1;
+  min-height: 0;
+}
+
+.count {
+  display: inline-block;
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-code);
+  font-size: 12px;
+}
+
+// Two copies of one animation: switching between them replays it on every bump.
+.bump-odd {
+  animation: bump-odd 400ms var(--yosegi-easing-out);
+}
+
+.bump-even {
+  animation: bump-even 400ms var(--yosegi-easing-out);
+}
+
+@keyframes bump-odd {
+  30% {
+    color: var(--yosegi-color-fg-accent);
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes bump-even {
+  30% {
+    color: var(--yosegi-color-fg-accent);
+    transform: translateY(-3px);
+  }
+}
+
+// Slightly smaller pages, so all of them and both arrows fit on one line in the card.
+.pagination {
+  --yosegi-pagination-size: 28px;
+}
+
+// ------------------------------------------------------------------- Members
+
+.members {
+  gap: 6px;
+}
+
+// --------------------------------------------------------------- Small screens
+
+@media (max-width: 1100px) {
+  .root {
+    height: auto;
+    overflow: visible;
+  }
+
+  .main {
+    flex-direction: column;
+    padding: var(--yosegi-space-600) var(--yosegi-space-400) var(--yosegi-space-800);
+  }
+
+  .intro {
+    flex: none;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+
+  .card {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tall {
+    grid-row: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret::after,
+  .bump-odd,
+  .bump-even {
+    animation: none;
+  }
+}

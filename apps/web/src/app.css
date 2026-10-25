@@ -1,0 +1,17 @@
+/* The site's own global styles, on top of yosegi/styles.css. */
+
+/* The theme switch draws its own circle, so the default cross-fade is off. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Without view transitions, colours fade into the new theme. */
+[data-theme-changing],
+[data-theme-changing] * {
+  transition:
+    background-color 200ms ease-out,
+    color 200ms ease-out,
+    border-color 200ms ease-out !important;
+}
