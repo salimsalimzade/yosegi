@@ -55,27 +55,30 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - id: filter
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
+          # A file counts when it matches every pattern: one of the paths, and none of the release
+          # files. A release only bumps the kit's version and changelog, which the sites don't show.
+          predicate-quantifier: every
           filters: |
             web:
-              - "apps/web/**"
-              - "packages/ui/**"
-              - "pnpm-lock.yaml"
-              - ".github/workflows/ci-cd.yml"
+              - "{apps/web/**,packages/ui/**,pnpm-lock.yaml,.github/workflows/ci-cd.yml}"
+              - "!packages/ui/CHANGELOG.md"
+              - "!packages/ui/package.json"
             playground:
-              - "apps/playground/**"
-              - "packages/ui/**"
-              - "pnpm-lock.yaml"
-              - ".github/workflows/ci-cd.yml"
+              - "{apps/playground/**,packages/ui/**,pnpm-lock.yaml,.github/workflows/ci-cd.yml}"
+              - "!packages/ui/CHANGELOG.md"
+              - "!packages/ui/package.json"
 
   deploy:
     # GitHub adds the app after the name, as "Deploy (web)", and shows plain "Deploy" when skipped.
     name: Deploy
     needs: [check, changes]
-    # Secrets aren't available to pull requests from forks.
+    # Secrets aren't available to pull requests from forks, and the version pull request has nothing
+    # to preview.
     if: >-
       needs.changes.outputs.apps != '[]' &&
+      github.head_ref != 'changeset-release/main' &&
       (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-24.04
     strategy:
