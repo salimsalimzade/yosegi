@@ -3,8 +3,16 @@
   "version": "0.2.0",
   "author": "Salim Salimzade",
   "description": "A SolidJS design system, made for my own projects",
+  "keywords": [
+    "solid",
+    "solidjs",
+    "design-system",
+    "ui",
+    "a11y"
+  ],
   "type": "module",
   "license": "MIT",
+  "homepage": "https://yosegi.learningishardiswear.workers.dev/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/salimsalimzade/yosegi.git",

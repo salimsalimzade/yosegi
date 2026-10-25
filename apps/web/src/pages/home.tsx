@@ -373,7 +373,14 @@ export function Home() {
             property you can change.
           </p>
           <div class={styles.actions}>
-            <Button as="a" href={storybookDocs("guides-getting-started")} size="lg" label="Get started" />
+            <Button
+              as="a"
+              href={storybookDocs("guides-getting-started")}
+              target="_blank"
+              rel="noopener noreferrer"
+              size="lg"
+              label="Get started"
+            />
             <Button as="a" href="/examples" size="lg" variant="outline" label="See examples" />
           </div>
 

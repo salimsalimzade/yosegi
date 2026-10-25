@@ -17,7 +17,7 @@ export function SiteHeader() {
           <a class={styles.link} href="/examples">
             Examples
           </a>
-          <a class={styles.link} href={storybookUrl}>
+          <a class={styles.link} href={storybookUrl} target="_blank" rel="noopener noreferrer">
             Storybook
           </a>
         </nav>

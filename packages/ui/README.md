@@ -2,10 +2,6 @@
 
 A small design system for SolidJS: calm, accessible components, one accent colour, and every value a CSS custom property you can change.
 
-- **Docs and every component:** [Storybook](https://yosegi-storybook.learningishardiswear.workers.dev/)
-- **Website:** [yosegi.learningishardiswear.workers.dev](https://yosegi.learningishardiswear.workers.dev/)
-- **Source:** [github.com/salimsalimzade/yosegi](https://github.com/salimsalimzade/yosegi)
-
 ## Install
 
 ```sh
