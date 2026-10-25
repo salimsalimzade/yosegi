@@ -1,5 +1,11 @@
 # yosegi-solid
 
+## 0.2.0
+
+### Minor Changes
+
+- a1dc50a: add kbd component and readme file
+
 ## 0.1.1
 
 ### Patch Changes
