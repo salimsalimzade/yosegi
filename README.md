@@ -11,7 +11,7 @@ There are already plenty of great design systems out there. I built this one any
 This repo is a pnpm workspace built on SolidJS 2.
 
 - `packages/ui`: the component library, published to npm as `yosegi`
-- `apps/playground`: a sandbox for building components
+- `apps/playground`: the Storybook, where every component is built, tried and documented
 - `apps/web`: the website, a "Hello world" page for now
 
 Apps use `yosegi` through `workspace:*`, so they compile the library's source directly. `pnpm publish` swaps in the `publishConfig.exports` that point at `dist/`.
@@ -20,13 +20,16 @@ Apps use `yosegi` through `workspace:*`, so they compile the library's source di
 
 ```sh
 pnpm install
-pnpm dev:playground   # the playground, at http://localhost:5173
+pnpm dev:storybook    # the Storybook, at http://localhost:6006
 pnpm dev:web          # the website, at http://localhost:5174
 pnpm dev              # both at once
 pnpm generate         # icon components from packages/ui/src/icons/*.svg
+pnpm build:storybook  # a static Storybook in apps/playground/dist
 ```
 
-The playground is laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, and a page for each component under `/playground` (`/playground/button`, `/playground/date-picker`, …) that shows every case on its own. The Assets group has the Icons page, with every icon to copy or download, and the Setup group has LocaleProvider. To add one, put its SVG in `packages/ui/src/icons/` and run `pnpm generate`. A switch at the top changes between the light and dark themes. Changes to `packages/ui` show up as you save.
+The Storybook is laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, then Assets for the icons and Setup for LocaleProvider. Each component has a Docs page with its props, types and defaults, a Playground story with every prop on a control, and one story per case with its code to copy. The toolbar switches between the light and dark themes and between phone, tablet and desktop widths, and the Accessibility panel runs axe on each story. Changes to `packages/ui` show up as you save.
+
+The stories are in `apps/playground/src/stories/`, and the config is in `apps/playground/.storybook/`. The Icons page has every icon to copy or download. To add one, put its SVG in `packages/ui/src/icons/` and run `pnpm generate`; **Assets › Icons › Adding an icon** has the steps and the rules.
 
 ## Components
 

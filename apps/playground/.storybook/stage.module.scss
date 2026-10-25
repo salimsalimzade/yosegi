@@ -1,0 +1,31 @@
+// The area a story sits on, painted with the theme so dark mode reads in the canvas and in docs.
+.stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--yosegi-space-300);
+  padding: var(--yosegi-space-600);
+  background: var(--yosegi-color-bg);
+  color: var(--yosegi-color-fg);
+
+  &[data-layout="stack"] {
+    display: grid;
+    align-items: start;
+    justify-items: start;
+  }
+
+  &[data-layout="fill"] {
+    display: block;
+  }
+
+  // One column as wide as a form field, for inputs and anything shown one under another.
+  &[data-layout="field"] {
+    display: grid;
+    grid-template-columns: min(100%, 360px);
+  }
+
+  &[data-layout="center"] {
+    justify-content: center;
+    min-height: 160px;
+  }
+}

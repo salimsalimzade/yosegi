@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "playground",
+      "name": "storybook",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev:playground"],
-      "port": 5173
+      "runtimeArgs": ["dev:storybook"],
+      "port": 6006
     },
     {
       "name": "web",

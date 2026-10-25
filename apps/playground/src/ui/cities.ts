@@ -1,0 +1,138 @@
+import type { ComboboxOption } from "yosegi";
+
+// Cities, customers and tags for the Combobox cases and stories.
+export const cities: ComboboxOption[] = [
+  ["kyoto", "Kyoto", "Asia"],
+  ["osaka", "Osaka", "Asia"],
+  ["tokyo", "Tokyo", "Asia"],
+  ["seoul", "Seoul", "Asia"],
+  ["baku", "Baku", "Asia"],
+  ["tbilisi", "Tbilisi", "Asia"],
+  ["amsterdam", "Amsterdam", "Europe"],
+  ["berlin", "Berlin", "Europe"],
+  ["istanbul", "Istanbul", "Europe"],
+  ["kyiv", "Kyiv", "Europe"],
+  ["lisbon", "Lisbon", "Europe"],
+  ["london", "London", "Europe"],
+  ["paris", "Paris", "Europe"],
+  ["cairo", "Cairo", "Africa"],
+  ["nairobi", "Nairobi", "Africa"],
+  ["buenos-aires", "Buenos Aires", "Americas"],
+  ["mexico-city", "Mexico City", "Americas"],
+].map(([value, label, group]) => ({
+  value,
+  label,
+  group,
+  disabled: value === "lisbon",
+}));
+
+/** Your own objects: the API's shape, not { value, label }. */
+export interface Customer {
+  id: string;
+  name: string;
+  country: string;
+  closed?: boolean;
+}
+
+export const customers: Customer[] = [
+  { id: "c-101", name: "Aiko Tanaka", country: "Japan" },
+  { id: "c-102", name: "Kenji Mori", country: "Japan", closed: true },
+  { id: "c-201", name: "Lena Fischer", country: "Germany" },
+  { id: "c-202", name: "Jonas Weber", country: "Germany" },
+  { id: "c-301", name: "Nia Okafor", country: "Nigeria" },
+];
+
+const tagNames = [
+  "design",
+  "research",
+  "writing",
+  "urgent",
+  "client",
+  "internal",
+  "q4",
+  "travel",
+  "finance",
+  "hiring",
+  "ops",
+  "later",
+];
+export const startingTags: ComboboxOption[] = tagNames.map((tag) => ({
+  value: tag,
+  label: tag,
+}));
+
+// A pretend server: 2,400 cities would be too many to send, so it searches.
+export const world = [
+  "Aarhus",
+  "Abuja",
+  "Accra",
+  "Adelaide",
+  "Almaty",
+  "Amman",
+  "Ankara",
+  "Antwerp",
+  "Athens",
+  "Auckland",
+  "Baghdad",
+  "Bangkok",
+  "Barcelona",
+  "Basel",
+  "Beirut",
+  "Belgrade",
+  "Bergen",
+  "Bogotá",
+  "Bordeaux",
+  "Boston",
+  "Brisbane",
+  "Brussels",
+  "Bucharest",
+  "Budapest",
+  "Calgary",
+  "Cape Town",
+  "Chicago",
+  "Copenhagen",
+  "Dakar",
+  "Delhi",
+  "Denver",
+  "Doha",
+  "Dubai",
+  "Dublin",
+  "Edinburgh",
+  "Florence",
+  "Geneva",
+  "Ghent",
+  "Glasgow",
+  "Hamburg",
+  "Hanoi",
+  "Helsinki",
+  "Kraków",
+  "Lagos",
+  "Lima",
+  "Lyon",
+  "Madrid",
+  "Manila",
+  "Marseille",
+  "Melbourne",
+  "Milan",
+  "Montréal",
+  "Mumbai",
+  "Munich",
+  "Naples",
+  "Oslo",
+  "Porto",
+  "Prague",
+  "Quito",
+  "Riga",
+  "Rome",
+  "Santiago",
+  "Seville",
+  "Sydney",
+  "Tallinn",
+  "Toronto",
+  "Valencia",
+  "Vienna",
+  "Vilnius",
+  "Warsaw",
+  "Zagreb",
+  "Zürich",
+].map((name) => ({ value: name.toLowerCase(), label: name }));

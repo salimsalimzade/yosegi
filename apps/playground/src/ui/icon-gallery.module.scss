@@ -1,0 +1,68 @@
+// The icon gallery: one tile per icon, like the design system's Icons group.
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--yosegi-space-200);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.tile {
+  position: relative;
+}
+
+.copy {
+  display: grid;
+  justify-items: center;
+  gap: var(--yosegi-space-100);
+  inline-size: 100%;
+  padding: var(--yosegi-space-600) var(--yosegi-space-200) var(--yosegi-space-300);
+  border: 1px solid var(--yosegi-color-border);
+  border-radius: var(--yosegi-radius-300);
+  background: var(--yosegi-color-bg-surface);
+  color: var(--yosegi-color-fg);
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    background: var(--yosegi-color-bg-muted);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--yosegi-color-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.glyph {
+  inline-size: 24px;
+  block-size: 24px;
+  margin-bottom: var(--yosegi-space-200);
+}
+
+.file {
+  font: var(--yosegi-text-label);
+}
+
+.component {
+  font: var(--yosegi-text-code);
+  color: var(--yosegi-color-fg-muted);
+}
+
+.used-by {
+  font: var(--yosegi-text-small);
+  color: var(--yosegi-color-fg-muted);
+}
+
+.download {
+  position: absolute;
+  inset-block-start: var(--yosegi-space-100);
+  inset-inline-end: var(--yosegi-space-100);
+  opacity: 0;
+
+  .tile:hover &,
+  &:focus-visible {
+    opacity: 1;
+  }
+}

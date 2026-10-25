@@ -1,0 +1,75 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Assets/Icons" name="Adding an icon" />
+
+# Adding an icon
+
+Every icon starts as one SVG file. `pnpm generate` turns the files into components, so you never write an icon component by hand.
+
+## 1. Draw it
+
+Match the design system's Icons group:
+
+- A **16 × 16** grid. The large icons in EmptyState and ErrorState use 24 × 24.
+- A **1.5px stroke** with round caps and joins, and no fill.
+- **Strokes and fills only.** Masks, gradients and clip paths need ids, and every copy of an icon on a page would share them, so they can't be used.
+
+Export it as SVG. A clean file looks like this:
+
+```xml
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 16 16"
+  width="16"
+  height="16"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M8 4v8M4 8h8" />
+</svg>
+```
+
+## 2. Add the file
+
+Save it in `packages/ui/src/icons/`, named in lowercase with dashes. The file name becomes the component name:
+
+- `plus.svg` → `PlusIcon`
+- `search-off.svg` → `SearchOffIcon`
+- `cloud-upload.svg` → `CloudUploadIcon`
+
+## 3. Run `pnpm generate`
+
+```sh
+pnpm generate
+```
+
+From the repo root, this:
+
+- cleans each SVG with SVGO: drops what design tools add, removes clip paths and turns fixed colours into `currentColor`, so the icon follows the text colour around it;
+- writes every icon component into `packages/ui/src/primitives/icons.tsx`;
+- copies the cleaned file to `apps/playground/public/icons/`, for the download button in the gallery, and removes downloads whose SVG is gone.
+
+It stops with an error if a name isn't lowercase with dashes, or if the SVG uses an id.
+
+## 4. Use it
+
+`yosegi` exports every generated icon, so it's ready to import:
+
+```tsx
+import { CloudUploadIcon } from "yosegi";
+
+<CloudUploadIcon />
+<Button label="Upload" icon={<CloudUploadIcon />} />
+```
+
+It also appears in **Icons › All icons**, where a click copies its component.
+
+## Good to know
+
+- **Don't edit the generated files.** `primitives/icons.tsx` and `public/icons/` are rewritten on every run. To change an icon, change its SVG and run `pnpm generate` again.
+- **Commit them with the SVG.** `pnpm build` runs `pnpm generate --check` and fails while they are out of date.
+- **To remove an icon,** delete its SVG and run `pnpm generate`.
+- **If a component draws it,** add it to `usedBy` in `apps/playground/src/ui/icon-gallery.tsx`, so the gallery lists it first and names the components that use it.

@@ -2,23 +2,26 @@
   "name": "playground",
   "version": "0.0.0",
   "private": true,
-  "description": "Local sandbox for building Yosegi components",
+  "description": "Storybook for the Yosegi components",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "storybook dev --port 6006",
+    "build": "storybook build --output-dir dist",
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@solidjs/router": "catalog:",
     "@solidjs/web": "catalog:",
     "solid-js": "catalog:",
     "yosegi": "workspace:*"
   },
   "devDependencies": {
     "@solidjs/vite-plugin": "catalog:",
+    "@storybook/addon-a11y": "10.6.3",
+    "@storybook/addon-docs": "10.6.3",
+    "prettier": "^3.9.10",
     "sass-embedded": "catalog:",
+    "storybook": "10.6.3",
+    "storybook-solidjs-vite": "10.7.4",
     "typescript": "catalog:",
     "vite": "catalog:"
   }

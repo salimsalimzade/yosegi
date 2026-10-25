@@ -12,10 +12,11 @@
   },
   "scripts": {
     "dev": "pnpm --parallel --filter playground --filter web dev",
-    "dev:playground": "pnpm --filter playground dev",
     "dev:web": "pnpm --filter web dev",
+    "dev:storybook": "pnpm --filter playground dev",
     "generate": "pnpm --filter yosegi generate",
     "build": "pnpm --recursive build",
+    "build:storybook": "pnpm --filter playground build",
     "typecheck": "pnpm --recursive typecheck",
     "format": "biome format --write",
     "format:check": "biome format",

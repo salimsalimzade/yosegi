@@ -15,3 +15,11 @@ catalog:
 
 onlyBuiltDependencies:
   - lefthook
+
+# storybook-solidjs-vite falls back to vite-plugin-solid (Solid 1) only when no `solid`
+# plugin is configured. The playground's vite.config.ts has @solidjs/vite-plugin, so skip it.
+packageExtensions:
+  storybook-solidjs-vite:
+    peerDependenciesMeta:
+      vite-plugin-solid:
+        optional: true
