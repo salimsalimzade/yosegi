@@ -1,10 +1,7 @@
 import { Button } from "yosegi";
+import { storybookUrl } from "../storybook";
 import { theme, toggleTheme } from "../theme";
 import styles from "./site-header.module.scss";
-
-// The Storybook runs on its own port in development; a deployed site names its address.
-const storybookUrl: string | undefined =
-  import.meta.env.VITE_STORYBOOK_URL ?? (import.meta.env.DEV ? "http://localhost:6006" : undefined);
 
 /** The wordmark, the main links and the theme switch, at the top of every page. */
 export function SiteHeader() {
@@ -20,11 +17,9 @@ export function SiteHeader() {
           <a class={styles.link} href="/examples">
             Examples
           </a>
-          {storybookUrl && (
-            <a class={styles.link} href={storybookUrl}>
-              Storybook
-            </a>
-          )}
+          <a class={styles.link} href={storybookUrl}>
+            Storybook
+          </a>
         </nav>
       </div>
       <Button

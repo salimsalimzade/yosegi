@@ -17,6 +17,7 @@ import {
   toast,
 } from "yosegi";
 import { SiteHeader } from "../components/site-header";
+import { storybookDocs } from "../storybook";
 import { theme } from "../theme";
 import styles from "./home.module.scss";
 
@@ -372,7 +373,7 @@ export function Home() {
             property you can change.
           </p>
           <div class={styles.actions}>
-            <Button as="a" href="https://github.com/salimsalimzade/yosegi#readme" size="lg" label="Get started" />
+            <Button as="a" href={storybookDocs("guides-getting-started")} size="lg" label="Get started" />
             <Button as="a" href="/examples" size="lg" variant="outline" label="See examples" />
           </div>
 
