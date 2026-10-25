@@ -1,4 +1,4 @@
-import type { FilterValue } from "yosegi";
+import type { FilterValue } from "yosegi-solid";
 
 export interface Invoice {
   id: string;

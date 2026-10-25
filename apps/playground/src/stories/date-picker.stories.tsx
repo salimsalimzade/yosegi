@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal } from "solid-js";
-import { DatePicker } from "yosegi";
+import { DatePicker } from "yosegi-solid";
 
 const today = new Date();
 const inDays = (n: number) => new Date(today.getFullYear(), today.getMonth(), today.getDate() + n);

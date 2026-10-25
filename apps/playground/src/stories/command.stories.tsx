@@ -1,6 +1,15 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal, onSettled } from "solid-js";
-import { ArchiveIcon, Button, Command, type CommandAction, FileIcon, PlusIcon, SettingsIcon, toast } from "yosegi";
+import {
+  ArchiveIcon,
+  Button,
+  Command,
+  type CommandAction,
+  FileIcon,
+  PlusIcon,
+  SettingsIcon,
+  toast,
+} from "yosegi-solid";
 
 // A function, so each story gets its own icons.
 const commands = (): CommandAction[] => [

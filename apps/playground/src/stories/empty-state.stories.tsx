@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import { Button, EmptyState, InboxIcon, PlusIcon, SearchOffIcon } from "yosegi";
+import { Button, EmptyState, InboxIcon, PlusIcon, SearchOffIcon } from "yosegi-solid";
 
 const meta = {
   title: "Feedback/EmptyState",

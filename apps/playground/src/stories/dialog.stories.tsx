@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal } from "solid-js";
-import { Button, Dialog, TextField, toast, TrashIcon } from "yosegi";
+import { Button, Dialog, TextField, toast, TrashIcon } from "yosegi-solid";
 import { createTask } from "../ui/task";
 
 const meta = {

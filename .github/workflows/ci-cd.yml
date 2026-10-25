@@ -1,13 +1,18 @@
-name: CI
+name: CI/CD
 
-# Checks every push and pull request, then deploys the sites that changed. Each
-# site is a Cloudflare Worker that only serves static assets, named in its
-# app's wrangler.jsonc: apps/web is `yosegi`, apps/playground is
-# `yosegi-storybook`. main deploys to <worker>.<account>.workers.dev; any other
-# branch or pull request uploads a preview at <branch>-<worker>.<account>.workers.dev.
+# Checks every push and pull request, then ships what changed:
 #
-# Deploys are paused until the Cloudflare secrets are set up. To turn them on,
-# set the DEPLOY repository variable: gh variable set DEPLOY --body true
+#   deploy   Each site is a Cloudflare Worker that only serves static assets,
+#            named in its app's wrangler.jsonc: apps/web is `yosegi`,
+#            apps/playground is `yosegi-storybook`. main deploys to
+#            <worker>.<account>.workers.dev; any other branch or pull request
+#            uploads a preview at <branch>-<worker>.<account>.workers.dev.
+#   release  On main, Changesets keeps a "version packages" pull request open
+#            while there are changesets. Merging it publishes yosegi-solid to npm.
+#
+# Both are paused until they're set up. To turn them on, set the repository
+# variables: gh variable set DEPLOY --body true
+#            gh variable set RELEASE --body true
 on:
   pull_request:
   push:
@@ -15,9 +20,11 @@ on:
   # Started by hand, it deploys both sites.
   workflow_dispatch:
 
+# A newer push cancels the older run, except on main, where runs wait their turn
+# so a release is never cut off halfway.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
   contents: read
@@ -55,12 +62,12 @@ jobs:
               - "apps/web/**"
               - "packages/ui/**"
               - "pnpm-lock.yaml"
-              - ".github/workflows/ci.yml"
+              - ".github/workflows/ci-cd.yml"
             playground:
               - "apps/playground/**"
               - "packages/ui/**"
               - "pnpm-lock.yaml"
-              - ".github/workflows/ci.yml"
+              - ".github/workflows/ci-cd.yml"
 
   deploy:
     # GitHub adds the app after the name, as "Deploy (web)", and shows plain "Deploy" when skipped.
@@ -102,3 +109,29 @@ jobs:
           BRANCH: ${{ github.head_ref || github.ref_name }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  # With changesets on main, opens or updates the "version packages" pull request. With none left,
+  # which is right after that pull request merges, publishes the new version to npm.
+  release:
+    needs: check
+    if: vars.RELEASE == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+      # npm trusted publishing: no npm token, and provenance is added automatically.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - uses: changesets/action@v2
+        with:
+          publish-script: pnpm release
+          commit-message: "chore(release): version packages"
+          pr-title: "chore(release): version packages"

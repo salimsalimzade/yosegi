@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import { Button, Spinner } from "yosegi";
+import { Button, Spinner } from "yosegi-solid";
 
 const meta = {
   title: "Feedback/Spinner",

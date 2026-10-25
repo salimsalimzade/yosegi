@@ -1,7 +1,7 @@
-import "yosegi/styles.css";
+import "yosegi-solid/styles.css";
 import { render } from "@solidjs/web";
 import { createDecorator, createJSXDecorator, type Preview } from "storybook-solidjs-vite";
-import { Toaster } from "yosegi";
+import { Toaster } from "yosegi-solid";
 import styles from "./stage.module.scss";
 
 type Theme = "system" | "light" | "dark";

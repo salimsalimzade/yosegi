@@ -1,4 +1,4 @@
-import type { ComboboxOption } from "yosegi";
+import type { ComboboxOption } from "yosegi-solid";
 
 // Cities, customers and tags for the Combobox cases and stories.
 export const cities: ComboboxOption[] = [

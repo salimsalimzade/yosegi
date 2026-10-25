@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import { Button, ErrorState, WarningIcon } from "yosegi";
+import { Button, ErrorState, WarningIcon } from "yosegi-solid";
 
 const meta = {
   title: "Feedback/ErrorState",

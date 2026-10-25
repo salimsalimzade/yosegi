@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal, onCleanup } from "solid-js";
-import { Combobox, type ComboboxOption } from "yosegi";
+import { Combobox, type ComboboxOption } from "yosegi-solid";
 import { type Customer, cities, customers, startingTags, world } from "../ui/cities";
 
 const meta = {

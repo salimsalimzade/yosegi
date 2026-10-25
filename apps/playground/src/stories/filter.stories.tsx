@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal } from "solid-js";
-import { Filter, type FilterSection, type FilterValue } from "yosegi";
+import { Filter, type FilterSection, type FilterValue } from "yosegi-solid";
 import { countBy, invoices, matches, methodLabels, money, statusLabels } from "../ui/invoices";
 
 const options = (field: "status" | "method", labels: Record<string, string>) =>

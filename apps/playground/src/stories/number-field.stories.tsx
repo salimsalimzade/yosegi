@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal } from "solid-js";
-import { NumberField } from "yosegi";
+import { NumberField } from "yosegi-solid";
 
 const meta = {
   title: "Forms/NumberField",

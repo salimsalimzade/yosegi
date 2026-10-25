@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { For } from "solid-js";
-import { CalendarIcon, InfoIcon, PlusIcon, Tooltip, type TooltipProps } from "yosegi";
+import { CalendarIcon, InfoIcon, PlusIcon, Tooltip, type TooltipProps } from "yosegi-solid";
 
 const meta = {
   title: "Overlays/Tooltip",

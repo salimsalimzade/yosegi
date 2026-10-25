@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import { Button, NotFound } from "yosegi";
+import { Button, NotFound } from "yosegi-solid";
 
 const meta = {
   title: "Feedback/NotFound",

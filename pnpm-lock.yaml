@@ -67,7 +67,7 @@ importers:
       solid-js:
         specifier: 'catalog:'
         version: 2.0.0-rc.17
-      yosegi:
+      yosegi-solid:
         specifier: workspace:*
         version: link:../../packages/ui
     devDependencies:
@@ -113,7 +113,7 @@ importers:
       solid-js:
         specifier: 'catalog:'
         version: 2.0.0-rc.17
-      yosegi:
+      yosegi-solid:
         specifier: workspace:*
         version: link:../../packages/ui
     devDependencies:

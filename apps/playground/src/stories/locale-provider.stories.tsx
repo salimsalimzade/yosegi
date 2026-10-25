@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import { DatePicker, type LocaleLabels, LocaleProvider, NumberField, Pagination } from "yosegi";
+import { DatePicker, type LocaleLabels, LocaleProvider, NumberField, Pagination } from "yosegi-solid";
 
 const german: LocaleLabels = {
   numberField: { increment: "Erhöhen", decrement: "Verringern" },

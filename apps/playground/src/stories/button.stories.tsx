@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { For } from "solid-js";
-import { ArrowRightIcon, Button, DownloadIcon, InfoIcon, PlusIcon, SettingsIcon, TrashIcon } from "yosegi";
+import { ArrowRightIcon, Button, DownloadIcon, InfoIcon, PlusIcon, SettingsIcon, TrashIcon } from "yosegi-solid";
 import { createTask } from "../ui/task";
 
 const meta = {

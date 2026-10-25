@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import { Button, Toaster, toast } from "yosegi";
+import { Button, Toaster, toast } from "yosegi-solid";
 
 const wait = (ms: number, fail = false) =>
   new Promise<string>((resolve, reject) =>

@@ -10,7 +10,7 @@ import {
   type TableQuery,
   toast,
   TrashIcon,
-} from "yosegi";
+} from "yosegi-solid";
 import { columns, germanColumns, germanLabels, recent } from "../ui/invoice-columns";
 import { type Invoice, invoices, money } from "../ui/invoices";
 

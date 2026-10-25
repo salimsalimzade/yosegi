@@ -1,4 +1,4 @@
-import { Button, EmptyState, GridIcon } from "yosegi";
+import { Button, EmptyState, GridIcon } from "yosegi-solid";
 import { SiteHeader } from "../components/site-header";
 import styles from "./examples.module.scss";
 

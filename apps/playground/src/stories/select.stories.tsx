@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal } from "solid-js";
-import { Select, type SelectOption } from "yosegi";
+import { Select, type SelectOption } from "yosegi-solid";
 
 const statuses: SelectOption[] = [
   { value: "draft", label: "Draft" },

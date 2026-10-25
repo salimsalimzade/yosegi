@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal } from "solid-js";
-import { Pagination, Table } from "yosegi";
+import { Pagination, Table } from "yosegi-solid";
 
 const meta = {
   title: "Navigation/Pagination",

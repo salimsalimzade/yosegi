@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import { Checkbox, Tabs } from "yosegi";
+import { Checkbox, Tabs } from "yosegi-solid";
 
 const meta = {
   title: "Navigation/Tabs",

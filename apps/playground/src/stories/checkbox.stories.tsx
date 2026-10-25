@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal, For } from "solid-js";
-import { Checkbox } from "yosegi";
+import { Checkbox } from "yosegi-solid";
 
 const meta = {
   title: "Forms/Checkbox",

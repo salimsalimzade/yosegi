@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { For } from "solid-js";
-import { Button, ChevronRightIcon, FileIcon, Item, PlusIcon, ShieldIcon, TickIcon } from "yosegi";
+import { Button, ChevronRightIcon, FileIcon, Item, PlusIcon, ShieldIcon, TickIcon } from "yosegi-solid";
 
 const people = [
   { initials: "SS", name: "Salim", email: "salim@yosegi.dev" },

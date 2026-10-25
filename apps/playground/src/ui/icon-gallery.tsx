@@ -1,7 +1,7 @@
 import type { Component } from "solid-js";
 import { For } from "solid-js";
-import * as yosegi from "yosegi";
-import { Button, DownloadIcon, type IconProps, toast } from "yosegi";
+import * as yosegi from "yosegi-solid";
+import { Button, DownloadIcon, type IconProps, toast } from "yosegi-solid";
 import styles from "./icon-gallery.module.scss";
 
 interface Icon {

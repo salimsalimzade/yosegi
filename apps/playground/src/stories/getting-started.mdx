@@ -9,7 +9,7 @@ From an empty SolidJS 2 app to a working form in a few steps.
 ## 1. Install
 
 ```sh
-pnpm add yosegi
+pnpm add yosegi-solid
 ```
 
 Yosegi needs `solid-js` and `@solidjs/web` 2, which a SolidJS 2 app already has. Component styles are SCSS modules, so an app that compiles Yosegi from source also needs `sass-embedded`.
@@ -19,7 +19,7 @@ Yosegi needs `solid-js` and `@solidjs/web` 2, which a SolidJS 2 app already has.
 Import the global styles once, at your app's entry:
 
 ```tsx
-import "yosegi/styles.css";
+import "yosegi-solid/styles.css";
 import { render } from "@solidjs/web";
 import { App } from "./app";
 
@@ -33,7 +33,7 @@ That loads the fonts, the tokens with the light and dark themes, and a reset. Co
 Every component works from props alone:
 
 ```tsx
-import { Button, TextField } from "yosegi";
+import { Button, TextField } from "yosegi-solid";
 
 <TextField label="Project name" description="You can change it later." />
 <Button label="Create project" />
@@ -47,7 +47,7 @@ Components keep their own state. To hold it yourself, pass the value and listen 
 
 ```tsx
 import { createSignal } from "solid-js";
-import { Button, Checkbox, TextField, toast } from "yosegi";
+import { Button, Checkbox, TextField, toast } from "yosegi-solid";
 
 export function NewProject() {
   const [name, setName] = createSignal("");
@@ -86,7 +86,7 @@ For full control, build a component from its parts. The root holds the state, an
 Put one `<Toaster />` near the root of the app, then call `toast` from anywhere:
 
 ```tsx
-import { Toaster, toast } from "yosegi";
+import { Toaster, toast } from "yosegi-solid";
 
 <App />
 <Toaster />
@@ -102,7 +102,7 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
 Everything is in English until you say otherwise. Wrap the app in a `LocaleProvider` to format dates and numbers for a locale and to change the words components write themselves:
 
 ```tsx
-import { LocaleProvider } from "yosegi";
+import { LocaleProvider } from "yosegi-solid";
 
 <LocaleProvider locale="de-DE" labels={{ pagination: { next: "Weiter" } }}>
   <App />
@@ -124,7 +124,7 @@ Colours, spacing, corners, type and themes are all CSS custom properties you can
 Every icon is a component. Use one on its own, or give it to a button's `icon`:
 
 ```tsx
-import { Button, PlusIcon } from "yosegi";
+import { Button, PlusIcon } from "yosegi-solid";
 
 <Button label="New note" icon={<PlusIcon />} />
 ```

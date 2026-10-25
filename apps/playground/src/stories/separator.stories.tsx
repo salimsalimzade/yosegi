@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import { Button, Separator } from "yosegi";
+import { Button, Separator } from "yosegi-solid";
 
 const meta = {
   title: "Layout/Separator",

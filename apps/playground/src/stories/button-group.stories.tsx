@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal, For } from "solid-js";
-import { Button, ButtonGroup, GridIcon, ListIcon } from "yosegi";
+import { Button, ButtonGroup, GridIcon, ListIcon } from "yosegi-solid";
 
 const meta = {
   title: "Actions/ButtonGroup",

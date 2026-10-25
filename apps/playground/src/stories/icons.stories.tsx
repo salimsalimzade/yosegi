@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { For } from "solid-js";
-import { ArrowRightIcon, Button, InfoIcon, PlusIcon, SettingsIcon, TickIcon, TrashIcon } from "yosegi";
+import { ArrowRightIcon, Button, InfoIcon, PlusIcon, SettingsIcon, TickIcon, TrashIcon } from "yosegi-solid";
 import { IconGallery } from "../ui/icon-gallery";
 
 const swatch = { display: "inline-flex", "align-items": "center", gap: "var(--yosegi-space-200)" };
@@ -13,7 +13,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Yosegi\'s outline icons: a 16px grid, a 1.5px stroke and currentColor, so each follows the text around it. `import { PlusIcon } from "yosegi"`, then `<PlusIcon width height />`. To add one, see **Adding an icon**: put its SVG in `packages/ui/src/icons/` and run `pnpm generate`.',
+          'Yosegi\'s outline icons: a 16px grid, a 1.5px stroke and currentColor, so each follows the text around it. `import { PlusIcon } from "yosegi-solid"`, then `<PlusIcon width height />`. To add one, see **Adding an icon**: put its SVG in `packages/ui/src/icons/` and run `pnpm generate`.',
       },
     },
   },

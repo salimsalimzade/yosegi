@@ -1,4 +1,4 @@
-import { Button, Checkbox, Tabs, TextField } from "yosegi";
+import { Button, Checkbox, Tabs, TextField } from "yosegi-solid";
 import styles from "./theme-sample.module.scss";
 
 interface ThemeSampleProps {

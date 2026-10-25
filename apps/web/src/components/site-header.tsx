@@ -1,4 +1,4 @@
-import { Button } from "yosegi";
+import { Button } from "yosegi-solid";
 import { storybookUrl } from "../storybook";
 import { theme, toggleTheme } from "../theme";
 import styles from "./site-header.module.scss";

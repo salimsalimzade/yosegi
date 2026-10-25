@@ -14,14 +14,14 @@
     "dev": "pnpm --parallel --filter playground --filter web dev",
     "dev:web": "pnpm --filter web dev",
     "dev:storybook": "pnpm --filter playground dev",
-    "generate": "pnpm --filter yosegi generate",
+    "generate": "pnpm --filter yosegi-solid generate",
     "build": "pnpm --recursive build",
     "build:storybook": "pnpm --filter playground build",
     "typecheck": "pnpm --recursive typecheck",
     "format": "biome format --write",
     "format:check": "biome format",
     "changeset": "changeset",
-    "release": "pnpm --filter yosegi build && changeset publish"
+    "release": "pnpm --filter yosegi-solid build && changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.2",

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { For } from "solid-js";
-import { Button, Checkbox, Popover, type PopoverProps, ShareIcon, toast } from "yosegi";
+import { Button, Checkbox, Popover, type PopoverProps, ShareIcon, toast } from "yosegi-solid";
 
 const meta = {
   title: "Overlays/Popover",

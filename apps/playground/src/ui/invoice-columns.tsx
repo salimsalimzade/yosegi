@@ -1,4 +1,4 @@
-import { InfoIcon, type TableColumn, type TableLabels, TickIcon, WarningIcon } from "yosegi";
+import { InfoIcon, type TableColumn, type TableLabels, TickIcon, WarningIcon } from "yosegi-solid";
 import { type Invoice, methodLabels, money, statusLabels } from "./invoices";
 
 // The invoice table's columns and cells, in English and German, for the Table cases and stories.

@@ -14,7 +14,7 @@
     "@solidjs/router": "catalog:",
     "@solidjs/web": "catalog:",
     "solid-js": "catalog:",
-    "yosegi": "workspace:*"
+    "yosegi-solid": "workspace:*"
   },
   "devDependencies": {
     "@solidjs/vite-plugin": "catalog:",

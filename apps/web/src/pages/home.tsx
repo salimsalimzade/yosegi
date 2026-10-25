@@ -15,7 +15,7 @@ import {
   Toaster,
   Tooltip,
   toast,
-} from "yosegi";
+} from "yosegi-solid";
 import { SiteHeader } from "../components/site-header";
 import { storybookDocs } from "../storybook";
 import { theme } from "../theme";

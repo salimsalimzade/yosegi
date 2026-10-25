@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal } from "solid-js";
-import { SearchIcon, TextField } from "yosegi";
+import { SearchIcon, TextField } from "yosegi-solid";
 
 const meta = {
   title: "Forms/TextField",

@@ -1,4 +1,4 @@
-# yosegi
+# yosegi-solid
 
 ## 0.1.0
 
@@ -12,7 +12,7 @@
 - 91e2e58: Add the first components: Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Combobox, Command, Accordion, Tabs, Tooltip, Popover, Dialog, Toast (with `toast()` and `<Toaster />`), Table, Item, Separator, NotFound, ErrorState and EmptyState. Each renders a stable `yosegi-{component}-{part}` class next to yours and exposes its state as `data-*` attributes. Component styles are SCSS modules, so apps that compile Yosegi from source need `sass-embedded`.
   
   Export the icon set: 24 outline icons such as `PlusIcon` and `ChevronDownIcon`, drawn in `currentColor` at 16px by default, taking any SVG attribute. Button takes `download` for links to files.
-- e039bad: Add design tokens, light and dark themes, fonts and global styles. Import `yosegi/styles.css` once at your app's entry, or `yosegi/tokens.css` for the tokens alone. Every token is a `--yosegi-*` custom property you can override in your own CSS, and `data-yosegi-theme` forces a theme. Red Hat Mono and Red Hat Text are self-hosted through `yosegi/fonts.css`.
+- e039bad: Add design tokens, light and dark themes, fonts and global styles. Import `yosegi-solid/styles.css` once at your app's entry, or `yosegi-solid/tokens.css` for the tokens alone. Every token is a `--yosegi-*` custom property you can override in your own CSS, and `data-yosegi-theme` forces a theme. Red Hat Mono and Red Hat Text are self-hosted through `yosegi-solid/fonts.css`.
 - 46e3ea9: Accordion builds itself when it has `sections`: `<Accordion sections={[{ value: "what", title: "What is Yosegi?", content: "…" }]} />`.
   
   - Each section is an `AccordionSection`: `value`, `title` (text or any JSX), `content` and `disabled`. `titleAs` changes every heading's element, h3 by default.

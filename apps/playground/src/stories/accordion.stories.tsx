@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import { Accordion, type AccordionSection } from "yosegi";
+import { Accordion, type AccordionSection } from "yosegi-solid";
 
 const faq: AccordionSection[] = [
   {
