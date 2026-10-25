@@ -27,7 +27,7 @@ pnpm generate         # icon components from packages/ui/src/icons/*.svg
 pnpm build:storybook  # a static Storybook in apps/playground/dist
 ```
 
-The Storybook is laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, then Assets for the icons and Setup for LocaleProvider. Each component has a Docs page with its props, types and defaults, a Playground story with every prop on a control, and one story per case with its code to copy. The toolbar switches between the light and dark themes and between phone, tablet and desktop widths, and the Accessibility panel runs axe on each story. Changes to `packages/ui` show up as you save.
+The Storybook starts with two guides, **Getting started** and **Theming**: how to install and use Yosegi, and how to swap its colours, spacing, corners, type and themes for your own, with live examples. Then it's laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, then Assets for the icons and Setup for LocaleProvider. Each component has a Docs page with its props, types and defaults, a Playground story with every prop on a control, and one story per case with its code to copy. The toolbar switches between the light and dark themes and between phone, tablet and desktop widths, and the Accessibility panel runs axe on each story. Changes to `packages/ui` show up as you save.
 
 The stories are in `apps/playground/src/stories/`, and the config is in `apps/playground/.storybook/`. The Icons page has every icon to copy or download. To add one, put its SVG in `packages/ui/src/icons/` and run `pnpm generate`; **Assets › Icons › Adding an icon** has the steps and the rules.
 
@@ -98,7 +98,7 @@ That loads everything, in the right order:
 
 If you only want Yosegi's values, import `yosegi/tokens.css` on its own. Without `yosegi/fonts.css` the type falls back to system fonts.
 
-Every token is a CSS custom property starting with `--yosegi-`. To change one, such as the font, redefine it in your own CSS:
+Every token is a CSS custom property starting with `--yosegi-`. To change one, such as the font, redefine it in your own CSS (the Storybook's **Guides › Theming** has a recipe for each kind of change):
 
 ```css
 :root {

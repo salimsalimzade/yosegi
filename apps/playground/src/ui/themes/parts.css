@@ -1,0 +1,13 @@
+/* Past what the knobs offer: every part has a stable class, and its state is a data-* attribute. */
+.parts .yosegi-text-field-label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.parts .yosegi-tabs-trigger[data-selected] {
+  background: var(--yosegi-color-bg-muted);
+}
+
+.parts .yosegi-button[data-variant="outline"] {
+  border-style: dashed;
+}

@@ -1,0 +1,18 @@
+/* A theme of your own, next to light and dark. Set data-yosegi-theme="sepia" on the page or on one
+   part of it. color-scheme tells the browser, and light-dark(), which side it is on. */
+[data-yosegi-theme="sepia"] {
+  color-scheme: light;
+  --yosegi-color-bg: #f4ecd8;
+  --yosegi-color-bg-surface: #fbf6ea;
+  --yosegi-color-bg-muted: #e9dec4;
+  --yosegi-color-bg-accent: #7a4b1e;
+  --yosegi-color-fg: #3b2f22;
+  --yosegi-color-fg-muted: #6e5d48;
+  --yosegi-color-fg-accent: #7a4b1e;
+  --yosegi-color-fg-on-accent: #fbf6ea;
+  --yosegi-color-fg-danger: #a3301c;
+  --yosegi-color-border: #ddd0b3;
+  --yosegi-color-border-strong: #9a8566;
+  --yosegi-color-border-danger: #a3301c;
+  --yosegi-color-border-focus: #7a4b1e;
+}

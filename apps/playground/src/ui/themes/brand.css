@@ -1,0 +1,8 @@
+/* Your accent instead of Yosegi's green. light-dark() picks the first colour in the light theme and
+   the second in the dark one, so one rule covers both. */
+.brand {
+  --yosegi-color-bg-accent: light-dark(#3451b2, #a5b4fc);
+  --yosegi-color-fg-accent: light-dark(#3451b2, #a5b4fc);
+  --yosegi-color-fg-on-accent: light-dark(#ffffff, #111827);
+  --yosegi-color-border-focus: light-dark(#3451b2, #a5b4fc);
+}

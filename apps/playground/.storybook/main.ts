@@ -1,3 +1,4 @@
+import remarkGfm from "remark-gfm";
 import type { StorybookConfig } from "storybook-solidjs-vite";
 import { unwrapSnippets } from "./snippets";
 
@@ -7,7 +8,14 @@ export default {
   framework: "storybook-solidjs-vite",
   // Stories before pages, so a page that joins a component, like Adding an icon, comes after its stories.
   stories: ["../src/stories/**/*.stories.tsx", "../src/stories/**/*.mdx"],
-  addons: ["@storybook/addon-docs", "@storybook/addon-a11y"],
+  addons: [
+    // remark-gfm gives the MDX pages GitHub's tables.
+    {
+      name: "@storybook/addon-docs",
+      options: { mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } } },
+    },
+    "@storybook/addon-a11y",
+  ],
   staticDirs: ["../public"],
   core: { disableTelemetry: true },
   // A preset hook StorybookConfig doesn't list yet: it rewrites each story's "Show code".

@@ -15,9 +15,10 @@ const faq: AccordionSection[] = [
       "Yes. Set a system token such as --yosegi-color-bg-accent, or a component knob such as --yosegi-accordion-border.",
   },
   {
-    value: "kobalte",
-    title: "Does it follow Kobalte?",
-    content: "The parts and data attributes match Kobalte: Accordion, Item, Header, Trigger and Content.",
+    value: "parts",
+    title: "Which parts can I style?",
+    content:
+      "Every part: Accordion, Item, Header, Trigger and Content. Each renders a stable class and data attributes.",
   },
 ];
 
@@ -81,5 +82,5 @@ export const SeveralOpen: Story = {
 /** Without collapsible, the open item can't be closed. */
 export const AlwaysOneOpen: Story = {
   name: "Always one open",
-  render: () => <Accordion defaultValue={["kobalte"]} sections={faq} style={{ width: "100%", "max-width": "560px" }} />,
+  render: () => <Accordion defaultValue={["parts"]} sections={faq} style={{ width: "100%", "max-width": "560px" }} />,
 };

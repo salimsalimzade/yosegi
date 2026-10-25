@@ -1,0 +1,226 @@
+import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
+import * as ThemingStories from "./theming.stories";
+import brand from "../ui/themes/brand.css?raw";
+import compact from "../ui/themes/compact.css?raw";
+import knobs from "../ui/themes/knobs.css?raw";
+import palette from "../ui/themes/palette.css?raw";
+import parts from "../ui/themes/parts.css?raw";
+import sepia from "../ui/themes/sepia.css?raw";
+import square from "../ui/themes/square.css?raw";
+
+<Meta of={ThemingStories} name="Theming" />
+
+# Theming
+
+Yosegi's whole look comes from CSS custom properties. Redefine them in your own CSS and every component follows: no build step and no JavaScript config. This page goes from the broadest change to the narrowest: colours, spacing, corners and type for the whole app, then themes, then one component.
+
+## How it works
+
+Every token starts with `--yosegi-` and sits at one of three levels:
+
+| Level | Example | What it's for |
+| --- | --- | --- |
+| Palette | `--yosegi-green-700` | Raw values. Components never read these. |
+| System | `--yosegi-color-bg-accent` | What a value is for. Themes change these, and so do you. |
+| Component knob | `--yosegi-button-radius` | One setting of one component. Unset until you set it. |
+
+**Your CSS always wins.** Yosegi keeps its styles in cascade layers, and CSS outside a layer beats every layer, whatever loads first and however specific the selector is. So an override needs no `!important`. If your own CSS lives in a layer, list yours after Yosegi's:
+
+```css
+@layer yosegi.reset, yosegi.tokens, yosegi.base, yosegi.components, app;
+```
+
+**Pick where it applies.** Set tokens on `:root, [data-yosegi-theme]` to change the whole app, or on any element to change only what's inside it. The examples below use a class, so each one only changes its own preview. Put the same lines on `:root, [data-yosegi-theme]` to change everything.
+
+Each example shows Yosegi's defaults on the left and the change on the right. Switch **Theme** in the toolbar to see both in dark mode too.
+
+## Your brand colour
+
+Four system tokens hold the accent: the solid fill, accent text, the text on top of the fill and the focus ring.
+
+<Source code={brand} language="css" dark />
+
+<Canvas of={ThemingStories.BrandColour} />
+
+An override outside the layers beats the dark theme too, so a plain colour would stay the same in both themes. `light-dark()` solves that in one line: Yosegi sets `color-scheme` for each theme, and `light-dark()` follows it. To support browsers from before 2024, give each theme its colour, with the same selectors Yosegi uses:
+
+```css
+:root,
+[data-yosegi-theme="light"] {
+  --yosegi-color-bg-accent: #3451b2;
+}
+
+[data-yosegi-theme="dark"] {
+  --yosegi-color-bg-accent: #a5b4fc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-yosegi-theme="light"]) {
+    --yosegi-color-bg-accent: #a5b4fc;
+  }
+}
+```
+
+## Your own palette
+
+Components read 13 colour tokens and nothing else. Set all of them and none of Yosegi's colours are left:
+
+| Token | Used for |
+| --- | --- |
+| `--yosegi-color-bg` | The page |
+| `--yosegi-color-bg-surface` | Inputs, popovers, dialogs and toasts |
+| `--yosegi-color-bg-muted` | Hover, pressed toggles and quiet fills |
+| `--yosegi-color-bg-accent` | Solid buttons, checked boxes, the selected day |
+| `--yosegi-color-fg` | Text |
+| `--yosegi-color-fg-muted` | Descriptions, placeholders and secondary text |
+| `--yosegi-color-fg-accent` | Accent text and the tab indicator |
+| `--yosegi-color-fg-on-accent` | Text and icons on the accent fill |
+| `--yosegi-color-fg-danger` | Errors and danger buttons |
+| `--yosegi-color-border` | Dividers and quiet outlines |
+| `--yosegi-color-border-strong` | Input and outline button borders |
+| `--yosegi-color-border-danger` | Invalid inputs |
+| `--yosegi-color-border-focus` | The focus ring |
+
+<Source code={palette} language="css" dark />
+
+<Canvas of={ThemingStories.OwnPalette} />
+
+If your app already has design tokens, point Yosegi's at them, so both change together. Tailwind 4, for example, puts its theme in variables too:
+
+```css
+:root {
+  --yosegi-color-bg-accent: var(--brand-primary);
+  --yosegi-color-fg: var(--text-default);
+  --yosegi-color-border: var(--color-zinc-200);
+}
+```
+
+## Spacing and density
+
+The spacing scale is named as a percentage of a 4px base: `--yosegi-space-100` is 4px, `200` is 8px, and then `300`, `400`, `600`, `800` and `1600`. It sets padding and gaps. Control heights aren't spacing, so they're knobs: `--yosegi-button-height`, `--yosegi-input-height`, `--yosegi-table-row-height` and so on.
+
+<Source code={compact} language="css" dark />
+
+<Canvas of={ThemingStories.Compact} />
+
+## Corners
+
+The radius tokens use the same scale: `--yosegi-radius-150` (6px) for small things like checkboxes and tooltips, `300` (12px) for buttons and inputs, `400` (16px) for panels and dialogs.
+
+<Source code={square} language="css" dark />
+
+<Canvas of={ThemingStories.SquareCorners} />
+
+## Type
+
+Change the two families on `:root`:
+
+```css
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter.woff2") format("woff2");
+  font-weight: 100 900;
+}
+
+:root {
+  --yosegi-font-family-sans: "Inter", system-ui, sans-serif;
+  --yosegi-font-family-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+```
+
+Then you no longer need Yosegi's fonts. Import its tokens and base styles instead of `yosegi/styles.css`:
+
+```ts
+import "yosegi/tokens.css";
+import "yosegi/global.css";
+```
+
+The type styles are values for the `font` shorthand: `--yosegi-text-display`, `title`, `heading`, `label`, `body`, `small` and `code`. To change a size, give the whole value:
+
+```css
+:root {
+  --yosegi-text-body: 400 15px / 22px var(--yosegi-font-family-sans);
+}
+```
+
+## Themes
+
+The theme follows the OS setting. To force one, set `data-yosegi-theme` on `<html>`, or on any element to theme only what's inside it:
+
+```html
+<html data-yosegi-theme="dark">
+  …
+  <aside data-yosegi-theme="light">…</aside>
+</html>
+```
+
+<Canvas of={ThemingStories.ScopedThemes} />
+
+To let people switch, set the attribute from your app. Remove it to follow the OS again:
+
+```ts
+document.documentElement.dataset.yosegiTheme = "dark";
+delete document.documentElement.dataset.yosegiTheme;
+```
+
+### A theme of your own
+
+A theme is a selector that sets the colour tokens and `color-scheme`. Add one beside light and dark and use it the same way:
+
+<Source code={sepia} language="css" dark />
+
+<Canvas of={ThemingStories.CustomTheme} />
+
+## One component: knobs
+
+Each component has knobs named `--yosegi-{component}-{name}`. They're unset, so the component falls back to the system tokens until you set one. Set a knob on `:root` for every instance, on a class for one part of the page, or on one element:
+
+```tsx
+<Button label="Upgrade" style={{ "--yosegi-button-solid-bg": "#b45309" }} />
+```
+
+<Source code={knobs} language="css" dark />
+
+<Canvas of={ThemingStories.Knobs} />
+
+| Component | Knobs |
+| --- | --- |
+| Accordion | `--yosegi-accordion-` `border`, `padding-y` |
+| Button | `--yosegi-button-` `solid-bg`, `solid-fg`, `outline-fg`, `outline-border`, `danger-fg`, `height`, `height-sm`, `height-lg`, `padding-x`, `radius`, `font`, `icon-size` |
+| ButtonGroup | `--yosegi-button-group-` `gap` |
+| Checkbox | `--yosegi-checkbox-` `size`, `radius`, `border`, `checked-bg`, `checked-fg` |
+| Combobox | `--yosegi-combobox-` `border`, `radius`, `max-height`, `overflow-width` |
+| Command | `--yosegi-command-` `border`, `radius`, `max-height` |
+| DatePicker | `--yosegi-date-picker-` `border`, `radius`, `selected-bg`, `selected-fg` |
+| Dialog | `--yosegi-dialog-` `width`, `padding`, `radius`, `overlay` |
+| EmptyState, ErrorState | `--yosegi-empty-state-`, `--yosegi-error-state-` `max-width`, `padding`, `icon-fg` |
+| Filter | `--yosegi-filter-` `width`, `overlay` |
+| Fields: TextField, NumberField, DatePicker, Select, Combobox | `--yosegi-input-` `height`, `bg`, `fg`, `border`, `border-invalid`, `radius` |
+| Item | `--yosegi-item-` `padding`, `gap`, `radius`, `border`, `media-size` |
+| NotFound | `--yosegi-not-found-` `max-width`, `padding`, `code-fg`, `code-size` |
+| Pagination | `--yosegi-pagination-` `size`, `radius` |
+| Popover | `--yosegi-popover-` `width`, `border`, `radius` |
+| Select | `--yosegi-select-` `border`, `radius`, `max-height` |
+| Separator | `--yosegi-separator-` `color`, `margin` |
+| Spinner | `--yosegi-spinner-` `size` |
+| Table | `--yosegi-table-` `border`, `box-border`, `box-radius`, `row-height`, `head-height`, `cell-padding-x` |
+| Tabs | `--yosegi-tabs-` `fg`, `selected-fg`, `indicator`, `indicator-size`, `border` |
+| Toast | `--yosegi-toast-` `width`, `border`, `radius` |
+| Tooltip | `--yosegi-tooltip-` `bg`, `fg`, `radius`, `max-width` |
+
+## Past the knobs: classes and states
+
+For anything the knobs don't cover, write plain CSS. Every part renders a stable class, `yosegi-{component}` on the root and `yosegi-{component}-{part}` on the rest, such as `yosegi-tabs-trigger`. Its state is a `data-*` attribute, such as `data-selected`, `data-invalid` or `data-variant`. Your own `class` goes next to them, so you can also pass one and target that.
+
+<Source code={parts} language="css" dark />
+
+<Canvas of={ThemingStories.Parts} />
+
+The browser's inspector shows every part's class and attributes.
+
+## Good to know
+
+- **Set colour overrides on `[data-yosegi-theme]` too.** An element with `data-yosegi-theme` sets the colour tokens again for what's inside it. With your overrides on `:root` alone, a section forced to dark goes back to Yosegi's colours. Spacing, radius, type and knobs aren't part of a theme, so `:root` is enough for them.
+- **Change the palette and font families on `:root` only.** A token built from other tokens is worked out where it's declared, and that's `:root`. Setting `--yosegi-green-700` or `--yosegi-font-family-sans` on a section doesn't reach the colour and type tokens inside it. To change one section, set the system tokens or knobs there, as the examples on this page do.
+- **Use the tokens in your own CSS** too, like `color: var(--yosegi-color-fg-muted)` or `gap: var(--yosegi-space-300)`. Your screens then follow every theme and every override with no extra work.
+- **Keep text readable.** When you change a colour, check it against what sits on it: `fg-on-accent` on `bg-accent`, and `fg` and `fg-muted` on `bg` and `bg-surface`. The **Accessibility** panel flags low contrast on any story.

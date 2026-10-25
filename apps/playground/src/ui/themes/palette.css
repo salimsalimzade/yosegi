@@ -1,0 +1,16 @@
+/* Every colour Yosegi uses, from your own palette. Components only read these system tokens. */
+.palette {
+  --yosegi-color-bg: light-dark(#faf6ef, #17120e);
+  --yosegi-color-bg-surface: light-dark(#ffffff, #1f1914);
+  --yosegi-color-bg-muted: light-dark(#f0e8da, #2c241d);
+  --yosegi-color-bg-accent: light-dark(#a14a25, #f0a47a);
+  --yosegi-color-fg: light-dark(#2b2118, #f3ebe0);
+  --yosegi-color-fg-muted: light-dark(#6b5a4a, #bba994);
+  --yosegi-color-fg-accent: light-dark(#a14a25, #f0a47a);
+  --yosegi-color-fg-on-accent: light-dark(#ffffff, #17120e);
+  --yosegi-color-fg-danger: light-dark(#b3261e, #f2b8b5);
+  --yosegi-color-border: light-dark(#e6dccb, #3a3027);
+  --yosegi-color-border-strong: light-dark(#a08c74, #7d6a57);
+  --yosegi-color-border-danger: light-dark(#b3261e, #f2b8b5);
+  --yosegi-color-border-focus: light-dark(#a14a25, #f0a47a);
+}

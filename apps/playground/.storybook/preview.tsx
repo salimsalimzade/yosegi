@@ -87,11 +87,14 @@ export default {
       },
     },
     options: {
-      // The design system's groups, then components A to Z; stories keep the order they're written in.
+      // The guides, then the design system's groups with components A to Z; stories keep the order
+      // they're written in.
       storySort: {
         method: "alphabetical",
         order: [
           "Introduction",
+          "Guides",
+          ["Getting started", "Theming"],
           "Actions",
           "Forms",
           "Disclosure",

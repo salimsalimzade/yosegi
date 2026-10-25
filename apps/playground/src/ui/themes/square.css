@@ -1,0 +1,6 @@
+/* Square corners everywhere. Pills and round dots keep --yosegi-radius-full. */
+.square {
+  --yosegi-radius-150: 0;
+  --yosegi-radius-300: 0;
+  --yosegi-radius-400: 0;
+}

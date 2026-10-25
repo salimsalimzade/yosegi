@@ -1,0 +1,9 @@
+/* One component at a time. Knobs are unset until you set them, then they win over the system tokens. */
+.knobs {
+  --yosegi-button-radius: 9999px;
+  --yosegi-button-padding-x: 20px;
+  --yosegi-checkbox-radius: 9999px;
+  --yosegi-input-radius: 0;
+  --yosegi-input-bg: var(--yosegi-color-bg-muted);
+  --yosegi-tabs-indicator-size: 4px;
+}

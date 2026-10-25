@@ -1,0 +1,14 @@
+/* A denser interface. The spacing scale sets padding and gaps; heights are component knobs. */
+.compact {
+  --yosegi-space-100: 2px;
+  --yosegi-space-200: 4px;
+  --yosegi-space-300: 8px;
+  --yosegi-space-400: 12px;
+  --yosegi-space-600: 16px;
+  --yosegi-space-800: 24px;
+  --yosegi-space-1600: 48px;
+
+  --yosegi-button-height: 30px;
+  --yosegi-input-height: 30px;
+  --yosegi-checkbox-size: 16px;
+}

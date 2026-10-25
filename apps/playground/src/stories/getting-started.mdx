@@ -1,0 +1,132 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Getting started" />
+
+# Getting started
+
+From an empty SolidJS 2 app to a working form in a few steps.
+
+## 1. Install
+
+```sh
+pnpm add yosegi
+```
+
+Yosegi needs `solid-js` and `@solidjs/web` 2, which a SolidJS 2 app already has. Component styles are SCSS modules, so an app that compiles Yosegi from source also needs `sass-embedded`.
+
+## 2. Load the styles
+
+Import the global styles once, at your app's entry:
+
+```tsx
+import "yosegi/styles.css";
+import { render } from "@solidjs/web";
+import { App } from "./app";
+
+render(() => <App />, document.getElementById("root")!);
+```
+
+That loads the fonts, the tokens with the light and dark themes, and a reset. Components bring their own styles, so there's nothing else to import.
+
+## 3. Use a component
+
+Every component works from props alone:
+
+```tsx
+import { Button, TextField } from "yosegi";
+
+<TextField label="Project name" description="You can change it later." />
+<Button label="Create project" />
+```
+
+Every prop has a default, so start small. Each component's page in this Storybook lists its props, and its stories show every case with code to copy.
+
+## 4. Control the state
+
+Components keep their own state. To hold it yourself, pass the value and listen for changes, the same way on every component: `value` and `onChange`, `checked` and `onChange`, `open` and `onOpenChange`.
+
+```tsx
+import { createSignal } from "solid-js";
+import { Button, Checkbox, TextField, toast } from "yosegi";
+
+export function NewProject() {
+  const [name, setName] = createSignal("");
+  const [shared, setShared] = createSignal(false);
+
+  const create = (event: SubmitEvent) => {
+    event.preventDefault();
+    toast.success(`Created “${name()}”`);
+  };
+
+  return (
+    <form onSubmit={create}>
+      <TextField label="Project name" value={name()} onChange={setName} />
+      <Checkbox label="Share with my team" checked={shared()} onChange={setShared} />
+      <Button type="submit" label="Create project" disabled={!name()} />
+    </form>
+  );
+}
+```
+
+## 5. Put the parts together
+
+For full control, build a component from its parts. The root holds the state, and the parts hang off it:
+
+```tsx
+<TextField validationState={error() ? "invalid" : "valid"}>
+  <TextField.Label>Project name</TextField.Label>
+  <TextField.Input />
+  <TextField.Description>You can change it later.</TextField.Description>
+  <TextField.ErrorMessage>Give the project a name.</TextField.ErrorMessage>
+</TextField>
+```
+
+## 6. Add toasts
+
+Put one `<Toaster />` near the root of the app, then call `toast` from anywhere:
+
+```tsx
+import { Toaster, toast } from "yosegi";
+
+<App />
+<Toaster />
+
+toast("Saved");
+toast.success("Project created");
+toast.error("Couldn't save. Try again.");
+toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't save" });
+```
+
+## 7. Set the language
+
+Everything is in English until you say otherwise. Wrap the app in a `LocaleProvider` to format dates and numbers for a locale and to change the words components write themselves:
+
+```tsx
+import { LocaleProvider } from "yosegi";
+
+<LocaleProvider locale="de-DE" labels={{ pagination: { next: "Weiter" } }}>
+  <App />
+</LocaleProvider>
+```
+
+**Setup › LocaleProvider** has the details.
+
+## 8. Make it yours
+
+Colours, spacing, corners, type and themes are all CSS custom properties you can redefine. **Guides › Theming** shows how, with live examples. To force a theme:
+
+```html
+<html data-yosegi-theme="dark">
+```
+
+## Icons
+
+Every icon is a component. Use one on its own, or give it to a button's `icon`:
+
+```tsx
+import { Button, PlusIcon } from "yosegi";
+
+<Button label="New note" icon={<PlusIcon />} />
+```
+
+**Assets › Icons** lists them all; click one to copy it.

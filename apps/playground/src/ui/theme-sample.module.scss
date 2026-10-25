@@ -1,0 +1,18 @@
+// The surface a theming example sits on. It paints with the tokens, so an example's overrides show
+// on the background, the spacing and the corners too.
+.sample {
+  display: grid;
+  gap: var(--yosegi-space-400);
+  width: min(100%, 360px);
+  padding: var(--yosegi-space-600);
+  border: 1px solid var(--yosegi-color-border);
+  border-radius: var(--yosegi-radius-400);
+  background: var(--yosegi-color-bg);
+  color: var(--yosegi-color-fg);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--yosegi-space-200);
+}

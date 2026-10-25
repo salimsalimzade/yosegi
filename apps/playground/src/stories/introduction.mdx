@@ -6,9 +6,14 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 Yosegi is a design system for SolidJS 2. The name comes from yosegi-zaiku, a Japanese woodcraft where many small pieces of wood are fitted together into one pattern: small, consistent components that fit together into one interface.
 
+## Start here
+
+- **Guides › Getting started**: install Yosegi, load its styles, and build a first form with toasts and a locale.
+- **Guides › Theming**: use your own colours, spacing, corners, type and themes instead of Yosegi's, and restyle single components, with live examples.
+
 ## How this Storybook is laid out
 
-The sidebar follows the design system's groups: **Actions**, **Forms**, **Disclosure**, **Navigation**, **Overlays**, **Feedback** and **Layout**, then **Assets** for the icons and **Setup** for app-wide settings.
+The sidebar starts with the **Guides**, then follows the design system's groups: **Actions**, **Forms**, **Disclosure**, **Navigation**, **Overlays**, **Feedback** and **Layout**, then **Assets** for the icons and **Setup** for app-wide settings.
 
 Each component has:
 
@@ -18,65 +23,21 @@ Each component has:
 
 The **Theme** switch in the toolbar changes between the system, light and dark themes, and the **viewport** menu next to it shows a story at phone, tablet or desktop width. The **Accessibility** panel runs axe on the story you're looking at.
 
-## Install
+## In short
 
 ```sh
 pnpm add yosegi
 ```
 
-Import the global styles once, at your app's entry:
-
-```ts
-import "yosegi/styles.css";
-```
-
-That loads the fonts, the tokens and themes, and a reset. If you only want Yosegi's values, import `yosegi/tokens.css` on its own. Component styles are SCSS modules, so an app that compiles Yosegi from source needs `sass-embedded` installed.
-
-## Components
-
-Each component is a root that holds state. Simple uses build their parts from props:
-
 ```tsx
+import "yosegi/styles.css";
 import { TextField } from "yosegi";
 
 <TextField label="Project name" description="You can change it later." />
 ```
 
-For full control, put the parts together yourself:
-
-```tsx
-<TextField validationState={error() ? "invalid" : "valid"}>
-  <TextField.Label>Project name</TextField.Label>
-  <TextField.Input />
-  <TextField.Description>You can change it later.</TextField.Description>
-  <TextField.ErrorMessage>Give the project a name.</TextField.ErrorMessage>
-</TextField>
-```
-
-Toasts need one `<Toaster />` near the root of the app; then call `toast("Saved")`, `toast.success(…)`, `toast.error(…)` or `toast.promise(…)` from anywhere.
-
-## Styling
-
-Every part renders a stable class, `yosegi-{component}-{part}`, next to any `class` you pass, and shows its state as `data-*` attributes (`data-expanded`, `data-invalid`, …). To restyle a component, set its `--yosegi-{component}-*` knobs or target those classes and attributes.
-
-Every token is a CSS custom property starting with `--yosegi-`. To change one, redefine it in your own CSS:
-
 ```css
 :root {
-  --yosegi-font-family-sans: "Inter Tight", system-ui, sans-serif;
+  --yosegi-color-bg-accent: light-dark(#3451b2, #a5b4fc);
 }
 ```
-
-Yosegi keeps its styles in cascade layers (`yosegi.reset`, `yosegi.tokens`, `yosegi.base`, `yosegi.components`). CSS you write outside a layer always wins, so overrides don't need `!important`.
-
-## Themes
-
-The theme follows the OS setting. To force one, on the whole page or on one part of it, set `data-yosegi-theme`:
-
-```html
-<html data-yosegi-theme="dark">
-```
-
-## Locale and labels
-
-Everything is in English (en-US) until you say otherwise. DatePicker, NumberField, Table and Filter take a `locale`, and the words components write themselves change through a `labels` prop. To set both once for the whole app, wrap it in a `LocaleProvider`; see **Setup › LocaleProvider**.
