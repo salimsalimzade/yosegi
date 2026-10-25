@@ -8,19 +8,19 @@ name: Deploy Storybook
 # Paused until the Cloudflare secrets are set up: it only runs when started by
 # hand. To turn it on, uncomment push and pull_request.
 on:
-  # push:
-  #   branches: [main]
-  #   paths:
-  #     - "apps/playground/**"
-  #     - "packages/ui/**"
-  #     - "pnpm-lock.yaml"
-  #     - ".github/workflows/deploy-storybook.yml"
-  # pull_request:
-  #   paths:
-  #     - "apps/playground/**"
-  #     - "packages/ui/**"
-  #     - "pnpm-lock.yaml"
-  #     - ".github/workflows/deploy-storybook.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/playground/**"
+      - "packages/ui/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-storybook.yml"
+  pull_request:
+    paths:
+      - "apps/playground/**"
+      - "packages/ui/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-storybook.yml"
   workflow_dispatch:
 
 concurrency:

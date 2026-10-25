@@ -8,19 +8,19 @@ name: Deploy web
 # Paused until the Cloudflare secrets are set up: it only runs when started by
 # hand. To turn it on, uncomment push and pull_request.
 on:
-  # push:
-  #   branches: [main]
-  #   paths:
-  #     - "apps/web/**"
-  #     - "packages/ui/**"
-  #     - "pnpm-lock.yaml"
-  #     - ".github/workflows/deploy-web.yml"
-  # pull_request:
-  #   paths:
-  #     - "apps/web/**"
-  #     - "packages/ui/**"
-  #     - "pnpm-lock.yaml"
-  #     - ".github/workflows/deploy-web.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/web/**"
+      - "packages/ui/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-web.yml"
+  pull_request:
+    paths:
+      - "apps/web/**"
+      - "packages/ui/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-web.yml"
   workflow_dispatch:
 
 concurrency:

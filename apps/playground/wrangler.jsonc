@@ -1,0 +1,11 @@
+// The Storybook as a Cloudflare Worker that only serves static assets, at
+// yosegi-storybook.<account>.workers.dev. Deployed by .github/workflows/deploy-storybook.yml.
+{
+  "name": "yosegi-storybook",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist"
+  }
+}
