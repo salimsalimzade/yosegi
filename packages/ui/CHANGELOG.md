@@ -1,5 +1,11 @@
 # yosegi-solid
 
+## 0.1.1
+
+### Patch Changes
+
+- 0ca8ca8: changed the package name from yosegi to yosegi-solid
+
 ## 0.1.0
 
 ### Minor Changes
