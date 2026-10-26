@@ -30,9 +30,6 @@ pnpm dev              # both at once
 pnpm generate         # icon components from packages/ui/src/icons/*.svg
 pnpm build:storybook  # a static Storybook in apps/playground/dist
 ```
-
-The Storybook starts with two guides, **Getting started** and **Theming**: how to install and use Yosegi, and how to swap its colours, spacing, corners, type and themes for your own, with live examples. Then it's laid out like the design system: a sidebar grouped into Actions, Forms, Disclosure, Navigation, Overlays, Feedback and Layout, then Assets for the icons and Setup for LocaleProvider. Each component has a Docs page with its props, types and defaults, a Playground story with every prop on a control, and one story per case with its code to copy. The toolbar switches between the light and dark themes and between phone, tablet and desktop widths, and the Accessibility panel runs axe on each story. Changes to `packages/ui` show up as you save.
-
 The stories are in `apps/playground/src/stories/`, and the config is in `apps/playground/.storybook/`. The Icons page has every icon to copy or download. To add one, put its SVG in `packages/ui/src/icons/` and run `pnpm generate`; **Assets › Icons › Adding an icon** has the steps and the rules.
 
 ## Components
@@ -56,7 +53,7 @@ Toasts need one `<Toaster />` near the root of the app; then call `toast("Saved"
 
 Every part renders a stable class, `yosegi-{component}-{part}`, next to any `class` you pass, and shows its state as `data-*` attributes (`data-expanded`, `data-invalid`, …). To restyle a component, set its `--yosegi-{component}-*` knobs or target those classes and attributes.
 
-Component styles are SCSS modules, so an app that compiles Yosegi from source needs `sass-embedded` installed.
+Component styles are written as SCSS modules and published compiled to CSS modules, so apps don't need Sass.
 
 ## Locale and labels
 
@@ -118,44 +115,3 @@ The theme follows the OS setting. To force one, on the whole page or on one part
 
 Yosegi keeps all of its styles in cascade layers (`yosegi.reset`, `yosegi.tokens`, `yosegi.base`, `yosegi.components`). CSS you write outside a layer always wins over them, so overrides don't need `!important` or extra specificity.
 
-## Releasing
-
-`yosegi-solid` is versioned with Changesets. You decide each bump; nothing guesses it from the code.
-
-1. With each change to the kit, run `pnpm changeset`, pick **patch** (a fix), **minor** (something new) or **major** (something breaks), and write a line for the changelog. Commit the file it creates with the change.
-2. On `main`, the CI/CD workflow's release job keeps a "version packages" pull request open. It bumps the version from the biggest change waiting, writes `CHANGELOG.md` and updates itself as more changesets land.
-3. Merging that pull request publishes the new version to npm, tags it and creates a GitHub release.
-
-Releases are paused until the release job is set up:
-
-- On npmjs.com, open `yosegi-solid` › Settings › Trusted Publisher and add GitHub Actions: repository `salimsalimzade/yosegi`, workflow `ci-cd.yml`. CI then publishes without an npm token.
-- In the repo's Settings › Actions › General, allow GitHub Actions to create and approve pull requests.
-- Turn the job on: `gh variable set RELEASE --body true`.
-
-To release by hand instead, from your machine:
-
-```sh
-pnpm changeset version    # bumps the version, writes CHANGELOG.md, uses up the changesets
-git add -A && git commit -m "chore(release): version packages"
-pnpm release              # builds packages/ui and publishes it to npm
-git push --follow-tags
-```
-
-## Deploying
-
-One workflow, CI/CD (`.github/workflows/ci-cd.yml`), checks every push and pull request, then deploys the sites whose files changed and releases the npm package (see Releasing). Nothing ships unless the type check and build pass.
-
-| App | Cloudflare Worker | Production URL |
-| --- | --- | --- |
-| `apps/web`, the landing page | `yosegi` | [yosegi.learningishardiswear.workers.dev](https://yosegi.learningishardiswear.workers.dev/) |
-| `apps/playground`, the Storybook | `yosegi-storybook` | [yosegi-storybook.learningishardiswear.workers.dev](https://yosegi-storybook.learningishardiswear.workers.dev/) |
-
-Both sites are Workers that only serve static assets, named and set up in each app's `wrangler.jsonc`. `main` deploys to production; any other branch or pull request uploads a preview at `<branch>-<worker>.learningishardiswear.workers.dev`, which leaves production alone. A site deploys when its app, `packages/ui` or the lockfile changes. Starting CI/CD by hand from the Actions tab deploys both.
-
-Deploys are paused for now. They need the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets; once those are in, turn deploys on with:
-
-```sh
-gh variable set DEPLOY --body true
-```
-
-Without a domain of your own, both sites live on the account's `learningishardiswear.workers.dev` subdomain; a custom domain can be added to each Worker later.

@@ -8,11 +8,7 @@ A small design system for SolidJS: calm, accessible components, one accent colou
 pnpm add yosegi-solid
 ```
 
-It needs `solid-js` and `@solidjs/web` 2. Build your app with Vite and `@solidjs/vite-plugin`: the plugin compiles Yosegi from its source, and its component styles are SCSS modules, so add `sass-embedded` too:
-
-```sh
-pnpm add -D sass-embedded
-```
+It needs `solid-js` and `@solidjs/web` 2. Build your app with Vite and `@solidjs/vite-plugin`: the plugin compiles Yosegi from its source, and its component styles ship as CSS modules, so there's nothing else to install.
 
 ## Use it
 
