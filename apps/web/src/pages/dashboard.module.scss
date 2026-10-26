@@ -1,0 +1,359 @@
+// A store's back office: a sidebar on the left, the overview beside it. The page fits the
+// window and only the overview scrolls, as in an app.
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.app {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 232px minmax(0, 1fr);
+  min-height: 0;
+  background: var(--yosegi-color-bg-muted);
+}
+
+.muted {
+  color: var(--yosegi-color-fg-muted);
+}
+
+// ------------------------------------------------------------------- Sidebar
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--yosegi-space-400);
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--yosegi-space-400) var(--yosegi-space-300);
+  border-right: 1px solid var(--yosegi-color-border);
+  background: var(--yosegi-color-bg);
+}
+
+.shop {
+  display: flex;
+  align-items: center;
+  gap: var(--yosegi-space-300);
+  padding: 0 var(--yosegi-space-200);
+  font: var(--yosegi-text-small);
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--yosegi-radius-300);
+  background: var(--yosegi-color-bg-accent);
+  color: var(--yosegi-color-fg-on-accent);
+  font: var(--yosegi-text-label);
+}
+
+.shop-name {
+  font: var(--yosegi-text-label);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rule {
+  margin-top: auto;
+}
+
+// ---------------------------------------------------------------------- Main
+
+.main {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--yosegi-space-400);
+  padding: var(--yosegi-space-600) clamp(16px, 3vw, 32px) var(--yosegi-space-800);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--yosegi-space-400);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--yosegi-space-100);
+
+  h1 {
+    font: var(--yosegi-text-title);
+    letter-spacing: var(--yosegi-text-title-tracking);
+  }
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--yosegi-space-200);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--yosegi-space-200);
+  min-width: 0;
+  padding: var(--yosegi-space-400);
+  border: 1px solid var(--yosegi-color-border);
+  border-radius: var(--yosegi-radius-400);
+  background: var(--yosegi-color-bg-surface);
+}
+
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--yosegi-space-300);
+
+  .muted {
+    font: var(--yosegi-text-small);
+  }
+}
+
+.title {
+  font: var(--yosegi-text-heading);
+  letter-spacing: var(--yosegi-text-heading-tracking);
+}
+
+// ------------------------------------------------------------------- Figures
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--yosegi-space-300);
+}
+
+.label {
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-label);
+}
+
+.value {
+  font: var(--yosegi-text-display);
+  letter-spacing: var(--yosegi-text-display-tracking);
+}
+
+.delta {
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-small);
+
+  [data-good] {
+    font-weight: var(--yosegi-font-weight-semibold);
+  }
+
+  [data-good="true"] {
+    color: var(--yosegi-color-fg-accent);
+  }
+
+  [data-good="false"] {
+    color: var(--yosegi-color-fg-danger);
+  }
+}
+
+// --------------------------------------------------------- Chart and activity
+
+.middle {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--yosegi-space-300);
+}
+
+.chart {
+  gap: var(--yosegi-space-400);
+  height: 380px;
+}
+
+.plot {
+  flex: 1;
+  min-height: 0;
+}
+
+.chart-table {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.side {
+  height: 380px;
+}
+
+.tabs {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+
+  :global(.yosegi-tabs-content) {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: var(--yosegi-space-200);
+}
+
+.when {
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-small);
+  white-space: nowrap;
+}
+
+.amount {
+  font: var(--yosegi-text-label);
+  font-variant-numeric: tabular-nums;
+}
+
+// -------------------------------------------------------------------- Orders
+
+.orders {
+  scroll-margin-top: var(--yosegi-space-400);
+}
+
+.customer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--yosegi-space-200);
+}
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--yosegi-radius-full);
+  background: var(--yosegi-color-bg-muted);
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-small);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--yosegi-space-100);
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: var(--yosegi-color-fg-muted);
+  }
+
+  &[data-status="shipped"] svg {
+    color: var(--yosegi-color-fg-accent);
+  }
+
+  &[data-status="refunded"] svg {
+    color: var(--yosegi-color-fg-danger);
+  }
+}
+
+// One order, in its dialog: names on the left, values on the right.
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--yosegi-space-200);
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--yosegi-space-400);
+  }
+
+  dt {
+    color: var(--yosegi-color-fg-muted);
+  }
+}
+
+.total {
+  margin-top: var(--yosegi-space-100);
+  padding-top: var(--yosegi-space-300);
+  border-top: 1px solid var(--yosegi-color-border);
+  font: var(--yosegi-text-label);
+
+  dt {
+    color: var(--yosegi-color-fg);
+  }
+}
+
+// --------------------------------------------------------------- Small screens
+
+@media (max-width: 1100px) {
+  .figures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .middle {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// The sidebar folds into a row above the overview, and the whole page scrolls.
+@media (max-width: 860px) {
+  .root {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main {
+    overflow-y: visible;
+  }
+
+  .sidebar {
+    flex-direction: row;
+    align-items: center;
+    padding: var(--yosegi-space-200) clamp(16px, 3vw, 32px);
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--yosegi-color-border);
+  }
+
+  .shop > div {
+    display: none;
+  }
+
+  .nav {
+    flex-direction: row;
+
+    > * {
+      flex: none;
+      white-space: nowrap;
+    }
+  }
+
+  .rule,
+  .me {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .figures {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

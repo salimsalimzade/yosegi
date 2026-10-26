@@ -1,0 +1,120 @@
+// The axis on the left, the plot beside it, and the labels under the plot.
+.root {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  column-gap: var(--yosegi-space-300);
+  row-gap: var(--yosegi-space-200);
+  height: 100%;
+  min-height: 180px;
+}
+
+.axis {
+  position: relative;
+  min-width: 36px;
+}
+
+.tick {
+  position: absolute;
+  right: 0;
+  translate: 0 50%;
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-small);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.plot {
+  position: relative;
+  min-height: 0;
+}
+
+// Recessive lines behind the bars; the one at zero is the baseline.
+.grid {
+  position: absolute;
+  right: 0;
+  left: 0;
+  border-top: 1px dashed var(--yosegi-color-border);
+
+  &:first-child {
+    border-top: 1px solid var(--yosegi-color-border-strong);
+  }
+}
+
+.bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+}
+
+// The whole column takes the pointer, so thin bars are still easy to hover.
+.column {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  padding: 0 1px;
+}
+
+// Wide enough to read, never a slab when there are only a few.
+.fill {
+  width: 100%;
+  max-width: 48px;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: var(--yosegi-color-bg-accent);
+  transition: opacity var(--yosegi-duration-fast) ease-out;
+
+  .plot[data-hovering] .column:not([data-hovered]) & {
+    opacity: 0.4;
+  }
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--yosegi-space-200);
+  padding: var(--yosegi-space-100) var(--yosegi-space-200);
+  border: 1px solid var(--yosegi-color-border);
+  border-radius: var(--yosegi-radius-150);
+  background: var(--yosegi-color-bg-surface);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
+  pointer-events: none;
+  white-space: nowrap;
+
+  // Past the middle it opens to the left of the bar, so it never leaves the card.
+  &[data-side="end"] {
+    translate: 4px 0;
+  }
+
+  &[data-side="start"] {
+    translate: calc(-100% - 4px) 0;
+  }
+}
+
+.tooltip-label {
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-small);
+}
+
+.tooltip-value {
+  color: var(--yosegi-color-fg);
+  font: var(--yosegi-text-label);
+}
+
+.labels {
+  position: relative;
+  grid-column: 2;
+  height: 16px;
+}
+
+.label {
+  position: absolute;
+  color: var(--yosegi-color-fg-muted);
+  font: var(--yosegi-text-small);
+  white-space: nowrap;
+}
