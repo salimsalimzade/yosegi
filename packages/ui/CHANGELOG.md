@@ -1,5 +1,11 @@
 # yosegi-solid
 
+## 0.2.2
+
+### Patch Changes
+
+- 125a8c4: ship the component styles as compiled CSS modules, so apps no longer need `sass-embedded`
+
 ## 0.2.1
 
 ### Patch Changes
