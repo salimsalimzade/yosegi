@@ -1,5 +1,6 @@
 import "yosegi-solid/styles.css";
 import { render } from "@solidjs/web";
+import { untrack } from "solid-js";
 import { createDecorator, createJSXDecorator, type Preview } from "storybook-solidjs-vite";
 import { Toaster } from "yosegi-solid";
 import styles from "./stage.module.scss";
@@ -9,9 +10,13 @@ type Theme = "system" | "light" | "dark";
 // One Toaster for the whole preview, so a docs page with many stories still shows each toast once.
 render(() => <Toaster />, document.body.appendChild(document.createElement("div")));
 
-/** Follows the toolbar's theme switch: no attribute follows the OS, or it forces light or dark. */
+/**
+ * Follows the toolbar's theme switch: no attribute follows the OS, or it forces light or dark. The
+ * globals are a store and the story renders in a memo, so a tracked read would re-run the story,
+ * which comes back empty once it's mounted. The renderer calls this again on every globals update.
+ */
 const withTheme = createDecorator((Story, context) => {
-  const theme = context.globals.theme as Theme;
+  const theme = untrack(() => context.globals.theme) as Theme;
   if (theme === "system") delete document.documentElement.dataset.yosegiTheme;
   else document.documentElement.dataset.yosegiTheme = theme;
   return Story();
