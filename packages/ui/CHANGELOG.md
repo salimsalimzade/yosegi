@@ -1,5 +1,11 @@
 # yosegi-solid
 
+## 0.4.1
+
+### Patch Changes
+
+- e5b12f3: NumberField: Enter commits the typed number and then submits the form, as a plain input and DatePicker do. It used to stop there.
+
 ## 0.4.0
 
 ### Minor Changes
