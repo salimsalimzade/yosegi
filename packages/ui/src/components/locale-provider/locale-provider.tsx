@@ -5,6 +5,7 @@ import type { DatePickerLabels } from "../date-picker/date-picker";
 import type { DialogLabels } from "../dialog/dialog";
 import type { NumberFieldLabels } from "../number-field/number-field";
 import type { PopoverLabels } from "../popover/popover";
+import type { StepperLabels } from "../stepper/stepper";
 import type { FilterLabels } from "../table/filter";
 import type { PaginationLabels } from "../table/pagination";
 import type { TableLabels } from "../table/table";
@@ -19,6 +20,7 @@ export interface LocaleLabels {
   numberField?: Partial<NumberFieldLabels>;
   pagination?: Partial<PaginationLabels>;
   popover?: Partial<PopoverLabels>;
+  stepper?: Partial<StepperLabels>;
   /** With `filter` and `pagination` inside, for the Filter and Pagination a Table builds. */
   table?: Partial<TableLabels>;
   toaster?: Partial<ToasterLabels>;

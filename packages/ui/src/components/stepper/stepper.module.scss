@@ -1,0 +1,250 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  // Steps of a short flow. Each item works out its state from the Stepper's value
+  // (done before it, current, upcoming after); `state` on an item overrides it with
+  // error or loading. --yosegi-stepper-variant-size and -gap are internal: set the knobs.
+  .root {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    &[data-orientation="vertical"] {
+      flex-direction: column;
+    }
+  }
+
+  .item {
+    --yosegi-stepper-variant-size: #{knob(stepper, indicator-size, 28px)};
+    --yosegi-stepper-variant-gap: #{knob(stepper, separator-gap, space(100))};
+
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    text-align: center;
+
+    .root[data-variant="icon"] & {
+      --yosegi-stepper-variant-size: #{knob(stepper, indicator-size, 36px)};
+    }
+
+    .root[data-size="sm"] & {
+      --yosegi-stepper-variant-size: #{knob(stepper, indicator-size, 20px)};
+    }
+
+    .root[data-size="lg"] & {
+      --yosegi-stepper-variant-size: #{knob(stepper, indicator-size, 36px)};
+    }
+
+    // joined runs the line right into the indicators, so the steps read as one track.
+    .root[data-connector="joined"] & {
+      --yosegi-stepper-variant-gap: 0px;
+    }
+  }
+
+  .trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: space(200);
+    margin: calc(-1 * #{space(100)});
+    padding: space(100);
+    border-radius: radius(300);
+    color: inherit;
+    text-align: inherit;
+
+    &:hover .label {
+      color: color(fg);
+    }
+
+    // Ahead of the current step in a linear stepper: it can't be picked yet.
+    &[aria-disabled="true"] {
+      cursor: default;
+
+      &:hover .label {
+        color: color(fg-muted);
+      }
+    }
+
+    .item[data-disabled] & {
+      @include disabled;
+    }
+  }
+
+  .indicator {
+    position: relative;
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: var(--yosegi-stepper-variant-size);
+    height: var(--yosegi-stepper-variant-size);
+    border: 1px solid knob(stepper, indicator-border, color(border-strong));
+    border-radius: radius(full);
+    background: color(bg-surface);
+    color: color(fg-muted);
+    font: token(font-weight-semibold) 12px / 16px token(font-family-mono);
+    font-variant-numeric: tabular-nums;
+    transition:
+      background-color token(duration-base) token(easing-out),
+      border-color token(duration-base) token(easing-out),
+      color token(duration-base) token(easing-out);
+
+    .root[data-size="sm"] & {
+      font-size: 10px;
+    }
+
+    .root[data-size="lg"] & {
+      font-size: 14px;
+    }
+
+    .item:is([data-state="current"], [data-state="loading"]) & {
+      border: 2px solid knob(stepper, active, color(bg-accent));
+      color: color(fg-accent);
+    }
+
+    .item[data-state="done"] & {
+      border-color: knob(stepper, active, color(bg-accent));
+      background: knob(stepper, active, color(bg-accent));
+      color: knob(stepper, done-fg, color(fg-on-accent));
+    }
+
+    .item[data-state="error"] & {
+      border: 2px solid color(border-danger);
+      color: color(fg-danger);
+    }
+  }
+
+  // The number, icon, tick, ! or Spinner, half the indicator's size.
+  .mark {
+    display: grid;
+    place-items: center;
+
+    > :where(svg, :global(.yosegi-spinner)) {
+      width: calc(var(--yosegi-stepper-variant-size) / 2);
+      height: calc(var(--yosegi-stepper-variant-size) / 2);
+    }
+  }
+
+  .hidden {
+    @include visually-hidden;
+  }
+
+  .label {
+    color: color(fg-muted);
+    font: token(font-weight-semibold) 14px / 20px token(font-family-sans);
+    transition: color token(duration-base) token(easing-out);
+
+    .root[data-size="sm"] & {
+      font-size: 13px;
+    }
+
+    .root[data-size="lg"] & {
+      font-size: 15px;
+    }
+
+    .item:not([data-state="upcoming"]) & {
+      color: color(fg);
+    }
+  }
+
+  .description {
+    color: color(fg-muted);
+    font: text(small);
+  }
+
+  .status {
+    margin-top: space(100);
+    color: color(fg-muted);
+    font: text(label);
+
+    .item:is([data-state="done"], [data-state="loading"]) & {
+      color: color(fg-accent);
+    }
+
+    .item[data-state="current"] & {
+      color: color(fg);
+    }
+  }
+
+  // Errors: red text always comes with the ! mark, on the last line of text.
+  .item[data-state="error"] :is(.description, .status) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: color(fg-danger);
+
+    &:last-child::before {
+      content: "!";
+      display: inline-grid;
+      flex: none;
+      place-items: center;
+      width: 14px;
+      height: 14px;
+      border-radius: radius(full);
+      background: color(fg-danger);
+      color: color(bg);
+      font: 700 10px / 1 token(font-family-sans);
+    }
+  }
+
+  // The line to the next step, through the middle of the indicators.
+  .separator {
+    position: absolute;
+    top: calc(var(--yosegi-stepper-variant-size) / 2);
+    right: calc(-50% + var(--yosegi-stepper-variant-size) / 2 + var(--yosegi-stepper-variant-gap));
+    left: calc(50% + var(--yosegi-stepper-variant-size) / 2 + var(--yosegi-stepper-variant-gap));
+    height: 1px;
+    background: knob(stepper, separator, color(border));
+    transition: background-color token(duration-base) token(easing-out);
+
+    .item[data-state="done"] & {
+      background: knob(stepper, separator-done, knob(stepper, active, color(bg-accent)));
+    }
+
+    .item:last-child & {
+      display: none;
+    }
+  }
+
+  // Vertical: the indicator sits in a rail on the left, the line runs down to the next step.
+  .root[data-orientation="vertical"] {
+    .item {
+      flex: none;
+      align-items: stretch;
+      padding-bottom: space(600);
+      text-align: start;
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+
+    .trigger {
+      display: grid;
+      grid-template-columns: var(--yosegi-stepper-variant-size) minmax(0, 1fr);
+      align-items: start;
+      justify-items: start;
+      gap: 2px space(300);
+    }
+
+    .indicator {
+      grid-row: 1 / span 3;
+    }
+
+    .label {
+      padding-top: calc((var(--yosegi-stepper-variant-size) - 20px) / 2);
+    }
+
+    .separator {
+      top: calc(var(--yosegi-stepper-variant-size) + var(--yosegi-stepper-variant-gap));
+      right: auto;
+      bottom: var(--yosegi-stepper-variant-gap);
+      left: calc(var(--yosegi-stepper-variant-size) / 2);
+      width: 1px;
+      height: auto;
+    }
+  }
+}

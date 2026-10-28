@@ -55,6 +55,14 @@ export { Select, type SelectListboxProps, type SelectOption, type SelectProps } 
 export { Separator, type SeparatorProps } from "./components/separator/separator";
 export { Spinner, type SpinnerProps } from "./components/spinner/spinner";
 export {
+  Stepper,
+  type StepperItemProps,
+  type StepperLabels,
+  type StepperProps,
+  type StepperState,
+  type StepperStep,
+} from "./components/stepper/stepper";
+export {
   Filter,
   type FilterLabels,
   type FilterOptionProps,
