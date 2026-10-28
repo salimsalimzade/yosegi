@@ -12,6 +12,14 @@ const examples = [
     parts: ["Table", "Filter", "Tabs", "Item", "ButtonGroup", "Command", "Dialog", "Tooltip", "Kbd", "Toast"],
     preview: "dashboard",
   },
+  {
+    href: "/examples/job-application",
+    title: "Job application",
+    description:
+      "The same tea shop is hiring: a form in four steps, each checked with valibot before the next one opens. Steps with errors say how many fields to fix, and Review sends you back to any of them.",
+    parts: ["Stepper", "TextField", "Combobox", "Select", "NumberField", "DatePicker", "Checkbox", "Button", "Toast"],
+    preview: "job-application",
+  },
 ] as const;
 
 /** Pages built with Yosegi, each a whole screen made only of its components. */

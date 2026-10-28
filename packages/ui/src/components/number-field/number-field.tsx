@@ -240,6 +240,8 @@ function Input(props: JSX.InputHTMLAttributes<HTMLInputElement>) {
       onKeyDown={(event) => {
         callHandler(props.onKeyDown, event);
         if (event.defaultPrevented || ctx.field.readOnly()) return;
+        // Commits the typed number, then lets Enter submit the form, as a plain input does.
+        if (event.key === "Enter") return ctx.commit();
         const keys: Record<string, () => void> = {
           ArrowUp: () => ctx.step(1),
           ArrowDown: () => ctx.step(-1),
@@ -247,7 +249,6 @@ function Input(props: JSX.InputHTMLAttributes<HTMLInputElement>) {
           PageDown: () => ctx.step(-1, ctx.largeStep()),
           Home: () => ctx.jump("min"),
           End: () => ctx.jump("max"),
-          Enter: () => ctx.commit(),
         };
         const action = keys[event.key];
         if (!action) return;

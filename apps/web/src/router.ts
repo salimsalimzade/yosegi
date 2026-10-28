@@ -7,10 +7,14 @@ export const Router = createRouter({
   routes: [
     { path: "/", component: Home },
     { path: "/examples", component: Examples },
-    // The example loads on its own, so the front page stays small.
+    // The examples load on their own, so the front page stays small.
     {
       path: "/examples/dashboard",
       component: lazy(() => import("./pages/dashboard").then((m) => ({ default: m.Dashboard }))),
+    },
+    {
+      path: "/examples/job-application",
+      component: lazy(() => import("./pages/job-application").then((m) => ({ default: m.JobApplication }))),
     },
   ],
 });
