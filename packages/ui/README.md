@@ -46,7 +46,7 @@ Toasts need one `<Toaster />` near the root of the app; then call `toast("Saved"
 
 ## Components
 
-Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Select, Combobox, Filter, Command, Accordion, Tabs, Pagination, Tooltip, Popover, Dialog, Toast, Table, Item, Separator, Kbd, NotFound, ErrorState, EmptyState and LocaleProvider, plus an icon set (`PlusIcon`, `SearchIcon`, …).
+Button, ButtonGroup, Spinner, TextField, NumberField, DatePicker, Checkbox, Select, Combobox, Filter, Command, Accordion, Tabs, Stepper, Pagination, Tooltip, Popover, Dialog, Toast, Table, Item, Separator, Kbd, NotFound, ErrorState, EmptyState and LocaleProvider, plus an icon set (`PlusIcon`, `SearchIcon`, …).
 
 ## Make it yours
 
