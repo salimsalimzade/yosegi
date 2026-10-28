@@ -4,15 +4,31 @@
   // Steps of a short flow. Each item works out its state from the Stepper's value
   // (done before it, current, upcoming after); `state` on an item overrides it with
   // error or loading. --yosegi-stepper-variant-size and -gap are internal: set the knobs.
+  // The list, then the current step's content under it, or beside it when vertical.
   .root {
+    display: grid;
+    gap: space(600);
+
+    &[data-orientation="vertical"]:has(> .content) {
+      grid-template-columns: max-content minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  .list {
     display: flex;
     margin: 0;
     padding: 0;
     list-style: none;
 
-    &[data-orientation="vertical"] {
+    .root[data-orientation="vertical"] & {
       flex-direction: column;
     }
+  }
+
+  .content {
+    min-width: 0;
+    color: color(fg);
   }
 
   .item {
@@ -56,17 +72,14 @@
     color: inherit;
     text-align: inherit;
 
-    &:hover .label {
+    // Only a step a click can move to lights up; with navigation="none" the trigger is a div.
+    &:is(button):not([aria-disabled="true"], :disabled):hover .label {
       color: color(fg);
     }
 
-    // Ahead of the current step in a linear stepper: it can't be picked yet.
+    // Past the furthest step reached, with navigation="reached": it can't be picked yet.
     &[aria-disabled="true"] {
       cursor: default;
-
-      &:hover .label {
-        color: color(fg-muted);
-      }
     }
 
     .item[data-disabled] & {

@@ -58,6 +58,7 @@ export {
   Stepper,
   type StepperItemProps,
   type StepperLabels,
+  type StepperNavigation,
   type StepperProps,
   type StepperState,
   type StepperStep,
