@@ -7,5 +7,12 @@
   "preview_urls": true,
   "assets": {
     "directory": "./dist"
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "persist": true
+    }
   }
 }

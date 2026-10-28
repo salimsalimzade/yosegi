@@ -9,5 +9,12 @@
     "directory": "./dist",
     // The router runs in the browser, so every unknown path gets index.html.
     "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "persist": true
+    }
   }
 }
