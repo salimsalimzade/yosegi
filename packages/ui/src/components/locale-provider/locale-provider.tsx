@@ -3,6 +3,7 @@ import { createContext, useContext } from "solid-js";
 import type { ComboboxLabels } from "../combobox/combobox";
 import type { DatePickerLabels } from "../date-picker/date-picker";
 import type { DialogLabels } from "../dialog/dialog";
+import type { FileUploadLabels } from "../file-upload/file-upload";
 import type { NumberFieldLabels } from "../number-field/number-field";
 import type { PopoverLabels } from "../popover/popover";
 import type { StepperLabels } from "../stepper/stepper";
@@ -16,6 +17,7 @@ export interface LocaleLabels {
   combobox?: Partial<ComboboxLabels>;
   datePicker?: Partial<DatePickerLabels>;
   dialog?: Partial<DialogLabels>;
+  fileUpload?: Partial<FileUploadLabels>;
   filter?: Partial<FilterLabels>;
   numberField?: Partial<NumberFieldLabels>;
   pagination?: Partial<PaginationLabels>;

@@ -36,6 +36,17 @@ export {
 export { Dialog, type DialogLabels, type DialogProps, type DialogTriggerProps } from "./components/dialog/dialog";
 export { EmptyState, type EmptyStateProps } from "./components/empty-state/empty-state";
 export { ErrorState, type ErrorStateProps } from "./components/error-state/error-state";
+export {
+  FileUpload,
+  type FileUploadFile,
+  type FileUploadItemProps,
+  type FileUploadLabels,
+  type FileUploadListProps,
+  type FileUploadProps,
+  type FileUploadRejection,
+  type FileUploadStatus,
+  type FileUploadUploadContext,
+} from "./components/file-upload/file-upload";
 export { Item, type ItemMediaProps, type ItemProps } from "./components/item/item";
 export { Kbd, KbdGroup, type KbdGroupProps, type KbdKey, type KbdProps } from "./components/kbd/kbd";
 export {
