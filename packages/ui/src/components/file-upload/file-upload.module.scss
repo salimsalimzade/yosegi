@@ -1,0 +1,232 @@
+@use "../../styles/sass" as *;
+
+@include component {
+  .root {
+    @include field-root;
+    gap: space(200);
+  }
+
+  .label {
+    @include field-label;
+  }
+
+  .description {
+    @include field-description;
+  }
+
+  .error-message {
+    @include field-error;
+  }
+
+  // Announcements for screen readers: done, failed, refused.
+  .live {
+    @include visually-hidden;
+  }
+
+  // The dashed area: click or press to browse, or drop files on it.
+  .dropzone {
+    display: grid;
+    justify-items: center;
+    gap: space(200);
+    padding: knob(file-upload, padding, 28px space(400));
+    border: 1px dashed knob(file-upload, border, color(border-strong));
+    border-radius: knob(file-upload, radius, radius(400));
+    background: color(bg-surface);
+    color: color(fg);
+    text-align: center;
+    cursor: pointer;
+    @include transition(background-color, border-color);
+
+    &:hover {
+      background: color(bg-muted);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    :where([data-invalid]) & {
+      border-color: color(border-danger);
+    }
+
+    // Files over it: a solid edge with the focus ring, and the icon turns green.
+    &[data-dragging] {
+      border-style: solid;
+      border-color: color(border-focus);
+      background: color(bg-muted);
+      @include focus-ring;
+    }
+
+    // At maxFiles it takes no more, and says so.
+    &[data-full] {
+      background: color(bg);
+      cursor: default;
+
+      &:hover {
+        background: color(bg);
+      }
+    }
+
+    &[aria-disabled="true"]:not([data-full]) {
+      cursor: default;
+    }
+  }
+
+  .dropzone-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: radius(full);
+    background: color(bg-muted);
+    color: color(fg-muted);
+    @include transition(background-color, color);
+
+    :where(svg) {
+      width: 24px;
+      height: 24px;
+    }
+
+    .dropzone[data-dragging] & {
+      background: color(bg-accent);
+      color: color(fg-on-accent);
+    }
+  }
+
+  .dropzone-title {
+    font: text(body);
+    font-weight: token(font-weight-semibold);
+
+    .dropzone[data-full] & {
+      color: color(fg-muted);
+    }
+  }
+
+  .dropzone-hint {
+    font: text(small);
+    color: color(fg-muted);
+  }
+
+  .trigger {
+    color: color(fg-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .hidden-input {
+    display: none;
+  }
+
+  .list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: space(200);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: space(300);
+    min-height: 54px;
+    padding: 10px 6px 10px 10px;
+    border: 1px solid color(border);
+    border-radius: radius(300);
+    background: color(bg-surface);
+
+    &[data-state="error"] {
+      border-color: color(border-danger);
+    }
+  }
+
+  // The type, from the extension: “PDF”.
+  .item-type {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: radius(150);
+    background: color(bg-muted);
+    color: color(fg-muted);
+    font: text(label);
+    font-size: 10px;
+  }
+
+  .item-text {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .item-name {
+    overflow: hidden;
+    color: color(fg);
+    font: text(body);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .item[data-state="queued"] & {
+      color: color(fg-muted);
+    }
+  }
+
+  .item-meta {
+    font: text(small);
+    font-variant-numeric: tabular-nums;
+    color: color(fg-muted);
+
+    .item[data-state="error"] & {
+      color: color(fg-danger);
+    }
+  }
+
+  .item-progress {
+    display: block;
+    height: 4px;
+    margin-top: space(100);
+    overflow: hidden;
+    border-radius: radius(full);
+    background: color(bg-muted);
+
+    > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: knob(file-upload, progress, color(bg-accent));
+      transition: width token(duration-fast) token(easing-out);
+    }
+  }
+
+  .item-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: space(100);
+  }
+
+  // Retry, and Remove or Cancel.
+  .item-action {
+    @include icon-button;
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  .item-done {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    color: color(fg-accent);
+
+    :where(svg) {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}

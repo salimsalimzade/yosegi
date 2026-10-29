@@ -359,6 +359,27 @@ export function PlusIcon(props: IconProps) {
   );
 }
 
+/** retry.svg */
+export function RetryIcon(props: IconProps) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.5"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M12.5 5.5A5 5 0 1 0 13 9" />
+      <path d="M13 2.5v3h-3" />
+    </svg>
+  );
+}
+
 /** search-off.svg */
 export function SearchOffIcon(props: IconProps) {
   return (
@@ -499,6 +520,26 @@ export function TrashIcon(props: IconProps) {
       {...props}
     >
       <path d="M3 4.5h10m-6.5 0V3h3v1.5m-5 0 .5 9h6l.5-9" />
+    </svg>
+  );
+}
+
+/** upload.svg */
+export function UploadIcon(props: IconProps) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.5"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M8 10.5v-8M4.5 6 8 2.5 11.5 6m-9 4.5v3h11v-3" />
     </svg>
   );
 }
