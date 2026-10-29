@@ -216,17 +216,4 @@
       @include focus-ring;
     }
   }
-
-  .item-done {
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    color: color(fg-accent);
-
-    :where(svg) {
-      width: 16px;
-      height: 16px;
-    }
-  }
 }

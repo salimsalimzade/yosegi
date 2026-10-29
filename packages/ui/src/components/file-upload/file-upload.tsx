@@ -16,7 +16,7 @@ import { createControllableSignal } from "../../primitives/create-controllable-s
 import { createField, type Field, type FieldState, type FieldTextProps } from "../../primitives/create-field";
 import { callHandler, dataAttr } from "../../primitives/dom";
 import { createFieldParts } from "../../primitives/field-parts";
-import { CloseIcon, RetryIcon, TickIcon, UploadIcon } from "../../primitives/icons";
+import { CloseIcon, RetryIcon, UploadIcon } from "../../primitives/icons";
 import { useLabels, useLocale } from "../locale-provider/locale-provider";
 import styles from "./file-upload.module.scss";
 
@@ -734,11 +734,6 @@ function Item(props: FileUploadItemProps) {
       </span>
       <Show when={ctx.canEdit()}>
         <span class={[styles["item-actions"], "yosegi-file-upload-item-actions"]}>
-          <Show when={props.file.status === "done" && ctx.hasUpload()}>
-            <span class={[styles["item-done"], "yosegi-file-upload-item-done"]} aria-hidden="true">
-              <TickIcon />
-            </span>
-          </Show>
           <Show when={props.file.status === "error" && !props.file.rejected}>
             <button
               type="button"
