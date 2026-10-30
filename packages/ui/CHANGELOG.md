@@ -1,5 +1,11 @@
 # yosegi-solid
 
+## 0.5.1
+
+### Patch Changes
+
+- 6ddf88d: remove the tick from uploaded file rows
+
 ## 0.5.0
 
 ### Minor Changes
