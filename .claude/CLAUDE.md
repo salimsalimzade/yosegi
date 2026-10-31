@@ -36,3 +36,8 @@ Exceptions are the standard uppercase files that tools look for by name: `README
 - A prop that holds JSX (`children`, `icon`) creates its elements every time it's read. Resolve it once with `children(() => props.icon)` and read that.
 - Run `pnpm dev:storybook` to try components, at port 6006. The Storybook lives in `apps/playground`, with its config in `.storybook/`, and builds with that app's Vite config. Its sidebar mirrors the design system's groups. Each component gets `apps/playground/src/stories/<name>.stories.tsx`, titled `<Group>/<Name>`: a `Playground` story with the props on controls, then one story per case, each with a JSDoc saying what it shows. Write each story's JSX in full, since it becomes the docs' "Show code". Keep rows, columns, sections and JSX out of `args`, because Storybook wraps args in a store. Pass them in `render` instead. Put fixtures the stories share in `apps/playground/src/ui/`.
 - Never import global CSS from `src/index.ts`. Apps opt in with `import "yosegi-solid/styles.css"`.
+
+## Commits and pull requests
+
+- Commits are authored by Salim Salimzade (`86426905+salimsalimzade@users.noreply.github.com`). Before committing, set `git config user.name` and `user.email` to that if they say anything else.
+- Don't credit Claude anywhere: no `Co-Authored-By: Claude` or `Claude-Session` lines in commit messages, and no "Generated with Claude Code" line or session link in pull request descriptions.
