@@ -1,5 +1,11 @@
 # yosegi-solid
 
+## 0.5.2
+
+### Patch Changes
+
+- 4654ab8: add default height to table and write tests for components and helper functions
+
 ## 0.5.1
 
 ### Patch Changes
