@@ -312,7 +312,11 @@ export interface DataTableProps<T> extends Omit<JSX.HTMLAttributes<HTMLElement>,
   pageSizeOptions?: number[];
   /** The rows area is this tall whatever the number of rows, and rows scroll inside it, under headings that stay put: 480 or "60vh". */
   height?: number | string;
-  /** Like height, but the rows area can be shorter when there are fewer rows. */
+  /**
+   * The tallest the rows area gets before its rows scroll under the headings; it's shorter when there
+   * are fewer rows. Ten rows and the headings by default, so a bigger page doesn't make the box grow.
+   * "none" lets it grow with every row.
+   */
   maxHeight?: number | string;
   query?: TableQuery;
   defaultQuery?: Partial<TableQuery>;
@@ -553,11 +557,14 @@ function DataTable<T>(props: DataTableProps<T>) {
     <Box
       {...rest}
       style={mergeStyle(
-        { "--yosegi-table-height": cssSize(props.height), "--yosegi-table-max-height": cssSize(props.maxHeight) },
+        {
+          "--yosegi-table-height": cssSize(props.height),
+          // A height alone isn't capped by the default maximum.
+          "--yosegi-table-max-height": cssSize(props.maxHeight ?? (props.height !== undefined ? "none" : undefined)),
+        },
         props.style,
       )}
       data-loading={dataAttr(props.loading)}
-      data-scroll={dataAttr(props.height !== undefined || props.maxHeight !== undefined)}
     >
       <Show
         when={props.selectable && selected().length > 0}

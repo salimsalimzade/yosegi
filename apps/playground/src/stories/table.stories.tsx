@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, screen, waitFor, within } from "storybook/test";
 import { createSignal, For, onCleanup } from "solid-js";
 import {
   applyTableQuery,
@@ -86,6 +87,7 @@ export const TwentyToAPage: Story = {
 
 /**
  * 50 to a page: maxHeight={400} lets the rows scroll under the headings, and lets the box shrink when fewer match.
+ * Without height or maxHeight, the rows area stops at ten rows; maxHeight="none" lets it grow with every row.
  */
 export const Scrolling: Story = {
   args: { pageSize: 50, height: undefined, maxHeight: 400 },
@@ -227,4 +229,128 @@ export const WithoutTheBox: Story = {
       </Table.Footer>
     </Table>
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** The body's rows, without the headings. */
+const bodyRows = (table: HTMLElement) => within(table).getAllByRole("row").slice(1);
+
+/** Test: the search narrows the rows and the range follows; clearing it brings them back. */
+export const SearchTest: Story = {
+  name: "Search (test)",
+  tags: ["!dev", "!autodocs"],
+  play: async ({ canvas, userEvent }) => {
+    const table = canvas.getByRole("table", { name: "Invoices" });
+    await expect(canvas.getByText("1–10 of 312")).toBeInTheDocument();
+
+    const search = canvas.getByRole("searchbox", { name: "Search invoices" });
+    await userEvent.type(search, "INV-31");
+    await waitFor(() => expect(bodyRows(table)).toHaveLength(3));
+    await expect(bodyRows(table).every((row) => row.textContent?.includes("INV-31"))).toBe(true);
+    await expect(canvas.getByText("1–3 of 3")).toBeInTheDocument();
+
+    await userEvent.clear(search);
+    await waitFor(() => expect(canvas.getByText("1–10 of 312")).toBeInTheDocument());
+  },
+};
+
+/** Test: a heading sorts up, then down, then off, and says so with aria-sort. */
+export const SortTest: Story = {
+  name: "Sort (test)",
+  tags: ["!dev", "!autodocs"],
+  play: async ({ canvas, userEvent }) => {
+    const table = canvas.getByRole("table", { name: "Invoices" });
+    const heading = canvas.getByRole("columnheader", { name: "Amount" });
+    const amounts = () => bodyRows(table).map((row) => Number(row.lastElementChild?.textContent?.replace(/\D/g, "")));
+
+    await userEvent.click(within(heading).getByRole("button"));
+    await expect(heading).toHaveAttribute("aria-sort", "ascending");
+    const up = amounts();
+    await expect(up).toEqual([...up].sort((a, b) => a - b));
+
+    await userEvent.click(within(heading).getByRole("button"));
+    await expect(heading).toHaveAttribute("aria-sort", "descending");
+    const down = amounts();
+    await expect(down).toEqual([...down].sort((a, b) => b - a));
+
+    await userEvent.click(within(heading).getByRole("button"));
+    await expect(heading).not.toHaveAttribute("aria-sort");
+  },
+};
+
+/** Test: the heading checkbox ticks the page, the selection bar counts it, and Clear ends it. */
+export const SelectTest: Story = {
+  name: "Select rows (test)",
+  tags: ["!dev", "!autodocs"],
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("checkbox", { name: "Select all on this page" }));
+    const bar = canvas.getByRole("status", { name: "" });
+    await expect(bar).toHaveTextContent("10 selected of 312");
+
+    await userEvent.click(canvas.getByRole("checkbox", { name: "Select INV-312" }));
+    await expect(bar).toHaveTextContent("9 selected of 312");
+    await expect(canvas.getByRole("checkbox", { name: "Select all on this page" })).toBePartiallyChecked();
+
+    await userEvent.click(within(bar).getByRole("button", { name: "Clear" }));
+    await expect(canvas.getByRole("searchbox", { name: "Search invoices" })).toBeInTheDocument();
+  },
+};
+
+/** Test: Next moves a page and the range follows. */
+export const PagesTest: Story = {
+  name: "Pages (test)",
+  tags: ["!dev", "!autodocs"],
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Next page" }));
+    await expect(canvas.getByText("11–20 of 312")).toBeInTheDocument();
+    await expect(canvas.getByRole("button", { name: "Page 2" })).toHaveAttribute("aria-current", "page");
+  },
+};
+
+/** Test: when the filters leave nothing, the table says so, and Clear filters brings the rows back. */
+export const NothingMatchesTest: Story = {
+  name: "Nothing matches (test)",
+  tags: ["!dev", "!autodocs"],
+  args: { defaultQuery: { filters: { status: ["unpaid"], amount: { from: 2000 } } } },
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getByText("No invoices match.")).toBeInTheDocument();
+    await expect(canvas.getByText("0 of 312")).toBeInTheDocument();
+    await userEvent.click(canvas.getByRole("button", { name: "Clear filters" }));
+    await expect(canvas.getByText("1–10 of 312")).toBeInTheDocument();
+  },
+};
+
+/** Test: without height or maxHeight, ten rows fit without scrolling, and a bigger page scrolls instead of growing the box. */
+export const DefaultMaxHeight: Story = {
+  name: "Default max height (test)",
+  tags: ["!dev", "!autodocs"],
+  args: { height: undefined },
+  play: async ({ canvas, userEvent }) => {
+    const table = canvas.getByRole("table", { name: "Invoices" });
+    const area = table.parentElement as HTMLElement;
+    await expect(bodyRows(table)).toHaveLength(10);
+    await expect(area.scrollHeight).toBeLessThanOrEqual(area.clientHeight);
+    const tenRows = area.getBoundingClientRect().height;
+
+    await userEvent.click(canvas.getByRole("combobox", { name: "Rows per page" }));
+    await userEvent.click(await screen.findByRole("option", { name: "20" }));
+    await waitFor(() => expect(bodyRows(table)).toHaveLength(20));
+    // The same box, give or take the half pixel collapsed borders round to.
+    await expect(Math.abs(area.getBoundingClientRect().height - tenRows)).toBeLessThanOrEqual(1);
+    await expect(area.scrollHeight).toBeGreaterThan(area.clientHeight);
+  },
+};
+
+/** Test: maxHeight="none" lets the rows area grow with every row. */
+export const NoMaxHeight: Story = {
+  name: "No max height (test)",
+  tags: ["!dev", "!autodocs"],
+  args: { height: undefined, maxHeight: "none", pageSize: 20 },
+  play: async ({ canvas }) => {
+    const table = canvas.getByRole("table", { name: "Invoices" });
+    const area = table.parentElement as HTMLElement;
+    await expect(bodyRows(table)).toHaveLength(20);
+    await expect(area.scrollHeight).toBeLessThanOrEqual(area.clientHeight);
+  },
 };

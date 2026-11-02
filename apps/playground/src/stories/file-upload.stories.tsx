@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, waitFor } from "storybook/test";
 import { createSignal, Show } from "solid-js";
 import { Button, FileUpload, type FileUploadFile } from "yosegi-solid";
 import { fakeUpload, sampleFile, tenMegabytes } from "../ui/uploads";
@@ -209,4 +210,71 @@ export const FromParts: Story = {
       <FileUpload.ErrorMessage>Some files weren't added.</FileUpload.ErrorMessage>
     </FileUpload>
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+const megabytes = (n: number) => new File([new Uint8Array(n * 1024 * 1024)], "big.pdf", { type: "application/pdf" });
+
+/** Picks files as the browser's file dialog does. userEvent.upload drops the ones `accept` doesn't allow first. */
+const pick = (input: HTMLInputElement, files: File[]) => {
+  const data = new DataTransfer();
+  for (const file of files) data.items.add(file);
+  input.files = data.files;
+  input.dispatchEvent(new Event("change", { bubbles: true }));
+};
+
+/** Test: picked files become rows and upload; a wrong type or a file too big is refused with the reason on its row. */
+export const AddingFiles: Story = {
+  name: "Adding files (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => (
+    <FileUpload
+      label="Attachments"
+      accept=".pdf,.png,.jpg"
+      maxFileSize={2 * 1024 * 1024}
+      maxFiles={5}
+      upload={async () => {}}
+    />
+  ),
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    const input = canvasElement.querySelector<HTMLInputElement>('input[type="file"]')!;
+    await expect(
+      canvas.getByRole("button", { name: "Upload files: drag them here, or press to browse" }),
+    ).toBeVisible();
+    await expect(canvas.getByText("PDF, PNG, or JPG · up to 2 MB each")).toBeInTheDocument();
+
+    pick(input, [
+      new File(["%PDF"], "report.pdf", { type: "application/pdf" }),
+      new File(["MZ"], "setup.exe", { type: "application/x-msdownload" }),
+      megabytes(3),
+    ]);
+
+    await expect(await canvas.findByText("report.pdf")).toBeInTheDocument();
+    await waitFor(() => expect(canvas.getByText("4 B · Uploaded")).toBeInTheDocument());
+    await expect(canvas.getByText("setup.exe")).toBeInTheDocument();
+    await expect(canvas.getByText("This type of file can't be added. Use PDF, PNG, or JPG.")).toBeInTheDocument();
+    await expect(canvas.getByText("Too big: 3 MB. Files can be up to 2 MB.")).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole("button", { name: "Remove report.pdf" }));
+    await waitFor(() => expect(canvas.queryByText("report.pdf")).not.toBeInTheDocument());
+  },
+};
+
+/** Test: past maxFiles, the extra files get no row, and the dropzone says the list is full. */
+export const TooMany: Story = {
+  name: "Too many (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <FileUpload label="Attachments" maxFiles={2} upload={async () => {}} />,
+  play: async ({ canvas, canvasElement }) => {
+    const input = canvasElement.querySelector<HTMLInputElement>('input[type="file"]')!;
+    pick(
+      input,
+      ["a.txt", "b.txt", "c.txt"].map((name) => new File(["x"], name)),
+    );
+    await expect(await canvas.findByText("a.txt")).toBeInTheDocument();
+    await expect(canvas.getByText("b.txt")).toBeInTheDocument();
+    await expect(canvas.queryByText("c.txt")).not.toBeInTheDocument();
+    await expect(canvas.getByText("2 of 2 files added")).toBeInTheDocument();
+  },
 };

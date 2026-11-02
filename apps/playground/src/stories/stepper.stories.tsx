@@ -1,5 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, within } from "storybook/test";
 import { createSignal, For } from "solid-js";
 import {
   Button,
@@ -351,5 +352,56 @@ export const FromParts: Story = {
         />
       </div>
     );
+  },
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+const testSteps = [
+  { value: "details", label: "Details" },
+  { value: "members", label: "Members" },
+  { value: "settings", label: "Settings" },
+  { value: "review", label: "Review" },
+];
+
+/** Test: with navigation="reached", steps up to the furthest reached can be picked; later ones can't. */
+export const ReachedNavigation: Story = {
+  name: "Reached navigation (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => (
+    <Stepper
+      aria-label="Create project"
+      navigation="reached"
+      defaultValue="members"
+      reached="settings"
+      steps={testSteps}
+    />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const step = (name: RegExp) => canvas.getByRole("button", { name });
+    await expect(step(/Members/)).toHaveAttribute("aria-current", "step");
+
+    await userEvent.click(step(/Settings/));
+    await expect(step(/Settings/)).toHaveAttribute("aria-current", "step");
+    await expect(step(/Members/)).not.toHaveAttribute("aria-current");
+
+    await expect(step(/Review/)).toHaveAttribute("aria-disabled", "true");
+    await userEvent.click(step(/Review/));
+    await expect(step(/Settings/)).toHaveAttribute("aria-current", "step");
+
+    await userEvent.click(step(/Details/));
+    await expect(step(/Details/)).toHaveAttribute("aria-current", "step");
+  },
+};
+
+/** Test: with navigation="none", the steps only show where you are and can't be clicked. */
+export const NoNavigation: Story = {
+  name: "No navigation (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Stepper aria-label="Create project" navigation="none" defaultValue="members" steps={testSteps} />,
+  play: async ({ canvas }) => {
+    await expect(canvas.queryAllByRole("button")).toHaveLength(0);
+    const list = canvas.getByRole("list", { name: "Create project" });
+    await expect(within(list).getAllByRole("listitem")).toHaveLength(4);
   },
 };

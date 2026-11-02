@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, screen, waitFor, within } from "storybook/test";
 import { createSignal } from "solid-js";
 import { Button, Dialog, TextField, toast, TrashIcon } from "yosegi-solid";
 import { createTask } from "../ui/task";
@@ -146,5 +147,68 @@ export const WithoutATrigger: Story = {
         />
       </>
     );
+  },
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: the trigger opens the dialog with focus inside it; Escape (cancel) closes it and focus goes back to the trigger. */
+export const OpenAndEscape: Story = {
+  name: "Open and Escape (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => (
+    <Dialog trigger="What's new" title="What's new in Yosegi" description="Toasts and a command palette." />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const trigger = canvas.getByRole("button", { name: "What's new" });
+    await userEvent.click(trigger);
+
+    const dialog = await screen.findByRole("dialog", { name: "What's new in Yosegi" });
+    await expect(dialog).toHaveAccessibleDescription("Toasts and a command palette.");
+    await waitFor(() => expect(dialog).toContainElement(document.activeElement as HTMLElement));
+
+    // A modal <dialog> turns Escape into a `cancel` event itself, which a simulated key press can't
+    // reach, so the test sends the `cancel` the browser would.
+    dialog.dispatchEvent(new Event("cancel", { cancelable: true }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    await expect(trigger).toHaveFocus();
+  },
+};
+
+/** Test: the × button closes the dialog. */
+export const CloseButtonCloses: Story = {
+  name: "Close button closes (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Dialog trigger="What's new" title="What's new in Yosegi" />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "What's new" }));
+    const dialog = await screen.findByRole("dialog");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Close" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  },
+};
+
+/** Test: a confirmation is an alertdialog, and its footer buttons close it through onOpenChange. */
+export const ConfirmationButtons: Story = {
+  name: "Confirmation buttons (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => {
+    const [open, setOpen] = createSignal(false);
+    return (
+      <Dialog
+        open={open()}
+        onOpenChange={setOpen}
+        role="alertdialog"
+        trigger={{ label: "Delete project", variant: "danger" }}
+        title="Delete “Trip to Kyoto”?"
+        footer={<Button label="Cancel" variant="outline" onClick={() => setOpen(false)} />}
+      />
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Delete project" }));
+    const dialog = await screen.findByRole("alertdialog", { name: "Delete “Trip to Kyoto”?" });
+    await userEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
   },
 };

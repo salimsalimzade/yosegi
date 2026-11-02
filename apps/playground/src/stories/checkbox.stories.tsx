@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect } from "storybook/test";
 import { createSignal, For } from "solid-js";
 import { Checkbox } from "yosegi-solid";
 
@@ -98,4 +99,55 @@ export const Disabled: Story = {
       <Checkbox label="Archive old notes" disabled />
     </>
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: the box and its label tick and untick it, and so does Space. */
+export const Ticking: Story = {
+  name: "Ticking (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Checkbox label="Weekly summary" description="Every Monday, one email." />,
+  play: async ({ canvas, userEvent }) => {
+    const checkbox = canvas.getByRole("checkbox", { name: "Weekly summary" });
+    await expect(checkbox).toHaveAccessibleDescription("Every Monday, one email.");
+    await expect(checkbox).not.toBeChecked();
+
+    await userEvent.click(canvas.getByText("Weekly summary"));
+    await expect(checkbox).toBeChecked();
+
+    await userEvent.keyboard(" ");
+    await expect(checkbox).toHaveFocus();
+    await expect(checkbox).not.toBeChecked();
+  },
+};
+
+/** Test: an indeterminate box reads as mixed, and a click ticks it. */
+export const IndeterminateTest: Story = {
+  name: "Indeterminate (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => {
+    const [checked, setChecked] = createSignal(false);
+    return <Checkbox label="All notes" checked={checked()} indeterminate={!checked()} onChange={setChecked} />;
+  },
+  play: async ({ canvas, userEvent }) => {
+    const checkbox = canvas.getByRole("checkbox", { name: "All notes" });
+    await expect(checkbox).toBePartiallyChecked();
+    await userEvent.click(checkbox);
+    await expect(checkbox).toBeChecked();
+    await expect(checkbox).not.toBePartiallyChecked();
+  },
+};
+
+/** Test: a disabled box can't be ticked. */
+export const DisabledTest: Story = {
+  name: "Disabled (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Checkbox label="Mentions" disabled />,
+  play: async ({ canvas }) => {
+    const checkbox = canvas.getByRole("checkbox", { name: "Mentions" });
+    await expect(checkbox).toBeDisabled();
+    checkbox.click();
+    await expect(checkbox).not.toBeChecked();
+  },
 };

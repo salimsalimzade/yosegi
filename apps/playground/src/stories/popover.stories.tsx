@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, screen, waitFor, within } from "storybook/test";
 import { For } from "solid-js";
 import { Button, Checkbox, Popover, type PopoverProps, ShareIcon, toast } from "yosegi-solid";
 
@@ -112,4 +113,43 @@ export const Modal: Story = {
       placement="bottom-start"
     />
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: the trigger opens the panel next to it; Escape closes it and focus goes back to the trigger. */
+export const OpenAndEscape: Story = {
+  name: "Open and Escape (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Popover trigger="Details" title="Reading list" description="12 notes, last edited today." />,
+  play: async ({ canvas, userEvent }) => {
+    const trigger = canvas.getByRole("button", { name: "Details" });
+    await userEvent.click(trigger);
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+    const panel = await screen.findByRole("dialog", { name: "Reading list" });
+    await expect(panel).toHaveAccessibleDescription("12 notes, last edited today.");
+
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await expect(trigger).toHaveFocus();
+  },
+};
+
+/** Test: a click outside the panel closes it; a click inside doesn't. */
+export const ClickOutsideCloses: Story = {
+  name: "Click outside closes (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Popover trigger="Details" title="Reading list" description="12 notes, last edited today." />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Details" }));
+    const panel = await screen.findByRole("dialog", { name: "Reading list" });
+
+    await userEvent.click(within(panel).getByText("12 notes, last edited today."));
+    await expect(panel).toBeInTheDocument();
+
+    await userEvent.click(document.body);
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  },
 };

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, fn } from "storybook/test";
 import { createSignal, onSettled } from "solid-js";
 import {
   ArchiveIcon,
@@ -125,5 +126,55 @@ export const PaletteInADialog: Story = {
         />
       </>
     );
+  },
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: typing filters by name and keywords, every word has to match, and nothing found says so. */
+export const FilterTest: Story = {
+  name: "Filter (test)",
+  tags: ["!dev", "!autodocs"],
+  args: { onSelect: fn() },
+  render: (args) => <Command items={commands()} onSelect={args.onSelect} />,
+  play: async ({ args, canvas, userEvent }) => {
+    const input = canvas.getByRole("combobox", { name: "Commands" });
+    const names = () => canvas.queryAllByRole("option").map((option) => option.textContent?.replace(/⌘.*$/, "").trim());
+
+    // “sett” finds Preferences by its keyword “settings”; the group's name isn't searched.
+    await userEvent.type(input, "sett");
+    await expect(names()).toEqual(["Preferences"]);
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "trip kyo");
+    await expect(names()).toEqual(["Trip to Kyoto"]);
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "nothing like this");
+    await expect(canvas.getByText("No results found.")).toBeInTheDocument();
+    await expect(args.onSelect).not.toHaveBeenCalled();
+  },
+};
+
+/** Test: arrows move over the items, skipping disabled ones, and Enter runs the highlighted one. */
+export const KeyboardTest: Story = {
+  name: "Keyboard (test)",
+  tags: ["!dev", "!autodocs"],
+  args: { onSelect: fn() },
+  render: (args) => <Command items={commands()} onSelect={args.onSelect} />,
+  play: async ({ args, canvas, userEvent }) => {
+    const input = canvas.getByRole("combobox", { name: "Commands" });
+    const active = () => document.getElementById(input.getAttribute("aria-activedescendant") ?? "");
+    await userEvent.click(input);
+
+    await expect(active()).toHaveTextContent("New note");
+    await userEvent.keyboard("{ArrowDown}{ArrowDown}{ArrowDown}");
+    await expect(active()).toHaveTextContent("Preferences");
+    // Billing is disabled, so the end of the list is Preferences.
+    await userEvent.keyboard("{ArrowDown}");
+    await expect(active()).not.toHaveTextContent("Billing");
+
+    await userEvent.keyboard("{End}{Enter}");
+    await expect(args.onSelect).toHaveBeenCalledWith("Preferences");
   },
 };

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
 import { createSignal } from "solid-js";
+import { expect, screen, waitFor, within } from "storybook/test";
 import { Select, type SelectOption } from "yosegi-solid";
 
 const statuses: SelectOption[] = [
@@ -197,4 +198,95 @@ export const LongValue: Story = {
  */
 export const Keyboard: Story = {
   render: () => <Select label="Status" options={statuses} placeholder="Choose a status" />,
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: a click opens the list, a click on an option picks it and closes the list. */
+export const PickWithTheMouse: Story = {
+  name: "Pick with the mouse (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Select label="Status" options={statuses} placeholder="Choose a status" />,
+  play: async ({ canvas, userEvent }) => {
+    const box = canvas.getByRole("combobox", { name: "Status" });
+    await expect(box).toHaveTextContent("Choose a status");
+
+    await userEvent.click(box);
+    const list = await screen.findByRole("listbox");
+    await expect(box).toHaveAttribute("aria-expanded", "true");
+
+    await userEvent.click(within(list).getByRole("option", { name: "Scheduled" }));
+    await expect(box).toHaveTextContent("Scheduled");
+    await expect(box).toHaveAttribute("aria-expanded", "false");
+    await waitFor(() => expect(screen.queryByRole("listbox")).not.toBeInTheDocument());
+  },
+};
+
+/** Test: arrows move over the options, skipping disabled ones, Enter picks, Escape closes and focus stays on the box. */
+export const PickWithTheKeyboard: Story = {
+  name: "Pick with the keyboard (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Select label="Status" options={statuses} placeholder="Choose a status" />,
+  play: async ({ canvas, userEvent }) => {
+    const box = canvas.getByRole("combobox", { name: "Status" });
+    const active = () => document.getElementById(box.getAttribute("aria-activedescendant") ?? "");
+
+    box.focus();
+    await userEvent.keyboard("{ArrowDown}");
+    await expect(box).toHaveAttribute("aria-expanded", "true");
+    await expect(active()).toHaveTextContent("Draft");
+
+    await userEvent.keyboard("{ArrowDown}{ArrowDown}");
+    await expect(active()).toHaveTextContent("Scheduled");
+
+    // Archived is disabled, so End stops on Published.
+    await userEvent.keyboard("{End}");
+    await expect(active()).toHaveTextContent("Published");
+
+    await userEvent.keyboard("{Enter}");
+    await expect(box).toHaveTextContent("Published");
+    await expect(box).toHaveAttribute("aria-expanded", "false");
+    await expect(box).toHaveFocus();
+
+    await userEvent.keyboard("{ArrowUp}");
+    await expect(box).toHaveAttribute("aria-expanded", "true");
+    await userEvent.keyboard("{Escape}");
+    await expect(box).toHaveAttribute("aria-expanded", "false");
+    await expect(box).toHaveTextContent("Published");
+    await expect(box).toHaveFocus();
+  },
+};
+
+/** Test: typed letters move to the option they start; after a pause, typing starts a new prefix. */
+export const TypeToFind: Story = {
+  name: "Type to find (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Select label="Status" options={statuses} placeholder="Choose a status" />,
+  play: async ({ canvas, userEvent }) => {
+    const box = canvas.getByRole("combobox", { name: "Status" });
+    const active = () => document.getElementById(box.getAttribute("aria-activedescendant") ?? "");
+
+    await userEvent.click(box);
+    await userEvent.keyboard("p");
+    await expect(active()).toHaveTextContent("Published");
+
+    // Letters within half a second build one prefix: “in” finds In review.
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    await userEvent.keyboard("in");
+    await expect(active()).toHaveTextContent("In review");
+  },
+};
+
+/** Test: a disabled Select doesn't open. */
+export const DisabledDoesNotOpen: Story = {
+  name: "Disabled doesn't open (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Select label="Status" options={statuses} defaultValue="published" disabled />,
+  play: async ({ canvas }) => {
+    const box = canvas.getByRole("combobox", { name: "Status" });
+    await expect(box).toBeDisabled();
+    box.click();
+    await expect(box).toHaveAttribute("aria-expanded", "false");
+    await expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+  },
 };

@@ -7,18 +7,20 @@ catalog:
   '@solidjs/router': 2.0.0-next.41
   '@solidjs/vite-plugin': 3.0.0-next.51
   '@solidjs/web': 2.0.0-rc.17
+  '@vitest/browser': ^5.0.5
+  '@vitest/browser-playwright': ^5.0.5
+  playwright: ^1.64.1
   sass-embedded: ~1.105.2
   solid-js: 2.0.0-rc.17
   svgo: ^4.1.0
   typescript: ^7.0.2
   valibot: ^1.5.0
   vite: ^8.3.5
+  vitest: ^5.0.5
 
 onlyBuiltDependencies:
   - lefthook
 
-# storybook-solidjs-vite falls back to vite-plugin-solid (Solid 1) only when no `solid`
-# plugin is configured. The playground's vite.config.ts has @solidjs/vite-plugin, so skip it.
 packageExtensions:
   storybook-solidjs-vite:
     peerDependenciesMeta:

@@ -1,5 +1,6 @@
 import type { JSX } from "@solidjs/web";
 import { createContext, useContext } from "solid-js";
+import { defaultLocale, mergeLabels } from "../../primitives/locale";
 import type { ComboboxLabels } from "../combobox/combobox";
 import type { DatePickerLabels } from "../date-picker/date-picker";
 import type { DialogLabels } from "../dialog/dialog";
@@ -40,9 +41,6 @@ export interface LocaleProviderProps {
   children?: JSX.Element;
 }
 
-/** The locale when neither a component nor a LocaleProvider sets one, so a page reads the same everywhere. */
-export const defaultLocale = "en-US";
-
 type Labels<K extends keyof LocaleLabels> = Required<NonNullable<LocaleLabels[K]>>;
 
 interface LocaleContextValue {
@@ -52,21 +50,6 @@ interface LocaleContextValue {
 
 const LocaleContext = createContext<LocaleContextValue>({ locale: () => defaultLocale, labels: () => undefined });
 
-const isGroup = (value: unknown): value is object => typeof value === "object" && value !== null;
-
-// Later layers win, key by key. A group of labels inside, like Table's
-// `filter`, merges the same way instead of being replaced whole.
-function merge(...layers: (object | undefined)[]) {
-  const merged: Record<string, unknown> = {};
-  for (const layer of layers) {
-    for (const [key, value] of Object.entries(layer ?? {})) {
-      if (value === undefined) continue;
-      merged[key] = isGroup(value) && isGroup(merged[key]) ? { ...merged[key], ...value } : value;
-    }
-  }
-  return merged;
-}
-
 export function LocaleProvider(props: LocaleProviderProps) {
   const outer = useContext(LocaleContext);
 
@@ -74,7 +57,7 @@ export function LocaleProvider(props: LocaleProviderProps) {
     <LocaleContext
       value={{
         locale: () => props.locale ?? outer.locale(),
-        labels: (name) => merge(outer.labels(name), props.labels?.[name]) as LocaleLabels[typeof name],
+        labels: (name) => mergeLabels(outer.labels(name), props.labels?.[name]) as LocaleLabels[typeof name],
       }}
     >
       {props.children}
@@ -95,5 +78,5 @@ export function useLabels<K extends keyof LocaleLabels>(
   own: () => LocaleLabels[K] | undefined,
 ): () => Labels<K> {
   const context = useContext(LocaleContext);
-  return () => merge(defaults, context.labels(name), own()) as Labels<K>;
+  return () => mergeLabels(defaults, context.labels(name), own()) as Labels<K>;
 }

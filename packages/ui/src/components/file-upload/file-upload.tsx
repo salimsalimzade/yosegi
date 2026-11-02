@@ -18,6 +18,7 @@ import { callHandler, dataAttr } from "../../primitives/dom";
 import { createFieldParts } from "../../primitives/field-parts";
 import { CloseIcon, RetryIcon, UploadIcon } from "../../primitives/icons";
 import { useLabels, useLocale } from "../locale-provider/locale-provider";
+import { accepts, describeTypes, extensionOf, fileSize } from "./file-types";
 import styles from "./file-upload.module.scss";
 
 export type FileUploadStatus = "queued" | "uploading" | "done" | "error";
@@ -190,63 +191,13 @@ interface FileUploadContextValue {
 const FileUploadContext = createContext<FileUploadContextValue>();
 const useFileUpload = () => useContext(FileUploadContext);
 
-const UNITS = ["B", "KB", "MB", "GB"];
-
-/** The extension, upper case, for a row's type tile: “PDF”. */
-const extensionOf = (name: string) => {
-  const dot = name.lastIndexOf(".");
-  return dot > 0 ? name.slice(dot + 1, dot + 5).toUpperCase() : "FILE";
-};
-
-/** Whether a file matches an `accept` list: extensions, exact types or wildcards like image/*. */
-function accepts(file: File, accept: string | undefined) {
-  if (!accept) return true;
-  const name = file.name.toLowerCase();
-  const type = file.type.toLowerCase();
-  return accept
-    .split(",")
-    .map((entry) => entry.trim().toLowerCase())
-    .filter(Boolean)
-    .some((entry) =>
-      entry.startsWith(".")
-        ? name.endsWith(entry)
-        : entry.endsWith("/*")
-          ? type.startsWith(entry.slice(0, -1))
-          : type === entry,
-    );
-}
-
-/** An `accept` list in words: “.pdf,image/*” → “PDF or images”. */
-function describeTypes(accept: string | undefined, locale: string) {
-  if (!accept) return undefined;
-  const words = accept
-    .split(",")
-    .map((entry) => entry.trim())
-    .filter(Boolean)
-    .map((entry) => {
-      if (entry.startsWith(".")) return entry.slice(1).toUpperCase();
-      if (entry.endsWith("/*")) return `${entry.slice(0, -2)}s`;
-      const sub = entry.split("/")[1] ?? entry;
-      return sub.toUpperCase();
-    });
-  return new Intl.ListFormat(locale, { type: "disjunction" }).format(words);
-}
-
 let counter = 0;
 
 function FileUploadRoot(props: FileUploadProps) {
   const labels = useLabels("fileUpload", defaultLabels, () => props.labels);
   const locale = useLocale(() => props.locale);
   const number = createMemo(() => new Intl.NumberFormat(locale(), { maximumFractionDigits: 1 }));
-  const formatSize = (bytes: number) => {
-    let size = bytes;
-    let unit = 0;
-    while (size >= 1024 && unit < UNITS.length - 1) {
-      size /= 1024;
-      unit += 1;
-    }
-    return `${number().format(unit === 0 ? size : Math.round(size * 10) / 10)} ${UNITS[unit]}`;
-  };
+  const formatSize = (bytes: number) => fileSize(bytes, number());
 
   const [files, setFiles] = createControllableSignal<FileUploadFile[]>({
     value: () => props.value,

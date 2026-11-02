@@ -1,5 +1,5 @@
 import type { JSX } from "@solidjs/web";
-import { defaultLocale } from "../locale-provider/locale-provider";
+import { defaultLocale } from "../../primitives/locale";
 import type { FilterValue } from "./filter";
 
 export interface TableSort {

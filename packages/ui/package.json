@@ -53,6 +53,7 @@
     "generate": "node scripts/generate-icons.js",
     "build": "node scripts/generate-icons.js --check && vite build && tsc -p tsconfig.build.json && node scripts/copy-assets.js",
     "typecheck": "tsc",
+    "test": "vitest run",
     "prepublishOnly": "pnpm build"
   },
   "peerDependencies": {
@@ -66,7 +67,8 @@
     "solid-js": "catalog:",
     "svgo": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "dependencies": {
     "@floating-ui/dom": "catalog:"

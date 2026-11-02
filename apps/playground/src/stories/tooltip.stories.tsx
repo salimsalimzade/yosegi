@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, screen, waitFor } from "storybook/test";
 import { For } from "solid-js";
 import { CalendarIcon, InfoIcon, PlusIcon, Tooltip, type TooltipProps } from "yosegi-solid";
 
@@ -87,4 +88,50 @@ export const InstantDisabledAndWithoutTheArrow: Story = {
       <Tooltip openDelay={0} arrow={false} trigger="No arrow" content="Just the text" />
     </>
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: keyboard focus opens the tooltip at once and names it in aria-describedby; Escape and leaving close it. */
+export const FocusAndEscape: Story = {
+  name: "Focus and Escape (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => (
+    <>
+      <Tooltip trigger="Archive" content="Move to the archive" />
+      <Tooltip trigger="Share" content="Copy a link" />
+    </>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const archive = canvas.getByRole("button", { name: "Archive" });
+    await userEvent.tab();
+    await expect(archive).toHaveFocus();
+
+    const tip = await screen.findByRole("tooltip");
+    await expect(tip).toHaveTextContent("Move to the archive");
+    await expect(archive).toHaveAccessibleDescription("Move to the archive");
+
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("tooltip")).not.toBeInTheDocument());
+    await expect(archive).toHaveFocus();
+
+    await userEvent.tab();
+    await expect(await screen.findByRole("tooltip")).toHaveTextContent("Copy a link");
+  },
+};
+
+/** Test: hovering opens it after the delay, and moving away closes it. */
+export const HoverTest: Story = {
+  name: "Hover (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Tooltip trigger="Archive" content="Move to the archive" openDelay={100} />,
+  play: async ({ canvas, userEvent }) => {
+    const archive = canvas.getByRole("button", { name: "Archive" });
+    await userEvent.hover(archive);
+    await expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+    await expect(await screen.findByRole("tooltip")).toHaveTextContent("Move to the archive");
+
+    await userEvent.unhover(archive);
+    await waitFor(() => expect(screen.queryByRole("tooltip")).not.toBeInTheDocument());
+  },
 };

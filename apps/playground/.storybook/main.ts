@@ -15,6 +15,8 @@ export default {
       options: { mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } } },
     },
     "@storybook/addon-a11y",
+    // Runs the stories as Vitest tests, from the sidebar or with `pnpm test`.
+    "@storybook/addon-vitest",
   ],
   staticDirs: ["../public"],
   core: { disableTelemetry: true },

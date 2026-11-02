@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, within } from "storybook/test";
 import { DatePicker, type LocaleLabels, LocaleProvider, NumberField, Pagination } from "yosegi-solid";
 
 const german: LocaleLabels = {
@@ -89,4 +90,46 @@ export const Nested: Story = {
       </LocaleProvider>
     </LocaleProvider>
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: components inside take the provider's locale and labels, and their own props still win. */
+export const ProviderTest: Story = {
+  name: "Provider (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => (
+    <LocaleProvider locale="de-DE" labels={german}>
+      <NumberField label="Menge" defaultValue={1234.5} step={0.5} />
+      <NumberField label="Amount" locale="en-US" defaultValue={1234.5} step={0.5} />
+      <Pagination count={12} defaultPage={3} aria-label="Seiten" labels={{ next: "›" }} />
+    </LocaleProvider>
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("spinbutton", { name: "Menge" })).toHaveValue("1.234,5");
+    await expect(canvas.getByRole("spinbutton", { name: "Amount" })).toHaveValue("1,234.5");
+    await expect(canvas.getAllByRole("button", { name: "Erhöhen" })).toHaveLength(2);
+
+    const pages = canvas.getByRole("navigation", { name: "Seiten" });
+    await expect(within(pages).getByRole("button", { name: "Seite 3" })).toHaveAttribute("aria-current", "page");
+    await expect(within(pages).getByRole("button", { name: "Vorige Seite" })).toHaveTextContent("Zurück");
+    await expect(within(pages).getByRole("button", { name: "Nächste Seite" })).toHaveTextContent("›");
+  },
+};
+
+/** Test: without a provider, everything is English. */
+export const EnglishByDefault: Story = {
+  name: "English by default (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => (
+    <>
+      <NumberField label="Amount" defaultValue={1234.5} step={0.5} />
+      <DatePicker label="Due date" defaultValue={new Date(2026, 9, 28)} />
+    </>
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("spinbutton", { name: "Amount" })).toHaveValue("1,234.5");
+    await expect(canvas.getByRole("textbox", { name: "Due date" })).toHaveValue("10/28/2026");
+    await expect(canvas.getByRole("button", { name: "Choose a date" })).toBeInTheDocument();
+  },
 };

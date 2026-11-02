@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "storybook dev --port 6006",
     "build": "storybook build --output-dir dist",
+    "test": "vitest run",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -18,12 +19,18 @@
     "@solidjs/vite-plugin": "catalog:",
     "@storybook/addon-a11y": "10.6.3",
     "@storybook/addon-docs": "10.6.3",
+    "@storybook/addon-vitest": "10.6.3",
+    "@vitest/browser": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "playwright": "catalog:",
     "prettier": "^3.9.10",
     "remark-gfm": "4.0.1",
     "sass-embedded": "catalog:",
     "storybook": "10.6.3",
     "storybook-solidjs-vite": "10.7.4",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vite-plugin-solid": "npm:@solidjs/vite-plugin@3.0.0-next.51",
+    "vitest": "catalog:"
   }
 }

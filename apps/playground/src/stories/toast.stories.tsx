@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, screen, waitFor, within } from "storybook/test";
 import { Button, Toaster, toast } from "yosegi-solid";
 
 const wait = (ms: number, fail = false) =>
@@ -112,4 +113,43 @@ export const ManyAtOnce: Story = {
       <Button label="Dismiss all" variant="ghost" onClick={() => toast.dismiss()} />
     </>
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: toast() shows the message in the notifications region, and Dismiss takes it away. */
+export const ShowAndDismiss: Story = {
+  name: "Show and dismiss (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Button label="Show toast" variant="outline" onClick={() => toast("Note saved for the test")} />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Show toast" }));
+    const region = screen.getByRole("region", { name: "Notifications" });
+    const message = await within(region).findByText("Note saved for the test");
+    const item = message.closest("li") as HTMLElement;
+
+    await userEvent.click(within(item).getByRole("button", { name: "Dismiss" }));
+    await waitFor(() => expect(within(region).queryByText("Note saved for the test")).not.toBeInTheDocument());
+  },
+};
+
+/** Test: toast.promise shows the loading text, then the result. */
+export const PromiseTest: Story = {
+  name: "Promise (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => (
+    <Button
+      label="Save"
+      onClick={() =>
+        toast.promise(wait(300), { loading: "Saving the test…", success: (name) => `Saved ${name}`, error: "Failed" })
+      }
+    />
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Save" }));
+    const region = screen.getByRole("region", { name: "Notifications" });
+    await expect(await within(region).findByText("Saving the test…")).toBeInTheDocument();
+    await expect(await within(region).findByText("Saved Trip to Kyoto")).toBeInTheDocument();
+    toast.dismiss();
+  },
 };

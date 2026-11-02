@@ -81,6 +81,9 @@ export default {
   },
   initialGlobals: { theme: "system" },
   parameters: {
+    // Accessibility violations show in the a11y panel and the test results without failing the
+    // run yet: some stories still have them. Switch to "error" once they're fixed.
+    a11y: { test: "todo" },
     layout: "fullscreen",
     controls: { expanded: true, sort: "requiredFirst" },
     // The toolbar's viewport menu: pick one to see the story at that width.

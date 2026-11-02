@@ -222,17 +222,21 @@
       opacity: 0.6;
     }
 
-    // height: the rows area is always this tall; maxHeight: at most this tall.
-    // Either way the rows scroll inside it, under headings that stay put.
-    &[data-scroll] .root {
+    // height: the rows area is always this tall; maxHeight: at most this tall, by default the
+    // headings, ten rows and the heading band's top line, so a bigger page scrolls instead of
+    // growing the box. The rows scroll inside it, under headings that stay put.
+    .root {
       height: var(--yosegi-table-height, auto);
-      max-height: var(--yosegi-table-max-height, none);
+      max-height: var(
+        --yosegi-table-max-height,
+        calc(#{knob(table, head-height, 36px)} + 10 * #{knob(table, row-height, 44px)} + 1px)
+      );
       @include scroll-y;
       // A row that takes focus scrolls to just below the headings, not under them.
       scroll-padding-top: knob(table, head-height, 36px);
     }
 
-    &[data-scroll] .head {
+    .head {
       position: sticky;
       top: 0;
       z-index: 1;

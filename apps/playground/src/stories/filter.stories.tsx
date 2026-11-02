@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, screen, waitFor, within } from "storybook/test";
 import { createSignal } from "solid-js";
 import { Filter, type FilterSection, type FilterValue } from "yosegi-solid";
 import { countBy, invoices, matches, methodLabels, money, statusLabels } from "../ui/invoices";
@@ -79,5 +80,86 @@ export const FiltersOn: Story = {
         <p style={{ color: "var(--yosegi-color-fg-muted)" }}>{resultCount(value())} of 312 invoices match.</p>
       </>
     );
+  },
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: ticks wait in the panel until Show applies them; then the button counts them and a chip shows each. */
+export const ApplyTest: Story = {
+  name: "Apply (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => {
+    const [value, setValue] = createSignal<FilterValue>({});
+    return (
+      <>
+        <Filter value={value()} onChange={setValue} sections={sections} resultCount={resultCount} noun="invoices" />
+        <output>{JSON.stringify(value())}</output>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const output = canvas.getByRole("status");
+    const trigger = canvas.getByRole("button", { name: "Filter" });
+    await userEvent.click(trigger);
+
+    const panel = await screen.findByRole("dialog", { name: "Filters" });
+    await userEvent.click(within(panel).getByRole("checkbox", { name: /^Paid/ }));
+    await expect(output).toHaveTextContent("{}");
+
+    const show = within(panel).getByRole("button", { name: /^Show \d+ invoices$/ });
+    await expect(show).toHaveTextContent(`Show ${resultCount({ status: ["paid"] })} invoices`);
+    await userEvent.click(show);
+
+    await expect(output).toHaveTextContent('{"status":["paid"]}');
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await expect(canvas.getByLabelText("1 on")).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole("button", { name: "Remove Status filter" }));
+    await expect(output).toHaveTextContent("{}");
+  },
+};
+
+/** Test: Escape throws away what was ticked and puts focus back on the button. */
+export const EscapeTest: Story = {
+  name: "Escape (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => {
+    const [value, setValue] = createSignal<FilterValue>({});
+    return (
+      <>
+        <Filter value={value()} onChange={setValue} sections={sections} resultCount={resultCount} noun="invoices" />
+        <output>{JSON.stringify(value())}</output>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const trigger = canvas.getByRole("button", { name: "Filter" });
+    await userEvent.click(trigger);
+    const panel = await screen.findByRole("dialog", { name: "Filters" });
+    await userEvent.click(within(panel).getByRole("checkbox", { name: /^Card/ }));
+
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Filters" })).not.toBeInTheDocument());
+    await expect(trigger).toHaveFocus();
+    await expect(canvas.getByRole("status")).toHaveTextContent("{}");
+  },
+};
+
+/** Test: a range takes numbers, and its chip reads “over …”. */
+export const RangeTest: Story = {
+  name: "Range (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => {
+    const [value, setValue] = createSignal<FilterValue>({});
+    return <Filter value={value()} onChange={setValue} sections={sections} resultCount={resultCount} noun="invoices" />;
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Filter" }));
+    const panel = await screen.findByRole("dialog", { name: "Filters" });
+    await userEvent.type(within(panel).getByRole("textbox", { name: "Amount from" }), "500");
+    await userEvent.tab();
+    await userEvent.click(within(panel).getByRole("button", { name: /^Show/ }));
+    await expect(canvas.getByText(`over ${money.format(500)}`)).toBeInTheDocument();
   },
 };

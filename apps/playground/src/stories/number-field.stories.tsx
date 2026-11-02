@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect } from "storybook/test";
 import { createSignal } from "solid-js";
 import { NumberField } from "yosegi-solid";
 
@@ -91,4 +92,56 @@ export const Percent: Story = {
       formatOptions={{ style: "percent" }}
     />
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: arrows and the buttons step by `step`, Page Up and Down by `largeStep`, and the limits hold. */
+export const Stepping: Story = {
+  name: "Stepping (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <NumberField label="Guests" defaultValue={2} minValue={1} maxValue={12} largeStep={5} />,
+  play: async ({ canvas, userEvent }) => {
+    const input = canvas.getByRole("spinbutton", { name: "Guests" });
+    const decrease = canvas.getByRole("button", { name: "Decrease" });
+    const increase = canvas.getByRole("button", { name: "Increase" });
+
+    await userEvent.click(increase);
+    await expect(input).toHaveValue("3");
+
+    input.focus();
+    await userEvent.keyboard("{ArrowUp}{ArrowUp}");
+    await expect(input).toHaveValue("5");
+    await userEvent.keyboard("{PageUp}{PageUp}");
+    await expect(input).toHaveValue("12");
+    await expect(increase).toBeDisabled();
+
+    await userEvent.keyboard("{Home}");
+    await expect(input).toHaveValue("1");
+    await expect(decrease).toBeDisabled();
+  },
+};
+
+/** Test: a typed number is read in the locale's marks when the field is left, kept to as many decimals as `step` has and within the limits. */
+export const TypeANumber: Story = {
+  name: "Type a number (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <NumberField label="Price" locale="de-DE" defaultValue={10} step={0.5} maxValue={5000} />,
+  play: async ({ canvas, userEvent }) => {
+    const input = canvas.getByRole("spinbutton", { name: "Price" });
+    await userEvent.clear(input);
+    await userEvent.type(input, "1.234,5");
+    await userEvent.tab();
+    await expect(input).toHaveValue("1.234,5");
+    await expect(input).toHaveAttribute("aria-valuenow", "1234.5");
+
+    await userEvent.clear(input);
+    // Kept to as many decimals as step has: one.
+    await userEvent.type(input, "7,36{Enter}");
+    await expect(input).toHaveValue("7,4");
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "9999{Enter}");
+    await expect(input).toHaveValue("5.000");
+  },
 };

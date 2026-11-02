@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect, screen, waitFor, within } from "storybook/test";
 import { createSignal, onCleanup } from "solid-js";
 import { Combobox, type ComboboxOption } from "yosegi-solid";
 import { type Customer, cities, customers, startingTags, world } from "../ui/cities";
@@ -305,4 +306,105 @@ export const DisabledAndReadOnly: Story = {
       <Combobox label="City" options={cities} defaultValue="kyoto" readOnly />
     </>
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: typing in the search box narrows the list; a click picks and closes it. */
+export const SearchAndPick: Story = {
+  name: "Search and pick (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Combobox label="City" options={cities} placeholder="Choose a city" />,
+  play: async ({ canvas, userEvent }) => {
+    const box = canvas.getByRole("button", { name: "City" });
+    await userEvent.click(box);
+
+    const search = await screen.findByRole("combobox", { name: "Search options" });
+    await waitFor(() => expect(search).toHaveFocus());
+    await userEvent.type(search, "ky");
+
+    const list = screen.getByRole("listbox");
+    const names = within(list)
+      .getAllByRole("option")
+      .map((option) => option.textContent?.trim());
+    await expect(names).toEqual(["Kyoto", "Tokyo", "Kyiv"]);
+
+    await userEvent.click(within(list).getByRole("option", { name: "Kyiv" }));
+    await waitFor(() => expect(screen.queryByRole("listbox")).not.toBeInTheDocument());
+    await expect(box).toHaveTextContent("Kyiv");
+  },
+};
+
+/** Test: arrows move over the matches, skipping disabled ones, and Enter picks. */
+export const PickWithTheKeyboard: Story = {
+  name: "Pick with the keyboard (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Combobox label="City" options={cities} placeholder="Choose a city" />,
+  play: async ({ canvas, userEvent }) => {
+    const box = canvas.getByRole("button", { name: "City" });
+    await userEvent.click(box);
+    const search = await screen.findByRole("combobox", { name: "Search options" });
+    const active = () => document.getElementById(search.getAttribute("aria-activedescendant") ?? "");
+
+    // “on” matches Lisbon and London; Lisbon is disabled, so London is the one to pick.
+    await userEvent.type(search, "on");
+    await waitFor(() => expect(active()).toHaveTextContent("London"));
+    await userEvent.keyboard("{ArrowUp}");
+    await expect(active()).toHaveTextContent("London");
+
+    await userEvent.keyboard("{Enter}");
+    await expect(box).toHaveTextContent("London");
+  },
+};
+
+/** Test: a search with no match says so. */
+export const NothingMatches: Story = {
+  name: "Nothing matches (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Combobox label="City" options={cities} placeholder="Choose a city" />,
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "City" }));
+    const search = await screen.findByRole("combobox", { name: "Search options" });
+    const panel = within(search.closest<HTMLElement>(".yosegi-combobox-content")!);
+    await userEvent.type(search, "zzz");
+    // The panel fades in from opacity 0, so wait for it rather than check once.
+    await waitFor(() => expect(panel.getByText("No results for “zzz”.", { selector: "strong" })).toBeVisible());
+    await waitFor(() => expect(panel.queryAllByRole("option")).toHaveLength(0));
+  },
+};
+
+/** Test: with multiple, picks add chips and keep the list open; a chip's × removes it. */
+export const ChipsTest: Story = {
+  name: "Chips (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => {
+    const [tags, setTags] = createSignal(["design"]);
+    return (
+      <>
+        <Combobox
+          multiple
+          label="Tags"
+          options={startingTags}
+          value={tags()}
+          onChange={setTags}
+          placeholder="Add tags"
+        />
+        <output>{tags().join(",")}</output>
+      </>
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    const output = canvas.getByRole("status");
+    await userEvent.click(canvas.getByRole("button", { name: "Show options" }));
+    const list = await screen.findByRole("listbox");
+
+    await userEvent.click(within(list).getByRole("option", { name: "research" }));
+    await expect(output).toHaveTextContent("design,research");
+    await expect(screen.getByRole("listbox")).toBeInTheDocument();
+    await expect(within(list).getByRole("option", { name: "research" })).toHaveAttribute("aria-selected", "true");
+
+    await userEvent.keyboard("{Escape}");
+    await userEvent.click(canvas.getByRole("button", { name: "Remove design" }));
+    await expect(output).toHaveTextContent(/^research$/);
+  },
 };

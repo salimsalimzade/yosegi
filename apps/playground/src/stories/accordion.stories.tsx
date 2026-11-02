@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect } from "storybook/test";
 import { Accordion, type AccordionSection } from "yosegi-solid";
 
 const faq: AccordionSection[] = [
@@ -83,4 +84,52 @@ export const SeveralOpen: Story = {
 export const AlwaysOneOpen: Story = {
   name: "Always one open",
   render: () => <Accordion defaultValue={["parts"]} sections={faq} style={{ width: "100%", "max-width": "560px" }} />,
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+/** Test: one at a time: opening a section closes the other, and a collapsible one closes on a second click. */
+export const OneAtATimeTest: Story = {
+  name: "One at a time (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Accordion collapsible defaultValue={["what"]} sections={[...faq, locked]} />,
+  play: async ({ canvas, userEvent }) => {
+    const button = (name: string) => canvas.getByRole("button", { name });
+    await expect(button("What is Yosegi?")).toHaveAttribute("aria-expanded", "true");
+    await expect(canvas.getByRole("region", { name: "What is Yosegi?" })).toBeVisible();
+
+    await userEvent.click(button("Can I change the colours?"));
+    await expect(button("Can I change the colours?")).toHaveAttribute("aria-expanded", "true");
+    await expect(button("What is Yosegi?")).toHaveAttribute("aria-expanded", "false");
+
+    await userEvent.click(button("Can I change the colours?"));
+    await expect(button("Can I change the colours?")).toHaveAttribute("aria-expanded", "false");
+
+    await expect(button("Can items be locked?")).toBeDisabled();
+  },
+};
+
+/** Test: with multiple, sections open and close on their own. */
+export const SeveralOpenTest: Story = {
+  name: "Several open (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Accordion multiple defaultValue={["what"]} sections={faq} />,
+  play: async ({ canvas, userEvent }) => {
+    const button = (name: string) => canvas.getByRole("button", { name });
+    await userEvent.click(button("Which parts can I style?"));
+    await expect(button("What is Yosegi?")).toHaveAttribute("aria-expanded", "true");
+    await expect(button("Which parts can I style?")).toHaveAttribute("aria-expanded", "true");
+  },
+};
+
+/** Test: without collapsible, the open section stays open on a second click. */
+export const AlwaysOneOpenTest: Story = {
+  name: "Always one open (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Accordion defaultValue={["parts"]} sections={faq} />,
+  play: async ({ canvas, userEvent }) => {
+    const parts = canvas.getByRole("button", { name: "Which parts can I style?" });
+    await userEvent.click(parts);
+    await expect(parts).toHaveAttribute("aria-expanded", "true");
+  },
 };

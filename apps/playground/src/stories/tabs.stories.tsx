@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
+import { expect } from "storybook/test";
 import { Checkbox, Tabs } from "yosegi-solid";
 
 const meta = {
@@ -100,4 +101,76 @@ export const ManualActivation: Story = {
       ]}
     />
   ),
+};
+
+// Tests: run by Vitest (`pnpm test`), hidden from the sidebar and the docs.
+
+const testTabs = [
+  { value: "all", label: "All", content: "12 notes, newest first." },
+  { value: "pinned", label: "Pinned", content: "3 pinned notes." },
+  { value: "shared", label: "Shared", disabled: true },
+  { value: "archive", label: "Archive", content: "Nothing archived yet." },
+];
+
+/** Test: a click picks a tab and shows its panel; only the picked tab is in the Tab order. */
+export const PickWithTheMouse: Story = {
+  name: "Pick with the mouse (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Tabs aria-label="Notes" defaultValue="all" tabs={testTabs} />,
+  play: async ({ canvas, userEvent }) => {
+    await expect(canvas.getByRole("tabpanel")).toHaveTextContent("12 notes, newest first.");
+
+    const pinned = canvas.getByRole("tab", { name: "Pinned" });
+    await userEvent.click(pinned);
+    await expect(pinned).toHaveAttribute("aria-selected", "true");
+    await expect(canvas.getByRole("tabpanel", { name: "Pinned" })).toHaveTextContent("3 pinned notes.");
+    await expect(pinned).toHaveAttribute("tabindex", "0");
+    await expect(canvas.getByRole("tab", { name: "All" })).toHaveAttribute("tabindex", "-1");
+  },
+};
+
+/** Test: arrows move and pick, skipping disabled tabs and wrapping round; Home and End jump to the ends. */
+export const Keyboard: Story = {
+  name: "Keyboard (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Tabs aria-label="Notes" defaultValue="all" tabs={testTabs} />,
+  play: async ({ canvas, userEvent }) => {
+    const tab = (name: string) => canvas.getByRole("tab", { name });
+    tab("All").focus();
+
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(tab("Pinned")).toHaveFocus();
+    await expect(tab("Pinned")).toHaveAttribute("aria-selected", "true");
+
+    // Shared is disabled.
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(tab("Archive")).toHaveFocus();
+
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(tab("All")).toHaveFocus();
+
+    await userEvent.keyboard("{End}");
+    await expect(tab("Archive")).toHaveFocus();
+    await userEvent.keyboard("{Home}");
+    await expect(tab("All")).toHaveFocus();
+    await expect(canvas.getByRole("tabpanel")).toHaveTextContent("12 notes, newest first.");
+  },
+};
+
+/** Test: with manual activation, arrows only move focus; Enter picks. */
+export const ManualKeyboard: Story = {
+  name: "Manual activation keyboard (test)",
+  tags: ["!dev", "!autodocs"],
+  render: () => <Tabs aria-label="Notes" activationMode="manual" defaultValue="all" tabs={testTabs} />,
+  play: async ({ canvas, userEvent }) => {
+    const tab = (name: string) => canvas.getByRole("tab", { name });
+    tab("All").focus();
+
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(tab("Pinned")).toHaveFocus();
+    await expect(tab("All")).toHaveAttribute("aria-selected", "true");
+
+    await userEvent.keyboard("{Enter}");
+    await expect(tab("Pinned")).toHaveAttribute("aria-selected", "true");
+  },
 };
